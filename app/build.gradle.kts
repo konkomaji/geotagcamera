@@ -66,6 +66,10 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
+    // Manifest theme (android:theme="@style/Theme.Material3...") needs the
+    // classic Material Components XML styles, Compose material3 alone doesn't ship them
+    implementation("com.google.android.material:material:1.12.0")
+
     // CameraX
     val cameraxVersion = "1.3.4"
     implementation("androidx.camera:camera-core:$cameraxVersion")
