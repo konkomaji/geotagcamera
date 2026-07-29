@@ -1,16 +1,23 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/banner-light.svg">
+  <img alt="GeoTag Camera" src="assets/banner-light.svg">
+</picture>
+
 # GeoTag Camera
 
 Free, open source, ad free Android camera app that stamps every photo with GPS location, address and timestamp. Built for field surveyors, college students and NGO teams who need to prove where and when a photo was taken, without paying for it or handing over their data.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Android-3DDC84.svg)](https://developer.android.com)
+[![Build](https://github.com/konkomaji/geotagcamera/actions/workflows/android-ci.yml/badge.svg)](https://github.com/konkomaji/geotagcamera/actions/workflows/android-ci.yml)
 [![Status](https://img.shields.io/badge/status-in%20development-orange.svg)](#roadmap)
 
 Website: https://konkomaji.github.io/geotagcamera/
 
 ## Why this exists
 
-Most geotagging camera apps on the Play Store make you sit through ads before you can even open the camera, lock basic stamp fields behind a subscription, ask for permissions that have nothing to do with taking a photo, and stop working the moment you lose signal. GeoTag Camera fixes all four, in the open, so anyone can read the code and check that claim for themselves.
+Most geotagging camera apps on the Play Store make you sit through ads before you can even open the camera, lock basic stamp fields behind a subscription, ask for permissions that have nothing to do with taking a photo, and stop working the moment you lose signal. GeoTag Camera fixes that, in the open, so anyone can read the code and check it for themselves.
 
 ## Features
 
@@ -73,7 +80,13 @@ git clone https://github.com/konkomaji/geotagcamera.git
 cd geotagcamera
 ```
 
-Open the project in Android Studio (Koala or newer). Android Studio will generate the Gradle wrapper on first sync if it's missing. Minimum SDK is 26 (Android 8.0), target SDK is 34.
+Open the project in Android Studio (Koala or newer) and let it sync, or build from the command line:
+
+```
+./gradlew assembleDebug
+```
+
+Minimum SDK is 26 (Android 8.0), target SDK is 34.
 
 ## Permissions
 
