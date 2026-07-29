@@ -137,20 +137,20 @@
     }
   }
 
-  *{box-sizing:border-box; margin:0; padding:0}
+  *{box-sizing:border-box; margin:0; padding:0; min-width:0}
   html{scroll-behavior:smooth}
   body{
     background:var(--surface); color:var(--on-surface); font-family:var(--font-display);
-    font-optical-sizing:auto; line-height:1.55; overflow-x:hidden;
+    font-optical-sizing:auto; line-height:1.55; overflow-x:hidden; width:100%;
   }
   img,svg{display:block; max-width:100%}
   a{color:inherit}
-  .wrap{max-width:1180px; margin:0 auto; padding:0 1.5rem}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 clamp(1.1rem,4vw,1.5rem); width:100%}
   section{padding:5.5rem 0}
   h1,h2,h3{text-wrap:balance; font-weight:800; letter-spacing:-0.01em}
-  h1{font-size:clamp(2.4rem,5.5vw,4.2rem); line-height:1.05}
-  h2{font-size:clamp(1.8rem,3.4vw,2.6rem); line-height:1.1}
-  h3{font-size:1.2rem}
+  h1{font-size:clamp(2.1rem,7vw,4.2rem); line-height:1.08}
+  h2{font-size:clamp(1.6rem,5vw,2.6rem); line-height:1.15}
+  h3{font-size:1.15rem}
   p{color:var(--on-surface-variant); max-width:62ch}
   .eyebrow{
     font-family:var(--font-mono); font-size:.78rem; letter-spacing:.14em; text-transform:uppercase;
@@ -164,17 +164,43 @@
     background:color-mix(in srgb, var(--surface) 82%, transparent);
     border-bottom:1px solid var(--outline);
   }
-  .navbar{display:flex; align-items:center; justify-content:space-between; padding:1rem 1.5rem; max-width:1180px; margin:0 auto}
-  .brand{display:flex; align-items:center; gap:.6rem; font-weight:800; font-size:1.05rem}
-  .brand svg{width:30px; height:33px}
+  .navbar{
+    display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+    padding:.9rem clamp(1.1rem,4vw,1.5rem); max-width:1180px; margin:0 auto;
+  }
+  .navbar-actions{display:flex; align-items:center; gap:.6rem; flex:none}
+  .brand{display:flex; align-items:center; gap:.6rem; font-weight:800; font-size:1.05rem; min-width:0}
+  .brand span{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .brand svg{width:30px; height:33px; flex:none}
   .navlinks{display:flex; align-items:center; gap:1.8rem; font-size:.92rem; font-weight:500}
   .navlinks a{text-decoration:none; color:var(--on-surface-variant); transition:color .2s}
   .navlinks a:hover{color:var(--primary)}
   .icon-btn{
     display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px;
     border-radius:50%; border:1px solid var(--outline); background:transparent; cursor:pointer; color:var(--on-surface);
+    flex:none;
   }
   .icon-btn:hover{background:var(--surface-dim)}
+  .menu-btn{display:none}
+  .menu-btn span, .menu-btn span::before, .menu-btn span::after{
+    content:""; display:block; width:18px; height:2px; background:currentColor; border-radius:2px;
+    transition:transform .25s, opacity .25s;
+  }
+  .menu-btn span{position:relative}
+  .menu-btn span::before{position:absolute; top:-6px}
+  .menu-btn span::after{position:absolute; top:6px}
+  .menu-btn[aria-expanded="true"] span{background:transparent}
+  .menu-btn[aria-expanded="true"] span::before{transform:translateY(6px) rotate(45deg)}
+  .menu-btn[aria-expanded="true"] span::after{transform:translateY(-6px) rotate(-45deg)}
+  .mobile-panel{
+    display:none; flex-direction:column; gap:.2rem; max-width:1180px; margin:0 auto;
+    padding:0 clamp(1.1rem,4vw,1.5rem) 1rem; overflow:hidden;
+  }
+  .mobile-panel a{
+    text-decoration:none; color:var(--on-surface); font-weight:600; font-size:1rem;
+    padding:.9rem .2rem; border-bottom:1px solid var(--outline);
+  }
+  .mobile-panel[data-open="true"]{display:flex}
 
   /* buttons */
   .btn{
@@ -214,7 +240,7 @@
   .hero-icon-card svg{width:170px; height:187px}
 
   /* problem */
-  .problem{background:var(--surface-dim); border-radius:var(--shape-xl); margin:0 1.5rem}
+  .problem{background:var(--surface-dim); border-radius:var(--shape-xl); margin:0 clamp(1.1rem,4vw,1.5rem)}
   .problem .wrap{max-width:900px; text-align:center}
   .problem h2{margin-bottom:1rem}
 
@@ -246,6 +272,7 @@
   .security-visual{
     background:var(--on-surface); color:var(--surface); border-radius:var(--shape-xl);
     padding:2.6rem; font-family:var(--font-mono); font-size:.86rem; line-height:1.9;
+    overflow-wrap:anywhere; max-width:100%;
   }
   .security-visual .k{color:var(--tertiary)}
   .security-visual .s{color:var(--secondary)}
@@ -274,7 +301,7 @@
   /* cta footer */
   .cta-band{
     background:var(--primary); color:var(--on-primary); border-radius:var(--shape-xl);
-    margin:0 1.5rem; padding:4rem 2rem; text-align:center;
+    margin:0 clamp(1.1rem,4vw,1.5rem); padding:4rem 2rem; text-align:center;
   }
   .cta-band h2{color:var(--on-primary)}
   .cta-band p{color:color-mix(in srgb, var(--on-primary) 82%, transparent); margin:1rem auto 2rem}
@@ -283,18 +310,40 @@
 
   footer.site{padding:3.5rem 0 2.5rem; text-align:center}
   footer.site p{margin:0 auto; color:var(--on-surface-variant); font-size:.88rem}
-  footer.site .foot-links{display:flex; justify-content:center; gap:1.4rem; margin-bottom:1.2rem; font-size:.9rem; font-weight:500}
+  footer.site .foot-links{display:flex; flex-wrap:wrap; justify-content:center; gap:.8rem 1.4rem; margin-bottom:1.2rem; font-size:.9rem; font-weight:500}
   footer.site a{text-decoration:none}
   footer.site a:hover{color:var(--primary)}
 
   @media (max-width:900px){
-    .hero-grid, .security{grid-template-columns:1fr}
+    section{padding:4rem 0}
+    .hero-grid{grid-template-columns:1fr; gap:2.5rem}
+    .hero-icon-card{order:-1; max-width:280px; margin:0 auto; padding:2.2rem}
+    .hero-icon-card svg{width:130px; height:143px}
+    .security{grid-template-columns:1fr}
     .feature-grid{grid-template-columns:repeat(2,1fr)}
     .navlinks{display:none}
+    .menu-btn{display:flex; align-items:center; justify-content:center}
   }
   @media (max-width:560px){
     .feature-grid{grid-template-columns:1fr}
-    section{padding:3.5rem 0}
+    section{padding:3rem 0}
+    .hero{padding:2.5rem 0 2rem}
+    .hero-blob{width:110vw; top:-10%; right:-30%; opacity:.7}
+    .hero-icon-card{padding:1.8rem; border-radius:var(--shape-lg) var(--shape-lg) var(--shape-lg) var(--shape-sm)}
+    .hero-icon-card svg{width:104px; height:114px}
+    .problem, .cta-band{margin:0 clamp(1.1rem,4vw,1.5rem); border-radius:var(--shape-lg)}
+    .cta-band{padding:2.6rem 1.4rem}
+    .security-visual{padding:1.5rem; font-size:.78rem; overflow-x:auto}
+    .hero-cta .btn, .cta-band .hero-cta .btn{flex:1 1 auto; justify-content:center; text-align:center}
+    .badges{gap:.5rem}
+    .badge{font-size:.7rem; padding:.35rem .7rem}
+    .navbar{padding:.75rem clamp(1.1rem,4vw,1.5rem)}
+    .brand{font-size:.95rem}
+    .brand svg{width:26px; height:29px}
+  }
+  @media (max-width:380px){
+    h1{font-size:1.9rem}
+    .hero-icon-card{display:none}
   }
   @media (prefers-reduced-motion: reduce){
     *{animation:none !important; transition:none !important}
@@ -313,7 +362,7 @@
         <circle fill="var(--primary)" cx="100" cy="110" r="38"/>
         <circle fill="var(--surface-bright)" cx="100" cy="110" r="17"/>
       </svg>
-      GeoTag Camera
+      <span>GeoTag Camera</span>
     </a>
     <nav class="navlinks">
       <a href="#features">Features</a>
@@ -322,10 +371,22 @@
       <a href="#faq">FAQ</a>
       <a href="https://github.com/konkomaji/geotagcamera">GitHub</a>
     </nav>
-    <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
-      <svg class="icon" viewBox="0 0 24 24" id="themeIcon" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"/></svg>
-    </button>
+    <div class="navbar-actions">
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
+        <svg class="icon" viewBox="0 0 24 24" id="themeIcon" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"/></svg>
+      </button>
+      <button class="icon-btn menu-btn" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobilePanel">
+        <span></span>
+      </button>
+    </div>
   </div>
+  <nav class="mobile-panel" id="mobilePanel" data-open="false">
+    <a href="#features">Features</a>
+    <a href="#security">Security</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#faq">FAQ</a>
+    <a href="https://github.com/konkomaji/geotagcamera">GitHub</a>
+  </nav>
 </header>
 
 <main id="top">
@@ -551,6 +612,27 @@
       var next = current === 'dark' ? 'light' : 'dark';
       root.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
+    });
+  })();
+
+  (function(){
+    var menuBtn = document.getElementById('menuToggle');
+    var panel = document.getElementById('mobilePanel');
+    if (!menuBtn || !panel) return;
+    function closeMenu(){
+      panel.setAttribute('data-open', 'false');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    }
+    menuBtn.addEventListener('click', function(){
+      var open = panel.getAttribute('data-open') === 'true';
+      panel.setAttribute('data-open', open ? 'false' : 'true');
+      menuBtn.setAttribute('aria-expanded', open ? 'false' : 'true');
+    });
+    panel.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', closeMenu);
+    });
+    window.addEventListener('resize', function(){
+      if (window.innerWidth > 900) closeMenu();
     });
   })();
 
