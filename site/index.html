@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GeoTag Camera — Free Open Source GPS Camera App for Android</title>
+<meta name="description" content="GeoTag Camera is a free, open source, ad-free Android app that stamps photos with GPS location, address and timestamp. Built for field surveyors, students and NGO workers in India. No ads, no tracking, works offline." />
+<meta name="keywords" content="geotag camera, geo camera app, gps camera android, gps photo stamp, open source camera app, gps map camera alternative, field survey photo app, timestamp camera, geotagging app india, tamper evident photo" />
+<meta name="author" content="Konko Maji" />
+<link rel="canonical" href="https://konkomaji.github.io/geotagcamera/" />
+<meta name="robots" content="index, follow" />
+
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://konkomaji.github.io/geotagcamera/" />
+<meta property="og:title" content="GeoTag Camera — Free Open Source GPS Camera App for Android" />
+<meta property="og:description" content="Stamp photos with GPS location, address and timestamp. Free, open source, no ads, no tracking. Built for field surveyors and students." />
+<meta property="og:image" content="https://konkomaji.github.io/geotagcamera/assets/og-image.png" />
+<meta property="og:locale" content="en_IN" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="GeoTag Camera — Free Open Source GPS Camera App" />
+<meta name="twitter:description" content="Stamp photos with GPS location, address and timestamp. Free, open source, no ads, no tracking." />
+<meta name="twitter:image" content="https://konkomaji.github.io/geotagcamera/assets/og-image.png" />
+
+<meta name="theme-color" content="#2A5F8F" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#10171A" media="(prefers-color-scheme: dark)" />
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 220'%3E%3Cpath fill='%232A5F8F' d='M100,6 C52,6 10,46 10,96 C10,152 100,210 100,210 C100,210 190,152 190,96 C190,46 148,6 100,6 Z'/%3E%3Cpath fill='%23fff' d='M60,60 L140,60 A24,24 0 0 1 164,84 L164,128 A24,24 0 0 1 140,152 L60,152 A24,24 0 0 1 36,128 L36,84 A24,24 0 0 1 60,60 Z'/%3E%3Cpath fill='%23fff' d='M92,44 L108,44 A8,8 0 0 1 116,52 L116,54 A8,8 0 0 1 108,62 L92,62 A8,8 0 0 1 84,54 L84,52 A8,8 0 0 1 92,44 Z'/%3E%3Ccircle fill='%232A5F8F' cx='100' cy='110' r='38'/%3E%3Ccircle fill='%23fff' cx='100' cy='110' r='17'/%3E%3C/svg%3E" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "GeoTag Camera",
+  "operatingSystem": "Android",
+  "applicationCategory": "PhotographyApplication",
+  "description": "Free, open source, ad-free Android camera app that stamps photos with GPS location, address and timestamp, with offline support and tamper-evident signing.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+  "softwareVersion": "0.1.0",
+  "author": {
+    "@type": "Person",
+    "name": "Konko Maji"
+  },
+  "url": "https://konkomaji.github.io/geotagcamera/",
+  "sameAs": ["https://github.com/konkomaji/geotagcamera"]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is GeoTag Camera really free, with no ads or subscriptions?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. GeoTag Camera is fully open source under the GPLv3 license and every feature works without a subscription. There are no ads and no trackers anywhere in the app."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does GeoTag Camera work without an internet connection?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Reverse geocoding is cached on your device, so the address on your photo stamp keeps working even when you are out of network range, which is common on field sites in rural India."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What data does GeoTag Camera collect?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "None beyond what the app needs to function. Camera and location access are used locally on your device only. Nothing is sent to any server, because the app does not have one."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the tamper-evident photo feature work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Every photo is hashed with SHA-256 and signed using a private key generated on your device through the Android Keystore. That signature can later be used to verify the photo's bytes have not changed since the moment it was captured."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Who is GeoTag Camera built for?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "College students documenting fieldwork, land and infrastructure surveyors, NGO and government field staff, and anyone who needs to prove exactly where and when a photo was taken."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I add my college or organization name to the photo stamp?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. You can add your own organization, college or project name to the stamp for free. There is no paywall for this."
+      }
+    }
+  ]
+}
+</script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400..900&family=Roboto+Mono:wght@400;500&display=swap');
+
+  :root{
+    --primary:#2A5F8F; --on-primary:#FFFFFF; --primary-container:#D2E4F6; --on-primary-container:#072E4D;
+    --secondary:#3F6E56; --on-secondary:#FFFFFF; --secondary-container:#D7ECDF; --on-secondary-container:#10291C;
+    --tertiary:#8A5A2E; --on-tertiary:#FFFFFF; --tertiary-container:#F3DCC2; --on-tertiary-container:#3A2308;
+    --surface:#FBF8F2; --surface-dim:#EFEBE1; --surface-bright:#FFFFFF;
+    --on-surface:#1B3A4B; --on-surface-variant:#4A5F6B; --outline:#C7C0B0;
+    --shape-sm:16px; --shape-md:24px; --shape-lg:32px; --shape-xl:48px;
+    --font-display:"Roboto Flex", system-ui, sans-serif;
+    --font-mono:"Roboto Mono", ui-monospace, monospace;
+  }
+  :root[data-theme="dark"]{
+    --primary:#9CC6EC; --on-primary:#08314F; --primary-container:#0F4970; --on-primary-container:#CFE6FA;
+    --secondary:#A8D3BB; --on-secondary:#0F2A1C; --secondary-container:#244635; --on-secondary-container:#C6E9D3;
+    --tertiary:#E8B98A; --on-tertiary:#482B08; --tertiary-container:#653E14; --on-tertiary-container:#FBDFC0;
+    --surface:#10171A; --surface-dim:#0C1214; --surface-bright:#1B2327;
+    --on-surface:#E6EDE9; --on-surface-variant:#A9BCC2; --outline:#3A454A;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --primary:#9CC6EC; --on-primary:#08314F; --primary-container:#0F4970; --on-primary-container:#CFE6FA;
+      --secondary:#A8D3BB; --on-secondary:#0F2A1C; --secondary-container:#244635; --on-secondary-container:#C6E9D3;
+      --tertiary:#E8B98A; --on-tertiary:#482B08; --tertiary-container:#653E14; --on-tertiary-container:#FBDFC0;
+      --surface:#10171A; --surface-dim:#0C1214; --surface-bright:#1B2327;
+      --on-surface:#E6EDE9; --on-surface-variant:#A9BCC2; --outline:#3A454A;
+    }
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--surface); color:var(--on-surface); font-family:var(--font-display);
+    font-optical-sizing:auto; line-height:1.55; overflow-x:hidden;
+  }
+  img,svg{display:block; max-width:100%}
+  a{color:inherit}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 1.5rem}
+  section{padding:5.5rem 0}
+  h1,h2,h3{text-wrap:balance; font-weight:800; letter-spacing:-0.01em}
+  h1{font-size:clamp(2.4rem,5.5vw,4.2rem); line-height:1.05}
+  h2{font-size:clamp(1.8rem,3.4vw,2.6rem); line-height:1.1}
+  h3{font-size:1.2rem}
+  p{color:var(--on-surface-variant); max-width:62ch}
+  .eyebrow{
+    font-family:var(--font-mono); font-size:.78rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--primary); font-weight:500;
+  }
+  .icon{width:26px; height:26px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+
+  /* nav */
+  header.site{
+    position:sticky; top:0; z-index:20; backdrop-filter:blur(10px);
+    background:color-mix(in srgb, var(--surface) 82%, transparent);
+    border-bottom:1px solid var(--outline);
+  }
+  .navbar{display:flex; align-items:center; justify-content:space-between; padding:1rem 1.5rem; max-width:1180px; margin:0 auto}
+  .brand{display:flex; align-items:center; gap:.6rem; font-weight:800; font-size:1.05rem}
+  .brand svg{width:30px; height:33px}
+  .navlinks{display:flex; align-items:center; gap:1.8rem; font-size:.92rem; font-weight:500}
+  .navlinks a{text-decoration:none; color:var(--on-surface-variant); transition:color .2s}
+  .navlinks a:hover{color:var(--primary)}
+  .icon-btn{
+    display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px;
+    border-radius:50%; border:1px solid var(--outline); background:transparent; cursor:pointer; color:var(--on-surface);
+  }
+  .icon-btn:hover{background:var(--surface-dim)}
+
+  /* buttons */
+  .btn{
+    display:inline-flex; align-items:center; gap:.5rem; padding:.85rem 1.6rem; border-radius:var(--shape-lg);
+    font-weight:700; font-size:.95rem; text-decoration:none; border:none; cursor:pointer;
+    transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s;
+  }
+  .btn:hover{transform:translateY(-2px) scale(1.02)}
+  .btn-filled{background:var(--primary); color:var(--on-primary)}
+  .btn-tonal{background:var(--primary-container); color:var(--on-primary-container)}
+  .btn-outline{background:transparent; color:var(--on-surface); border:1.5px solid var(--outline)}
+
+  /* hero */
+  .hero{position:relative; padding:5rem 0 4rem; overflow:hidden}
+  .hero-blob{
+    position:absolute; top:-18%; right:-14%; width:60vw; max-width:820px; aspect-ratio:1;
+    background:radial-gradient(circle at 32% 30%, var(--primary-container), transparent 68%);
+    border-radius:44% 56% 62% 38% / 48% 42% 58% 52%;
+    animation:blobMove 16s ease-in-out infinite alternate; z-index:-1;
+  }
+  @keyframes blobMove{
+    0%{border-radius:44% 56% 62% 38% / 48% 42% 58% 52%; transform:rotate(0deg)}
+    100%{border-radius:58% 42% 40% 60% / 55% 60% 40% 45%; transform:rotate(8deg)}
+  }
+  .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:3rem; align-items:center}
+  .hero p.lede{font-size:1.15rem; margin-top:1.3rem; max-width:52ch}
+  .hero-cta{display:flex; gap:1rem; margin-top:2.2rem; flex-wrap:wrap}
+  .badges{display:flex; gap:.6rem; flex-wrap:wrap; margin-top:2.2rem}
+  .badge{
+    font-family:var(--font-mono); font-size:.74rem; padding:.4rem .8rem; border-radius:var(--shape-sm);
+    background:var(--surface-bright); border:1px solid var(--outline); color:var(--on-surface-variant);
+  }
+  .hero-icon-card{
+    background:var(--surface-bright); border-radius:var(--shape-xl) var(--shape-xl) var(--shape-xl) var(--shape-sm);
+    padding:3.2rem; box-shadow:0 30px 60px -30px rgba(0,0,0,.25); display:flex; align-items:center; justify-content:center;
+  }
+  .hero-icon-card svg{width:170px; height:187px}
+
+  /* problem */
+  .problem{background:var(--surface-dim); border-radius:var(--shape-xl); margin:0 1.5rem}
+  .problem .wrap{max-width:900px; text-align:center}
+  .problem h2{margin-bottom:1rem}
+
+  /* features */
+  .feature-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1.4rem; margin-top:3rem}
+  .feature-card{
+    padding:2rem; border:1px solid var(--outline);
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
+    opacity:0; transform:translateY(18px);
+  }
+  .feature-card.in-view{opacity:1; transform:translateY(0)}
+  .feature-card:hover{transform:translateY(-6px); box-shadow:0 20px 40px -24px rgba(0,0,0,.28)}
+  .feature-card:nth-child(3n+1){border-radius:var(--shape-xl) var(--shape-sm) var(--shape-xl) var(--shape-sm); background:var(--primary-container)}
+  .feature-card:nth-child(3n+2){border-radius:var(--shape-sm) var(--shape-xl) var(--shape-sm) var(--shape-xl); background:var(--secondary-container)}
+  .feature-card:nth-child(3n){border-radius:var(--shape-xl) var(--shape-xl) var(--shape-sm) var(--shape-sm); background:var(--tertiary-container)}
+  .feature-card:nth-child(3n+1) .icon-wrap{background:var(--primary); color:var(--on-primary)}
+  .feature-card:nth-child(3n+2) .icon-wrap{background:var(--secondary); color:var(--on-secondary)}
+  .feature-card:nth-child(3n) .icon-wrap{background:var(--tertiary); color:var(--on-tertiary)}
+  .icon-wrap{
+    width:52px; height:52px; border-radius:var(--shape-sm); display:flex; align-items:center; justify-content:center;
+    margin-bottom:1.1rem; transition:transform .3s;
+  }
+  .feature-card:hover .icon-wrap{transform:rotate(-6deg) scale(1.08)}
+  .feature-card h3{margin-bottom:.5rem; color:var(--on-surface)}
+  .feature-card p{color:var(--on-surface-variant); font-size:.94rem; max-width:none}
+
+  /* security */
+  .security{display:grid; grid-template-columns:.9fr 1.1fr; gap:3rem; align-items:center}
+  .security-visual{
+    background:var(--on-surface); color:var(--surface); border-radius:var(--shape-xl);
+    padding:2.6rem; font-family:var(--font-mono); font-size:.86rem; line-height:1.9;
+  }
+  .security-visual .k{color:var(--tertiary)}
+  .security-visual .s{color:var(--secondary)}
+
+  /* roadmap */
+  .roadmap-chips{display:flex; flex-wrap:wrap; gap:.7rem; margin-top:2rem}
+  .chip{
+    padding:.6rem 1.1rem; border-radius:var(--shape-lg); border:1px dashed var(--outline);
+    font-size:.88rem; color:var(--on-surface-variant);
+  }
+
+  /* faq */
+  .faq{max-width:820px}
+  details{
+    border-bottom:1px solid var(--outline); padding:1.3rem 0;
+  }
+  summary{
+    cursor:pointer; font-weight:700; font-size:1.05rem; list-style:none; display:flex;
+    justify-content:space-between; align-items:center; color:var(--on-surface);
+  }
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+"; font-size:1.4rem; color:var(--primary); transition:transform .25s}
+  details[open] summary::after{transform:rotate(45deg)}
+  details p{margin-top:.8rem}
+
+  /* cta footer */
+  .cta-band{
+    background:var(--primary); color:var(--on-primary); border-radius:var(--shape-xl);
+    margin:0 1.5rem; padding:4rem 2rem; text-align:center;
+  }
+  .cta-band h2{color:var(--on-primary)}
+  .cta-band p{color:color-mix(in srgb, var(--on-primary) 82%, transparent); margin:1rem auto 2rem}
+  .cta-band .btn-filled{background:var(--on-primary); color:var(--primary)}
+  .cta-band .btn-outline{border-color:color-mix(in srgb, var(--on-primary) 50%, transparent); color:var(--on-primary)}
+
+  footer.site{padding:3.5rem 0 2.5rem; text-align:center}
+  footer.site p{margin:0 auto; color:var(--on-surface-variant); font-size:.88rem}
+  footer.site .foot-links{display:flex; justify-content:center; gap:1.4rem; margin-bottom:1.2rem; font-size:.9rem; font-weight:500}
+  footer.site a{text-decoration:none}
+  footer.site a:hover{color:var(--primary)}
+
+  @media (max-width:900px){
+    .hero-grid, .security{grid-template-columns:1fr}
+    .feature-grid{grid-template-columns:repeat(2,1fr)}
+    .navlinks{display:none}
+  }
+  @media (max-width:560px){
+    .feature-grid{grid-template-columns:1fr}
+    section{padding:3.5rem 0}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="navbar">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 200 220" aria-hidden="true">
+        <path fill="var(--primary)" d="M100,6 C52,6 10,46 10,96 C10,152 100,210 100,210 C100,210 190,152 190,96 C190,46 148,6 100,6 Z"/>
+        <path fill="var(--surface-bright)" d="M60,60 L140,60 A24,24 0 0 1 164,84 L164,128 A24,24 0 0 1 140,152 L60,152 A24,24 0 0 1 36,128 L36,84 A24,24 0 0 1 60,60 Z"/>
+        <path fill="var(--surface-bright)" d="M92,44 L108,44 A8,8 0 0 1 116,52 L116,54 A8,8 0 0 1 108,62 L92,62 A8,8 0 0 1 84,54 L84,52 A8,8 0 0 1 92,44 Z"/>
+        <circle fill="var(--primary)" cx="100" cy="110" r="38"/>
+        <circle fill="var(--surface-bright)" cx="100" cy="110" r="17"/>
+      </svg>
+      GeoTag Camera
+    </a>
+    <nav class="navlinks">
+      <a href="#features">Features</a>
+      <a href="#security">Security</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://github.com/konkomaji/geotagcamera">GitHub</a>
+    </nav>
+    <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
+      <svg class="icon" viewBox="0 0 24 24" id="themeIcon" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="hero-blob" aria-hidden="true"></div>
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow">Free &middot; Open Source &middot; Ad Free</p>
+        <h1>Every photo, exactly where and when it happened.</h1>
+        <p class="lede">GeoTag Camera stamps your photos with GPS location, address and timestamp the moment you shoot. Built for field surveyors, students and NGO teams who need proof, not clutter.</p>
+        <div class="hero-cta">
+          <a class="btn btn-filled" href="https://github.com/konkomaji/geotagcamera/releases">Download APK</a>
+          <a class="btn btn-tonal" href="https://github.com/konkomaji/geotagcamera">View Source on GitHub</a>
+        </div>
+        <div class="badges">
+          <span class="badge">No Ads</span>
+          <span class="badge">No Tracking</span>
+          <span class="badge">GPLv3 Licensed</span>
+          <span class="badge">Works Offline</span>
+          <span class="badge">Built in India</span>
+        </div>
+      </div>
+      <div class="hero-icon-card">
+        <svg viewBox="0 0 200 220" role="img" aria-label="GeoTag Camera app icon">
+          <path fill="var(--primary)" d="M100,6 C52,6 10,46 10,96 C10,152 100,210 100,210 C100,210 190,152 190,96 C190,46 148,6 100,6 Z"/>
+          <path fill="var(--surface)" d="M60,60 L140,60 A24,24 0 0 1 164,84 L164,128 A24,24 0 0 1 140,152 L60,152 A24,24 0 0 1 36,128 L36,84 A24,24 0 0 1 60,60 Z"/>
+          <path fill="var(--surface)" d="M92,44 L108,44 A8,8 0 0 1 116,52 L116,54 A8,8 0 0 1 108,62 L92,62 A8,8 0 0 1 84,54 L84,52 A8,8 0 0 1 92,44 Z"/>
+          <circle fill="var(--primary)" cx="100" cy="110" r="38"/>
+          <circle fill="var(--surface)" cx="100" cy="110" r="17"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="problem">
+    <div class="wrap">
+      <p class="eyebrow">Why this exists</p>
+      <h2>Most geotagging apps make you pay for what should be free</h2>
+      <p style="margin:0 auto">Video ads before you can even open the camera. Basic stamp fields locked behind a subscription. Permissions that have nothing to do with taking a photo. And the moment you lose signal in the field, half of it stops working. GeoTag Camera was built to fix all four, in the open, for anyone to check.</p>
+    </div>
+  </section>
+
+  <section id="features" class="wrap">
+    <p class="eyebrow">What's inside</p>
+    <h2>Everything you need on a proof-of-location photo</h2>
+    <div class="feature-grid" id="featureGrid">
+
+      <article class="feature-card">
+        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M9 7l1.2-2.2h3.6L15 7"/><circle cx="12" cy="13.5" r="3.4"/></svg></div>
+        <h3>Clean camera capture</h3>
+        <p>A focused capture screen built on CameraX. No filters, no clutter, no background processes you didn't ask for.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg></div>
+        <h3>Location, address and time, stamped in</h3>
+        <p>Every photo carries GPS coordinates, a readable address and the exact timestamp burned right into the image.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="12" height="12" rx="2"/><rect x="8" y="8" width="12" height="12" rx="2"/></svg></div>
+        <h3>GPS written into EXIF too</h3>
+        <p>Coordinates are also saved in the photo's own EXIF metadata, so GIS software and photo tools pick it up automatically.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+        <h3>A gallery that stays on your phone</h3>
+        <p>All your captures live in a simple on-device gallery. Nothing leaves your phone unless you choose to share it.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="5.5" y1="18.5" x2="18.5" y2="5.5"/></svg></div>
+        <h3>Zero ads, zero tracking</h3>
+        <p>No ad SDKs, no analytics, no hidden network calls. The app does exactly what it says on the tin and nothing else.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 8.5a15 15 0 0 1 20 0M5.5 12a10 10 0 0 1 13 0M9 15.5a5 5 0 0 1 6 0"/><circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/><line x1="3" y1="3" x2="21" y2="21"/></svg></div>
+        <h3>Built to work offline</h3>
+        <p>Addresses are cached on your device, so the stamp keeps working even when you lose signal out in the field.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><circle cx="9" cy="7" r="2.2" fill="currentColor" stroke="none"/><line x1="4" y1="14" x2="20" y2="14"/><circle cx="16" cy="14" r="2.2" fill="currentColor" stroke="none"/><line x1="4" y1="21" x2="20" y2="21"/><circle cx="11" cy="21" r="2.2" fill="currentColor" stroke="none"/></svg></div>
+        <h3>Pick exactly what shows</h3>
+        <p>Turn coordinates, address, altitude, accuracy or compass bearing on or off. It's your stamp, your call.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="4"/><path d="M14 9h6M17 9v4"/></svg></div>
+        <h3>Only two permissions, ever</h3>
+        <p>Camera and location. That's the whole list. Nothing is asked for that the app doesn't actually need.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 4v4h-4M6 20v-4h4"/></svg></div>
+        <h3>Always a fresh location</h3>
+        <p>Every capture fetches a new address instead of quietly reusing an old cached one, a common bug in other apps.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h13l3 6-3 6H4z"/><circle cx="9" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg></div>
+        <h3>Your own name on the stamp</h3>
+        <p>Add your college, company or project name to every photo. No paywall for something this basic.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>Photos you can prove weren't edited</h3>
+        <p>Every photo is hashed and signed on-device at capture, so you can later verify it hasn't been touched since.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18c3-4 4-7 4-9.5a2.5 2.5 0 0 1 5 0c0 3-2 4-2 7a2 2 0 0 0 4 0"/><path d="M17 15l3 3-1.5 1.5"/></svg></div>
+        <h3>Sign off in the field</h3>
+        <p>Field workers can add a signature directly on the photo before saving, for inspection and muster-roll style records.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="security" class="wrap security">
+    <div>
+      <p class="eyebrow">Trust, not promises</p>
+      <h2>Open source you can actually audit</h2>
+      <p style="margin-top:1rem">Every line of GeoTag Camera is public. There's no server collecting your data, because there is no server. Location and camera access stay on your device. If you don't believe an app when it says "we don't track you," here you don't have to, you can read the code yourself.</p>
+      <p style="margin-top:1rem">On top of that, every photo is hashed with SHA-256 and signed using a private key generated on your device through the Android Keystore, the same secure hardware layer Android uses for biometric unlock. That's what lets you prove later that a photo hasn't been edited since the second it was taken.</p>
+    </div>
+    <div class="security-visual">
+      <div>&gt; sha256(photo.jpg)</div>
+      <div class="s">e3b0c44298fc1c14...9af9b2</div>
+      <div style="margin-top:.8rem">&gt; sign(hash, <span class="k">deviceKeystoreKey</span>)</div>
+      <div class="s">MEUCIQD4x7...signature</div>
+      <div style="margin-top:.8rem">&gt; verify(photo.jpg)</div>
+      <div class="s">&#10003; unmodified since capture</div>
+    </div>
+  </section>
+
+  <section id="roadmap" class="wrap">
+    <p class="eyebrow">What's next</p>
+    <h2>Actively maintained, more coming</h2>
+    <p style="margin-top:.8rem">Version one ships photo capture. These are already planned for the releases after that.</p>
+    <div class="roadmap-chips">
+      <span class="chip">Video geotagging</span>
+      <span class="chip">Project and site folders</span>
+      <span class="chip">Batch PDF export</span>
+      <span class="chip">CSV / KML / GeoJSON export</span>
+      <span class="chip">Voice notes on photos</span>
+      <span class="chip">Before and after pairing</span>
+      <span class="chip">Multiple stamp templates</span>
+      <span class="chip">Quick-capture widget</span>
+      <span class="chip">Biometric app lock</span>
+      <span class="chip">Manual local backup</span>
+      <span class="chip">Hindi and regional languages</span>
+      <span class="chip">Dynamic Material You theming</span>
+    </div>
+  </section>
+
+  <section id="faq" class="wrap">
+    <p class="eyebrow">Questions</p>
+    <h2>Frequently asked</h2>
+    <div class="faq" style="margin-top:2rem">
+      <details open>
+        <summary>Is GeoTag Camera really free, with no ads or subscriptions?</summary>
+        <p>Yes. It's fully open source under the GPLv3 license and every feature works without a subscription. There are no ads and no trackers anywhere in the app.</p>
+      </details>
+      <details>
+        <summary>Does it work without an internet connection?</summary>
+        <p>Yes. Reverse geocoding is cached on your device, so the address on your stamp keeps working even when you're out of signal, which happens a lot on field sites.</p>
+      </details>
+      <details>
+        <summary>What data does it collect?</summary>
+        <p>None beyond what's needed to work. Camera and location access are used locally on your device. Nothing is sent to any server, because there is no server.</p>
+      </details>
+      <details>
+        <summary>How does the tamper-evident feature actually work?</summary>
+        <p>Every photo is hashed with SHA-256 and signed using a private key generated on your device through Android's own Keystore. That signature can later be used to verify the photo's bytes haven't changed since capture.</p>
+      </details>
+      <details>
+        <summary>Who is this app built for?</summary>
+        <p>College students documenting fieldwork, land and infrastructure surveyors, NGO and government field staff, and anyone who needs to prove exactly where and when a photo was taken.</p>
+      </details>
+      <details>
+        <summary>Can I put my college or organization's name on the stamp?</summary>
+        <p>Yes, for free. No paywall for something this basic.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="cta-band">
+      <h2>Take a photo that can prove itself.</h2>
+      <p>Free forever. Open source forever. Built by one developer who got tired of ad-choked camera apps.</p>
+      <div class="hero-cta" style="justify-content:center">
+        <a class="btn btn-filled" href="https://github.com/konkomaji/geotagcamera/releases">Download APK</a>
+        <a class="btn btn-outline" href="https://github.com/konkomaji/geotagcamera">Star on GitHub</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-links">
+      <a href="https://github.com/konkomaji/geotagcamera">GitHub</a>
+      <a href="https://github.com/konkomaji/geotagcamera/blob/main/LICENSE">GPLv3 License</a>
+      <a href="https://github.com/konkomaji/geotagcamera/issues">Report an issue</a>
+    </div>
+    <p>Built by Konko Maji. Not affiliated with Google or any other camera app.</p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var toggle = document.getElementById('themeToggle');
+    var root = document.documentElement;
+    var stored = localStorage.getItem('theme');
+    if (stored) root.setAttribute('data-theme', stored);
+    toggle.addEventListener('click', function(){
+      var current = root.getAttribute('data-theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      var next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+  })();
+
+  (function(){
+    var cards = document.querySelectorAll('.feature-card');
+    if (!('IntersectionObserver' in window)) {
+      cards.forEach(function(c){ c.classList.add('in-view'); });
+      return;
+    }
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    cards.forEach(function(c){ observer.observe(c); });
+  })();
+
+  document.getElementById('year') && (document.getElementById('year').textContent = new Date().getFullYear());
+</script>
+</body>
+</html>

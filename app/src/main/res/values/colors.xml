@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cartographer_blue">#2A5F8F</color>
+    <color name="paper">#F3F1EA</color>
+    <color name="paper_raised">#FFFFFF</color>
+    <color name="ink">#1B3A4B</color>
+</resources>

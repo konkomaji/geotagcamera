@@ -1,0 +1,42 @@
+# GeoTag Camera
+
+> Free, open source, ad-free Android camera app that stamps photos with GPS location, address and timestamp. Built for field surveyors, students and NGO workers in India. Works offline and signs each photo on-device so it can later be proven unedited.
+
+## Key facts
+
+- Platform: Android (Kotlin, CameraX, Jetpack Compose)
+- License: GNU GPLv3
+- Price: free, no ads, no subscriptions, no in-app purchases
+- Data collection: none, no server, no analytics SDK, no ad SDK
+- Permissions used: camera, location (fine and coarse)
+- Works offline: yes, reverse-geocoded addresses are cached on-device
+- Author: Konko Maji
+- Source code: https://github.com/konkomaji/geotagcamera
+- Website: https://konkomaji.github.io/geotagcamera/
+
+## Core features (v1)
+
+- Camera capture with GPS location, address and timestamp burned into the photo
+- GPS coordinates written into the photo's EXIF metadata
+- Local on-device gallery, nothing uploaded anywhere
+- User-selectable stamp fields (coordinates, address, timestamp, altitude, accuracy, bearing)
+- Offline-first reverse geocoding with local cache fallback
+- Minimal permissions, no bundled ad or analytics SDKs
+- Custom organization or college name on the stamp, free
+- Tamper-evident photos: SHA-256 hash signed with an Android Keystore key generated on-device
+- Field-worker signature overlay for inspection and muster-roll style records
+
+## Who it's for
+
+College students documenting fieldwork, land and infrastructure surveyors, NGO and government field staff, and anyone needing verifiable proof of where and when a photo was taken.
+
+## Common questions
+
+Q: Is it really free with no ads?
+A: Yes, fully open source under GPLv3, no ads, no tracking, no subscription.
+
+Q: Does it work without internet?
+A: Yes, addresses are cached locally so the stamp still works out of network range.
+
+Q: How is photo authenticity verified?
+A: Each photo is SHA-256 hashed and signed with a device-generated Android Keystore key at capture time. Recomputing the hash later and checking it against the stored signature proves the file hasn't changed.
