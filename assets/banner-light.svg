@@ -2,7 +2,7 @@
   <rect width="1200" height="300" fill="#F7F6F4"/>
 
   <g transform="translate(72,68) scale(0.82)">
-    <rect x="25" y="25" width="150" height="150" rx="50" fill="none" stroke="#16181A" stroke-width="14"/>
+    <rect x="32" y="32" width="136" height="136" rx="43" fill="none" stroke="#16181A" stroke-width="14"/>
     <circle cx="100" cy="100" r="18.75" fill="#56CB98"/>
   </g>
 
