@@ -116,7 +116,20 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
 
             val mediaUri = withContext(Dispatchers.IO) {
                 val upright = loadUprightBitmap(file)
-                val stamped = StampRenderer.stamp(upright, fix, geocode?.addressLine, capturedAtEpochMs, fields)
+                val stamped = StampRenderer.stamp(
+                    context = context,
+                    source = upright,
+                    fix = fix,
+                    addressParts = geocode,
+                    capturedAtEpochMs = capturedAtEpochMs,
+                    fields = fields,
+                    // Map tile and org logo bitmaps aren't wired up yet — Phase 3 (osmdroid) and
+                    // Phase 10 (Settings logo upload) are what actually load these; StampSpec
+                    // already reflows cleanly with either absent, same as any other optional field.
+                    mapTile = null,
+                    orgLogo = null,
+                    hasSignature = signature != null
+                )
                 if (stamped !== upright) upright.recycle()
 
                 val signed = signature?.let { SignatureOverlay.apply(stamped, it) } ?: stamped
