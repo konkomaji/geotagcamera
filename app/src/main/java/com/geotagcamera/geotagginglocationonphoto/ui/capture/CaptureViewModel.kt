@@ -116,7 +116,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
 
             val mediaUri = withContext(Dispatchers.IO) {
                 val upright = loadUprightBitmap(file)
-                val stamped = StampRenderer.stamp(upright, fix, geocode?.address, capturedAtEpochMs, fields)
+                val stamped = StampRenderer.stamp(upright, fix, geocode?.addressLine, capturedAtEpochMs, fields)
                 if (stamped !== upright) upright.recycle()
 
                 val signed = signature?.let { SignatureOverlay.apply(stamped, it) } ?: stamped
@@ -141,7 +141,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
                             altitudeMeters = fix.altitudeMeters,
                             accuracyMeters = fix.accuracyMeters,
                             bearingDegrees = fix.bearingDegrees,
-                            address = geocode?.address,
+                            address = geocode?.addressLine,
                             addressFromCache = geocode?.fromCache ?: false,
                             orgLabel = fields.orgLabel.ifBlank { null },
                             sha256Hash = integrity.sha256Hex,

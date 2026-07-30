@@ -14,7 +14,22 @@ import kotlinx.coroutines.withContext
 import java.util.Locale
 import kotlin.coroutines.resume
 
-data class GeocodeResult(val address: String, val fromCache: Boolean)
+/**
+ * The stamp's anchor line, full address line, and country chip need more
+ * than the one joined string this repository used to produce. A live
+ * geocode has all of it; a cache hit (the old `GeoCacheEntity` schema is
+ * unchanged, still just one address string) degrades gracefully to
+ * `place == addressLine` and `countryName/countryCode == null` — the stamp
+ * layer already has to reflow around any field being absent, so this is no
+ * special case, just another field that isn't always there.
+ */
+data class AddressParts(
+    val place: String,
+    val addressLine: String,
+    val countryName: String?,
+    val countryCode: String?,
+    val fromCache: Boolean
+)
 
 /**
  * Reverse-geocodes using the on-device Android [Geocoder] — no network key,
@@ -29,25 +44,33 @@ class GeocoderRepository(
 ) {
     private val geocoder by lazy { Geocoder(context, Locale.getDefault()) }
 
-    suspend fun reverseGeocode(latitude: Double, longitude: Double): GeocodeResult? {
+    suspend fun reverseGeocode(latitude: Double, longitude: Double): AddressParts? {
         val live = tryLiveGeocode(latitude, longitude)
         if (live != null) {
             geoCacheDao.upsert(
                 GeoCacheEntity(
                     latGridKey = gridKey(latitude),
                     lngGridKey = gridKey(longitude),
-                    address = live,
+                    address = live.addressLine,
                     cachedAtEpochMs = System.currentTimeMillis()
                 )
             )
-            return GeocodeResult(live, fromCache = false)
+            return live
         }
 
         val cached = geoCacheDao.getNearby(gridKey(latitude), gridKey(longitude), radius = 25)
-        return cached?.let { GeocodeResult(it.address, fromCache = true) }
+        return cached?.let {
+            AddressParts(
+                place = it.address,
+                addressLine = it.address,
+                countryName = null,
+                countryCode = null,
+                fromCache = true
+            )
+        }
     }
 
-    private suspend fun tryLiveGeocode(latitude: Double, longitude: Double): String? {
+    private suspend fun tryLiveGeocode(latitude: Double, longitude: Double): AddressParts? {
         if (!Geocoder.isPresent()) return null
         return try {
             val addresses = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -56,7 +79,7 @@ class GeocoderRepository(
                 @Suppress("DEPRECATION")
                 withContext(Dispatchers.IO) { geocoder.getFromLocation(latitude, longitude, 1) }
             }
-            addresses?.firstOrNull()?.let(::formatAddress)
+            addresses?.firstOrNull()?.let(::toAddressParts)
         } catch (_: Exception) {
             null
         }
@@ -70,13 +93,26 @@ class GeocoderRepository(
             }
         }
 
-    private fun formatAddress(address: Address): String {
-        val parts = listOfNotNull(
+    private fun toAddressParts(address: Address): AddressParts {
+        val place = listOfNotNull(
+            address.locality ?: address.subLocality,
+            address.adminArea
+        ).joinToString(", ").ifBlank { address.getAddressLine(0).orEmpty() }
+
+        val lineParts = listOfNotNull(
             address.subLocality,
             address.locality,
             address.adminArea,
             address.postalCode
         )
-        return if (parts.isNotEmpty()) parts.joinToString(", ") else address.getAddressLine(0).orEmpty()
+        val addressLine = if (lineParts.isNotEmpty()) lineParts.joinToString(", ") else address.getAddressLine(0).orEmpty()
+
+        return AddressParts(
+            place = place,
+            addressLine = addressLine,
+            countryName = address.countryName,
+            countryCode = address.countryCode,
+            fromCache = false
+        )
     }
 }
