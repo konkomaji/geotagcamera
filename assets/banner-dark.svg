@@ -1,28 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300" role="img" aria-label="GeoTag Camera">
-  <rect width="1200" height="300" fill="#10171A"/>
+  <rect width="1200" height="300" fill="#0C0E10"/>
 
-  <g transform="translate(70,50) scale(0.9)">
-    <path fill="#9CC6EC" d="M100,6 C52,6 10,46 10,96 C10,152 100,210 100,210 C100,210 190,152 190,96 C190,46 148,6 100,6 Z"/>
-    <rect fill="#10171A" x="36" y="60" width="128" height="92" rx="24"/>
-    <rect fill="#10171A" x="84" y="44" width="32" height="18" rx="8"/>
-    <circle fill="#9CC6EC" cx="100" cy="110" r="38"/>
-    <circle fill="#10171A" cx="100" cy="110" r="17"/>
+  <g transform="translate(72,68) scale(0.82)">
+    <rect x="25" y="25" width="150" height="150" rx="50" fill="none" stroke="#F5F7F8" stroke-width="14"/>
+    <circle cx="106" cy="108" r="18" fill="#56CB98"/>
   </g>
 
-  <text x="290" y="150" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="800" fill="#E6EDE9">GeoTag Camera</text>
-  <text x="292" y="192" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#A9BCC2">Free, open source, ad-free GPS camera for Android</text>
+  <text x="290" y="150" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="800" fill="#F5F7F8">GeoTag Camera</text>
+  <text x="292" y="192" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#9AA0A6">Free, open source, ad-free GPS camera for Android</text>
 
-  <g font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="600" fill="#A9BCC2">
-    <rect x="292" y="222" width="98" height="36" rx="18" fill="#1B2327" stroke="#3A454A"/>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="600" fill="#C7CBCF">
+    <rect x="292" y="222" width="98" height="36" rx="18" fill="#1B1E22" stroke="#33383D"/>
     <text x="312" y="245">No Ads</text>
 
-    <rect x="404" y="222" width="150" height="36" rx="18" fill="#1B2327" stroke="#3A454A"/>
+    <rect x="404" y="222" width="150" height="36" rx="18" fill="#1B1E22" stroke="#33383D"/>
     <text x="424" y="245">Open Source</text>
 
-    <rect x="568" y="222" width="150" height="36" rx="18" fill="#1B2327" stroke="#3A454A"/>
+    <rect x="568" y="222" width="150" height="36" rx="18" fill="#1B1E22" stroke="#33383D"/>
     <text x="588" y="245">Works Offline</text>
 
-    <rect x="732" y="222" width="120" height="36" rx="18" fill="#1B2327" stroke="#3A454A"/>
+    <rect x="732" y="222" width="120" height="36" rx="18" fill="#1B1E22" stroke="#33383D"/>
     <text x="752" y="245">GPLv3</text>
   </g>
 </svg>

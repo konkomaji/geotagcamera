@@ -6,7 +6,9 @@
 
 # GeoTag Camera
 
-Free, open source, ad free Android camera app that stamps every photo with GPS location, address and timestamp. Built for field surveyors, college students and NGO teams who need to prove where and when a photo was taken, without paying for it or handing over their data.
+No ads. No paywall. We know, it's suspicious.
+
+Free, open source, ad free Android camera app that stamps every photo with GPS location, address and timestamp, signs it on-device so anyone can later prove it hasn't been edited, and works fully offline. Built for field surveyors, college students and NGO teams who need to prove where and when a photo was taken, without paying for it or handing over their data.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Android-3DDC84.svg)](https://developer.android.com)
@@ -56,10 +58,20 @@ Most geotagging camera apps on the Play Store make you sit through ads before yo
 
 ## Project status
 
-GeoTag Camera is actively being built. Version 1 targets photo capture with everything listed under Features above. Video geotagging and the rest of the roadmap below come after.
+Version 1.0.0 shipped with everything listed under Features above. 1.1.0 is a full redesign, not a feature bolt-on: a real design system (new brand mark, a proper stamp with a card and a map thumbnail instead of bare text floating on the photo), a live preview of the stamp right in the viewfinder before you shoot, a share button, real camera controls (flash, zoom, grid, timer), and a way to verify a photo someone else sends you, not just the one you captured yourself. Details below and in the roadmap.
 
 ## Roadmap
 
+**1.1.0, in design**
+- Redesigned stamp: card background, real hierarchy, an optional map thumbnail (OpenStreetMap only, never Google Maps, so the app stays offline-first with no API key)
+- Live, accurate stamp preview inside the viewfinder itself, not a guess you check after the fact
+- Share straight from the app, right after capture and from the gallery
+- Real camera controls: flash, front/back switch, zoom, grid, aspect ratio, timer, tap-to-focus
+- Verify a photo someone else sent you, even if it was never captured on your device
+- Organization logo image on the stamp, not just text
+- A considered first-run screen that explains the two permissions before Android asks
+
+**Later**
 - Video geotagging
 - Project and site folders to organize captures
 - Batch export to PDF report
@@ -70,7 +82,6 @@ GeoTag Camera is actively being built. Version 1 targets photo capture with ever
 - Quick capture home screen widget
 - Biometric app lock
 - Manual local backup and restore
-- Hindi and regional language support
 - Material You dynamic theming
 
 ## Building from source
