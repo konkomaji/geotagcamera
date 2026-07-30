@@ -3,7 +3,7 @@ package com.geotagcamera.geotagginglocationonphoto
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.geotagcamera.geotagginglocationonphoto.ui.capture.CaptureScreen
+import com.geotagcamera.geotagginglocationonphoto.ui.nav.GeoTagCameraApp
 import com.geotagcamera.geotagginglocationonphoto.ui.theme.GeoTagCameraTheme
 
 class MainActivity : ComponentActivity() {
@@ -11,7 +11,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             GeoTagCameraTheme {
-                CaptureScreen()
+                GeoTagCameraApp()
             }
         }
     }

@@ -16,8 +16,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - EXIF GPS and timestamp writer
 - Tamper-evident photo signing: SHA-256 hash signed with an Android Keystore key generated on-device
 - Project website with feature showcase, FAQ and SEO/AEO metadata, deployed via GitHub Pages
+- Capture screen: CameraX preview, runtime permission gate, shutter-to-saved-row pipeline (fresh GPS fix, reverse geocode, stamp render, EXIF write, keystore sign)
+- Captures publish to the device's real Photos/Gallery app via MediaStore (Pictures/GeoTagCamera) instead of an app-private folder
 
 ### Planned for v1.0.0
-- Capture, gallery and settings screens (Jetpack Compose)
-- Runtime permission handling
+- Gallery and settings screens (Jetpack Compose)
 - Field-worker signature overlay UI

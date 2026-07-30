@@ -25,12 +25,12 @@ Most geotagging camera apps on the Play Store make you sit through ads before yo
 - Clean camera capture built on CameraX, nothing running in the background that shouldn't be
 - GPS coordinates, address and timestamp stamped directly onto the photo
 - GPS data also written into the photo's own EXIF metadata, so GIS and photo tools pick it up automatically
-- A simple on-device gallery, nothing leaves your phone unless you choose to share it
+- Every capture is published straight to your phone's Photos/Gallery app (Pictures/GeoTagCamera), nothing leaves your phone unless you choose to share it
 
 **Built to actually work in the field**
 - Offline first reverse geocoding, addresses are cached on-device so the stamp keeps working with no signal
 - Every capture fetches a fresh location instead of reusing a stale cached one
-- Only two permissions are requested: camera and location, nothing else
+- Only camera and location are requested on Android 10+; Android 9 and older also needs storage access to save into the gallery, nothing else, ever
 
 **Made for your organization**
 - Choose exactly which fields show on the stamp: coordinates, address, timestamp, altitude, accuracy, compass bearing
@@ -94,8 +94,9 @@ Minimum SDK is 26 (Android 8.0), target SDK is 34.
 |---|---|
 | Camera | To take the photo |
 | Location (fine and coarse) | To read GPS coordinates for the stamp and EXIF data |
+| Storage (Android 9 / API 28 and below only) | To save the finished photo into the gallery — Android 10+ does this without any storage permission |
 
-That's the complete list. No storage broad access, no contacts, no network state beyond what the OS grants by default, no background location.
+That's the complete list. No broad storage access on modern Android, no contacts, no network state beyond what the OS grants by default, no background location.
 
 ## Contributing
 

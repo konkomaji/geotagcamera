@@ -8,7 +8,7 @@
 - License: GNU GPLv3
 - Price: free, no ads, no subscriptions, no in-app purchases
 - Data collection: none, no server, no analytics SDK, no ad SDK
-- Permissions used: camera, location (fine and coarse)
+- Permissions used: camera, location (fine and coarse); storage too, but only on Android 9 and older
 - Works offline: yes, reverse-geocoded addresses are cached on-device
 - Author: Konko Maji
 - Source code: https://github.com/konkomaji/geotagcamera
@@ -18,7 +18,7 @@
 
 - Camera capture with GPS location, address and timestamp burned into the photo
 - GPS coordinates written into the photo's EXIF metadata
-- Local on-device gallery, nothing uploaded anywhere
+- Photos publish straight to the phone's own Photos/Gallery app, nothing uploaded anywhere
 - User-selectable stamp fields (coordinates, address, timestamp, altitude, accuracy, bearing)
 - Offline-first reverse geocoding with local cache fallback
 - Minimal permissions, no bundled ad or analytics SDKs
