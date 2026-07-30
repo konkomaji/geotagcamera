@@ -19,6 +19,7 @@ import com.geotagcamera.geotagginglocationonphoto.security.PhotoIntegrity
 import com.geotagcamera.geotagginglocationonphoto.stamp.StampFields
 import com.geotagcamera.geotagginglocationonphoto.stamp.StampPreferences
 import com.geotagcamera.geotagginglocationonphoto.stamp.StampRenderer
+import com.geotagcamera.geotagginglocationonphoto.storage.MediaStoreImageSaver
 import java.io.File
 import java.io.FileOutputStream
 import kotlinx.coroutines.Dispatchers
@@ -60,8 +61,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
         if (_uiState.value == CaptureUiState.Processing) return
         val context = getApplication<Application>()
 
-        val outputDir = File(context.getExternalFilesDir(null), "Pictures/GeoTagCamera").apply { mkdirs() }
-        val file = File(outputDir, "IMG_${System.currentTimeMillis()}.jpg")
+        val file = File(context.cacheDir, "capture_${System.currentTimeMillis()}.jpg")
         val outputOptions = ImageCapture.OutputFileOptions.Builder(file).build()
 
         _uiState.value = CaptureUiState.Processing
@@ -97,7 +97,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
             val geocode = runCatching { geocoderRepository.reverseGeocode(fix.latitude, fix.longitude) }.getOrNull()
             val fields = stampFields.value
 
-            withContext(Dispatchers.IO) {
+            val mediaUri = withContext(Dispatchers.IO) {
                 val upright = loadUprightBitmap(file)
                 val stamped = StampRenderer.stamp(upright, fix, geocode?.address, capturedAtEpochMs, fields)
 
@@ -108,27 +108,37 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
                 ExifWriter.write(file, fix, capturedAtEpochMs)
                 val integrity = PhotoIntegrity.sign(file)
 
-                photoDao.insert(
-                    PhotoEntity(
-                        filePath = file.absolutePath,
-                        capturedAtEpochMs = capturedAtEpochMs,
-                        latitude = fix.latitude,
-                        longitude = fix.longitude,
-                        altitudeMeters = fix.altitudeMeters,
-                        accuracyMeters = fix.accuracyMeters,
-                        bearingDegrees = fix.bearingDegrees,
-                        address = geocode?.address,
-                        addressFromCache = geocode?.fromCache ?: false,
-                        orgLabel = fields.orgLabel.ifBlank { null },
-                        sha256Hash = integrity.sha256Hex,
-                        signatureBase64 = integrity.signatureBase64,
-                        signingKeyAlias = integrity.keyAlias,
-                        fieldWorkerSignature = false
+                val uri = MediaStoreImageSaver.save(context, file, file.name)
+                file.delete()
+                uri?.let {
+                    photoDao.insert(
+                        PhotoEntity(
+                            filePath = it.toString(),
+                            capturedAtEpochMs = capturedAtEpochMs,
+                            latitude = fix.latitude,
+                            longitude = fix.longitude,
+                            altitudeMeters = fix.altitudeMeters,
+                            accuracyMeters = fix.accuracyMeters,
+                            bearingDegrees = fix.bearingDegrees,
+                            address = geocode?.address,
+                            addressFromCache = geocode?.fromCache ?: false,
+                            orgLabel = fields.orgLabel.ifBlank { null },
+                            sha256Hash = integrity.sha256Hex,
+                            signatureBase64 = integrity.signatureBase64,
+                            signingKeyAlias = integrity.keyAlias,
+                            fieldWorkerSignature = false
+                        )
                     )
-                )
+                }
+                uri
             }
 
-            _uiState.value = CaptureUiState.Saved(file.absolutePath)
+            if (mediaUri == null) {
+                _uiState.value = CaptureUiState.Error("Couldn't save photo to gallery.")
+                return@launch
+            }
+
+            _uiState.value = CaptureUiState.Saved(mediaUri.toString())
         }
     }
 
