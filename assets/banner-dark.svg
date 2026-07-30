@@ -3,7 +3,7 @@
 
   <g transform="translate(72,68) scale(0.82)">
     <rect x="25" y="25" width="150" height="150" rx="50" fill="none" stroke="#F5F7F8" stroke-width="14"/>
-    <circle cx="106" cy="108" r="18" fill="#56CB98"/>
+    <circle cx="100" cy="100" r="18.75" fill="#56CB98"/>
   </g>
 
   <text x="290" y="150" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="800" fill="#F5F7F8">GeoTag Camera</text>
