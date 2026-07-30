@@ -1,7 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="cartographer_blue">#2A5F8F</color>
-    <color name="paper">#F3F1EA</color>
+    <!-- Tokens from docs/GeoTag Camera Design System.dc.html (section 01, Color).
+         Cartographer Blue is retired; the brand mark's dot is accent/verified. -->
+
+    <!-- chrome: the camera layer, always dark regardless of system theme -->
+    <color name="chrome_base">#08090A</color>
+    <color name="chrome_raised">#121417</color>
+    <color name="chrome_pill">#1B1E22</color>
+    <color name="chrome_ink">#F5F7F8</color>
+    <color name="adaptive_icon_bg">#0C0E10</color>
+
+    <!-- surface: Gallery / Settings / Detail, follows the system light/dark -->
+    <color name="surface_bg">#F7F6F4</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="surface_ink">#16181A</color>
+    <color name="surface_muted">#6A6F75</color>
+
+    <!-- accent, one lightness/chroma pair at three hues, plus tamper red -->
+    <color name="accent_verified">#56CB98</color>
+    <color name="accent_live">#6DB6FF</color>
+    <color name="accent_pending">#E5A24B</color>
+    <color name="accent_tamper">#E24947</color>
+
+    <!-- legacy aliases kept only for anything not yet migrated off them -->
+    <color name="paper">#F7F6F4</color>
     <color name="paper_raised">#FFFFFF</color>
-    <color name="ink">#1B3A4B</color>
+    <color name="ink">#16181A</color>
 </resources>

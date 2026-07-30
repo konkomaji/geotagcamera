@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Launch is always dark chrome (design system section 05, screen 01), so the
+         pre-Compose window background/status bar matches that, not a light theme. -->
     <style name="Theme.GeoTagCamera" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:statusBarColor">@color/cartographer_blue</item>
-        <item name="colorPrimary">@color/cartographer_blue</item>
+        <item name="android:statusBarColor">@color/chrome_base</item>
+        <item name="android:windowBackground">@color/chrome_base</item>
+        <item name="colorPrimary">@color/accent_verified</item>
     </style>
 </resources>

@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  GeoTag Camera adaptive icon foreground.
-  Source shape: docs/branding.md — pin (accent) with camera glyph (paper) knocked
-  out, scaled+centered to sit inside the 66dp adaptive-icon safe zone.
+  GeoTag Camera adaptive icon foreground, v5 mark.
+  Source: docs/branding.md and docs/GeoTag Camera Design System.dc.html section 02,
+  "CONSTRUCTION - 24-UNIT GRID": 18/24 outer frame centred, 1.7/24 stroke weight,
+  6/24 corner radius, 4.5/24 aperture dot centred. Drawn on a 200x200 content grid
+  (matching the doc's 144px construction diagram scaled 200/144), then placed at
+  44dp inside the 66dp safe zone on the 108dp canvas (translate 32, scale 0.22).
+
+  Frame is a filled evenOdd donut, not a stroked path, so it reproduces the exact
+  outer/inner boundary from the doc with no stroke-centering conversion:
+  outer rounded rect 25,25,150,150 rx50 (the literal 18/24 x 6/24 box),
+  inner rounded rect 39,39,122,122 rx36 (outer inset by the 14-wide/1.7-24 stroke).
+  Aperture dot sits dead center at 100,100, r18.75 (4.5/24 diameter), matching the
+  construction diagram's own coordinates (58.5,58.5 size 27 on its 144px grid is
+  exactly that grid's center, not offset).
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
@@ -10,26 +21,14 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <group android:translateX="24" android:translateY="21.6" android:scaleX="0.3" android:scaleY="0.3">
-        <!-- pin -->
+    <group android:translateX="32" android:translateY="32" android:scaleX="0.22" android:scaleY="0.22">
         <path
-            android:fillColor="@color/cartographer_blue"
-            android:pathData="M100,6 C52,6 10,46 10,96 C10,152 100,210 100,210 C100,210 190,152 190,96 C190,46 148,6 100,6 Z" />
-        <!-- camera body -->
+            android:fillColor="@color/chrome_ink"
+            android:fillType="evenOdd"
+            android:pathData="M75,25 L125,25 A50,50 0 0 1 175,75 L175,125 A50,50 0 0 1 125,175 L75,175 A50,50 0 0 1 25,125 L25,75 A50,50 0 0 1 75,25 Z
+                               M75,39 L125,39 A36,36 0 0 1 161,75 L161,125 A36,36 0 0 1 125,161 L75,161 A36,36 0 0 1 39,125 L39,75 A36,36 0 0 1 75,39 Z" />
         <path
-            android:fillColor="@color/paper_raised"
-            android:pathData="M60,60 L140,60 A24,24 0 0 1 164,84 L164,128 A24,24 0 0 1 140,152 L60,152 A24,24 0 0 1 36,128 L36,84 A24,24 0 0 1 60,60 Z" />
-        <!-- viewfinder bump -->
-        <path
-            android:fillColor="@color/paper_raised"
-            android:pathData="M92,44 L108,44 A8,8 0 0 1 116,52 L116,54 A8,8 0 0 1 108,62 L92,62 A8,8 0 0 1 84,54 L84,52 A8,8 0 0 1 92,44 Z" />
-        <!-- lens outer -->
-        <path
-            android:fillColor="@color/cartographer_blue"
-            android:pathData="M62,110 A38,38 0 1,0 138,110 A38,38 0 1,0 62,110 Z" />
-        <!-- lens inner knockout -->
-        <path
-            android:fillColor="@color/paper_raised"
-            android:pathData="M83,110 A17,17 0 1,0 117,110 A17,17 0 1,0 83,110 Z" />
+            android:fillColor="@color/accent_verified"
+            android:pathData="M81.25,100 A18.75,18.75 0 1,0 118.75,100 A18.75,18.75 0 1,0 81.25,100 Z" />
     </group>
 </vector>

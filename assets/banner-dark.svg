@@ -2,7 +2,7 @@
   <rect width="1200" height="300" fill="#0C0E10"/>
 
   <g transform="translate(72,68) scale(0.82)">
-    <rect x="32" y="32" width="136" height="136" rx="43" fill="none" stroke="#F5F7F8" stroke-width="14"/>
+    <path fill="#F5F7F8" fill-rule="evenodd" d="M75,25 L125,25 A50,50 0 0 1 175,75 L175,125 A50,50 0 0 1 125,175 L75,175 A50,50 0 0 1 25,125 L25,75 A50,50 0 0 1 75,25 Z M75,39 L125,39 A36,36 0 0 1 161,75 L161,125 A36,36 0 0 1 125,161 L75,161 A36,36 0 0 1 39,125 L39,75 A36,36 0 0 1 75,39 Z"/>
     <circle cx="100" cy="100" r="18.75" fill="#56CB98"/>
   </g>
 
