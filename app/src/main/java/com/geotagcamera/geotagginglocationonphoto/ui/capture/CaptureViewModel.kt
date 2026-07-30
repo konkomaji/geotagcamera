@@ -85,6 +85,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun processCapturedPhoto(file: File) {
+        val context = getApplication<Application>()
         viewModelScope.launch {
             val capturedAtEpochMs = System.currentTimeMillis()
             val fix = locationProvider.getFreshFix()
