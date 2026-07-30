@@ -12,7 +12,8 @@ data class StampFields(
     val showAltitude: Boolean = false,
     val showAccuracy: Boolean = false,
     val showBearing: Boolean = false,
-    val orgLabel: String = ""
+    val orgLabel: String = "",
+    val requireSignature: Boolean = false
 ) {
     val showOrgLabel: Boolean get() = orgLabel.isNotBlank()
 }

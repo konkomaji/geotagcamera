@@ -114,7 +114,7 @@ private fun CameraContent(viewModel: CaptureViewModel) {
             AndroidView(factory = { previewView }, modifier = Modifier.fillMaxSize())
 
             ShutterButton(
-                enabled = uiState !is CaptureUiState.Processing,
+                enabled = uiState is CaptureUiState.Idle,
                 onClick = { viewModel.capture(imageCapture) },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -128,6 +128,13 @@ private fun CameraContent(viewModel: CaptureViewModel) {
                         .padding(bottom = 32.dp)
                         .size(80.dp),
                     color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
+            if (uiState is CaptureUiState.AwaitingSignature) {
+                SignatureCaptureDialog(
+                    onConfirm = { bitmap -> viewModel.submitSignature(bitmap) },
+                    onSkip = { viewModel.submitSignature(null) }
                 )
             }
         }

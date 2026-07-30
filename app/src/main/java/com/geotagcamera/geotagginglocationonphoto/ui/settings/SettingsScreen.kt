@@ -79,5 +79,28 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                 )
             }
         }
+
+        item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
+
+        item {
+            Text(
+                "Field-worker signature",
+                style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        }
+
+        item {
+            ListItem(
+                headlineContent = { Text("Require signature before saving") },
+                supportingContent = { Text("Prompts to draw a signature after each shot; it's burned into the photo") },
+                trailingContent = {
+                    Switch(
+                        checked = fields.requireSignature,
+                        onCheckedChange = { checked -> viewModel.update { it.copy(requireSignature = checked) } }
+                    )
+                }
+            )
+        }
     }
 }

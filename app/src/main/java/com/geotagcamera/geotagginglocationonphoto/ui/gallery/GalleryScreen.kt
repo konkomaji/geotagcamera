@@ -110,6 +110,9 @@ private fun PhotoDetailDialog(photo: PhotoEntity, viewModel: GalleryViewModel, o
                 )
                 Text("%.6f, %.6f".format(Locale.US, photo.latitude, photo.longitude))
                 photo.address?.let { Text(it) }
+                if (photo.fieldWorkerSignature) {
+                    Text("Field worker signature captured", color = MaterialTheme.colorScheme.primary)
+                }
                 Text(
                     when (verifyStatus) {
                         VerifyStatus.UNCHECKED -> "Not verified yet"

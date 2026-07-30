@@ -16,6 +16,7 @@ import com.geotagcamera.geotagginglocationonphoto.exif.ExifWriter
 import com.geotagcamera.geotagginglocationonphoto.location.LocationProvider
 import com.geotagcamera.geotagginglocationonphoto.location.GeocoderRepository
 import com.geotagcamera.geotagginglocationonphoto.security.PhotoIntegrity
+import com.geotagcamera.geotagginglocationonphoto.signature.SignatureOverlay
 import com.geotagcamera.geotagginglocationonphoto.stamp.StampFields
 import com.geotagcamera.geotagginglocationonphoto.stamp.StampPreferences
 import com.geotagcamera.geotagginglocationonphoto.stamp.StampRenderer
@@ -34,6 +35,7 @@ import kotlinx.coroutines.withContext
 sealed interface CaptureUiState {
     data object Idle : CaptureUiState
     data object Processing : CaptureUiState
+    data object AwaitingSignature : CaptureUiState
     data class Saved(val filePath: String) : CaptureUiState
     data class Error(val message: String) : CaptureUiState
 }
@@ -57,8 +59,10 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
     private val _uiState = MutableStateFlow<CaptureUiState>(CaptureUiState.Idle)
     val uiState: StateFlow<CaptureUiState> = _uiState.asStateFlow()
 
+    private var pendingFile: File? = null
+
     fun capture(imageCapture: ImageCapture) {
-        if (_uiState.value == CaptureUiState.Processing) return
+        if (_uiState.value != CaptureUiState.Idle) return
         val context = getApplication<Application>()
 
         val file = File(context.cacheDir, "capture_${System.currentTimeMillis()}.jpg")
@@ -70,7 +74,12 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
             ContextCompat.getMainExecutor(context),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    processCapturedPhoto(file)
+                    if (stampFields.value.requireSignature) {
+                        pendingFile = file
+                        _uiState.value = CaptureUiState.AwaitingSignature
+                    } else {
+                        processCapturedPhoto(file, signature = null)
+                    }
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -80,11 +89,18 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
         )
     }
 
+    fun submitSignature(signature: Bitmap?) {
+        val file = pendingFile ?: return
+        pendingFile = null
+        _uiState.value = CaptureUiState.Processing
+        processCapturedPhoto(file, signature)
+    }
+
     fun acknowledgeMessage() {
         _uiState.value = CaptureUiState.Idle
     }
 
-    private fun processCapturedPhoto(file: File) {
+    private fun processCapturedPhoto(file: File, signature: Bitmap?) {
         val context = getApplication<Application>()
         viewModelScope.launch {
             val capturedAtEpochMs = System.currentTimeMillis()
@@ -101,10 +117,14 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
             val mediaUri = withContext(Dispatchers.IO) {
                 val upright = loadUprightBitmap(file)
                 val stamped = StampRenderer.stamp(upright, fix, geocode?.address, capturedAtEpochMs, fields)
-
-                FileOutputStream(file).use { out -> stamped.compress(Bitmap.CompressFormat.JPEG, 92, out) }
                 if (stamped !== upright) upright.recycle()
-                stamped.recycle()
+
+                val signed = signature?.let { SignatureOverlay.apply(stamped, it) } ?: stamped
+                if (signed !== stamped) stamped.recycle()
+                if (signature != null && signature !== signed) signature.recycle()
+
+                FileOutputStream(file).use { out -> signed.compress(Bitmap.CompressFormat.JPEG, 92, out) }
+                signed.recycle()
 
                 ExifWriter.write(file, fix, capturedAtEpochMs)
                 val integrity = PhotoIntegrity.sign(file)
@@ -127,7 +147,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
                             sha256Hash = integrity.sha256Hex,
                             signatureBase64 = integrity.signatureBase64,
                             signingKeyAlias = integrity.keyAlias,
-                            fieldWorkerSignature = false
+                            fieldWorkerSignature = signature != null
                         )
                     )
                 }

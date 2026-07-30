@@ -18,7 +18,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Project website with feature showcase, FAQ and SEO/AEO metadata, deployed via GitHub Pages
 - Capture screen: CameraX preview, runtime permission gate, shutter-to-saved-row pipeline (fresh GPS fix, reverse geocode, stamp render, EXIF write, keystore sign)
 - Captures publish to the device's real Photos/Gallery app via MediaStore (Pictures/GeoTagCamera) instead of an app-private folder
-
-### Planned for v1.0.0
-- Gallery and settings screens (Jetpack Compose)
-- Field-worker signature overlay UI
+- Gallery screen: grid of captures with a detail dialog for date, coordinates, address and tamper-check verification
+- Settings screen: per-field stamp toggles and organization label, backed by DataStore
+- Bottom-nav shell wiring capture, gallery and settings
+- Field-worker signature overlay: optional draw-to-sign pad shown after capture, burned into the photo before EXIF write and keystore signing

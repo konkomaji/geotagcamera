@@ -21,6 +21,7 @@ class StampPreferences(private val context: Context) {
         val ACCURACY = booleanPreferencesKey("show_accuracy")
         val BEARING = booleanPreferencesKey("show_bearing")
         val ORG_LABEL = stringPreferencesKey("org_label")
+        val REQUIRE_SIGNATURE = booleanPreferencesKey("require_signature")
     }
 
     val fields: Flow<StampFields> = context.stampDataStore.data.map { prefs ->
@@ -31,7 +32,8 @@ class StampPreferences(private val context: Context) {
             showAltitude = prefs[Keys.ALTITUDE] ?: false,
             showAccuracy = prefs[Keys.ACCURACY] ?: false,
             showBearing = prefs[Keys.BEARING] ?: false,
-            orgLabel = prefs[Keys.ORG_LABEL] ?: ""
+            orgLabel = prefs[Keys.ORG_LABEL] ?: "",
+            requireSignature = prefs[Keys.REQUIRE_SIGNATURE] ?: false
         )
     }
 
@@ -44,6 +46,7 @@ class StampPreferences(private val context: Context) {
             prefs[Keys.ACCURACY] = fields.showAccuracy
             prefs[Keys.BEARING] = fields.showBearing
             prefs[Keys.ORG_LABEL] = fields.orgLabel
+            prefs[Keys.REQUIRE_SIGNATURE] = fields.requireSignature
         }
     }
 }
