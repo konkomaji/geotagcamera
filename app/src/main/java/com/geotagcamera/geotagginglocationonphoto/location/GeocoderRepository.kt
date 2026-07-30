@@ -4,6 +4,7 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
+import androidx.annotation.RequiresApi
 import com.geotagcamera.geotagginglocationonphoto.data.GeoCacheDao
 import com.geotagcamera.geotagginglocationonphoto.data.GeoCacheEntity
 import com.geotagcamera.geotagginglocationonphoto.data.gridKey
@@ -61,6 +62,7 @@ class GeocoderRepository(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private suspend fun fetchAddressesAsync(latitude: Double, longitude: Double): List<Address>? =
         suspendCancellableCoroutine { cont ->
             geocoder.getFromLocation(latitude, longitude, 1) { addresses ->
