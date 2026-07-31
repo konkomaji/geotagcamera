@@ -6,7 +6,11 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -51,11 +55,23 @@ private object Routes {
 }
 
 @Composable
-fun GeoTagCameraApp() {
+fun GeoTagCameraApp(shareUri: String? = null, onShareConsumed: () -> Unit = {}) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
     val showBottomBar = currentRoute in tabRoutes
+
+    // A shared "verify this photo" image is held here (not threaded through the
+    // route's query arg, which can't safely carry a content:// Uri) and read by
+    // the verify destination once, then cleared.
+    var pendingVerifyUri by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(shareUri) {
+        if (!shareUri.isNullOrBlank()) {
+            pendingVerifyUri = shareUri
+            navController.navigate(Routes.verify())
+            onShareConsumed()
+        }
+    }
 
     Scaffold(
         bottomBar = {
@@ -131,7 +147,7 @@ fun GeoTagCameraApp() {
                     defaultValue = null
                 })
             ) { entry ->
-                val uri = entry.arguments?.getString("uri")
+                val uri = entry.arguments?.getString("uri") ?: pendingVerifyUri
                 VerifyScreen(uri = uri, onBack = { navController.popBackStack() })
             }
             composable(Routes.ABOUT_LEGAL) {
