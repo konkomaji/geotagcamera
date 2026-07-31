@@ -2,6 +2,7 @@ package com.geotagcamera.geotagginglocationonphoto.ui.capture
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -57,6 +58,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -119,6 +122,10 @@ private fun CameraContent(viewModel: CaptureViewModel) {
     val liveSpec by viewModel.liveSpec.collectAsStateWithLifecycle()
     val lastCaptureUri by viewModel.lastCaptureUri.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    // Landscape (design section 10: controls float clear of the letterbox, never
+    // fixed widths). The shutter cluster becomes a right-edge vertical rail and
+    // the zoom rail moves to the left so the two don't collide.
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     // Camera control state
     var lensFacing by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
@@ -241,7 +248,7 @@ private fun CameraContent(viewModel: CaptureViewModel) {
                     min = minZoom,
                     max = maxZoom,
                     onRatio = { applyZoom(it) },
-                    modifier = Modifier.align(Alignment.CenterEnd)
+                    modifier = Modifier.align(if (isLandscape) Alignment.CenterStart else Alignment.CenterEnd)
                 )
             }
 
@@ -275,7 +282,7 @@ private fun CameraContent(viewModel: CaptureViewModel) {
                     fontSize = 9.5.sp,
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding(start = 16.dp, bottom = 156.dp)
+                        .padding(start = 16.dp, bottom = if (isLandscape) 16.dp else 156.dp)
                 )
             }
 
@@ -299,7 +306,8 @@ private fun CameraContent(viewModel: CaptureViewModel) {
                     lensFacing = if (lensFacing == CameraSelector.DEFAULT_BACK_CAMERA)
                         CameraSelector.DEFAULT_FRONT_CAMERA else CameraSelector.DEFAULT_BACK_CAMERA
                 },
-                modifier = Modifier.align(Alignment.BottomCenter)
+                vertical = isLandscape,
+                modifier = Modifier.align(if (isLandscape) Alignment.CenterEnd else Alignment.BottomCenter)
             )
 
             // Frame flash (12% white) on shutter
@@ -338,7 +346,7 @@ private fun CameraContent(viewModel: CaptureViewModel) {
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 160.dp)
+                    .padding(bottom = if (isLandscape) 24.dp else 160.dp)
             )
     }
 }
@@ -490,56 +498,82 @@ private fun BottomBar(
     shutterScale: Float,
     onShutter: () -> Unit,
     onSwitch: () -> Unit,
+    vertical: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(150.dp)
-            .padding(horizontal = 26.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+    if (vertical) {
+        Column(
+            modifier = modifier
+                .fillMaxHeight()
+                .width(150.dp)
+                .padding(vertical = 26.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            ThumbnailControl(lastCaptureUri)
+            ShutterControl(shutterEnabled, shutterScale, onShutter)
+            SwitchControl(onSwitch)
+        }
+    } else {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(150.dp)
+                .padding(horizontal = 26.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            ThumbnailControl(lastCaptureUri)
+            ShutterControl(shutterEnabled, shutterScale, onShutter)
+            SwitchControl(onSwitch)
+        }
+    }
+}
+
+@Composable
+private fun ThumbnailControl(lastCaptureUri: String?) {
+    Box(
+        modifier = Modifier
+            .size(50.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color(0xFF2C3237))
+            .border(BorderStroke(1.5.dp, Color.White.copy(alpha = 0.35f)), RoundedCornerShape(12.dp))
     ) {
-        // Last-capture thumbnail
-        Box(
-            modifier = Modifier
-                .size(50.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color(0xFF2C3237))
-                .border(BorderStroke(1.5.dp, Color.White.copy(alpha = 0.35f)), RoundedCornerShape(12.dp))
-        ) {
-            lastCaptureUri?.let {
-                AsyncImage(model = it, contentDescription = "Last capture", modifier = Modifier.fillMaxSize())
+        lastCaptureUri?.let {
+            AsyncImage(model = it, contentDescription = "Last capture", modifier = Modifier.fillMaxSize())
+        }
+    }
+}
+
+@Composable
+private fun ShutterControl(shutterEnabled: Boolean, shutterScale: Float, onShutter: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(76.dp)
+            .scale(shutterScale)
+            .clip(CircleShape)
+            .border(BorderStroke(3.5.dp, Color.White), CircleShape)
+            .padding(8.dp)
+            .clip(CircleShape)
+            .background(if (shutterEnabled) Color.White else Color.White.copy(alpha = 0.4f))
+            .pointerInput(shutterEnabled) {
+                detectTapGestures { if (shutterEnabled) onShutter() }
             }
-        }
+    )
+}
 
-        // Shutter — the only filled control
-        Box(
-            modifier = Modifier
-                .size(76.dp)
-                .scale(shutterScale)
-                .clip(CircleShape)
-                .border(BorderStroke(3.5.dp, Color.White), CircleShape)
-                .padding(8.dp)
-                .clip(CircleShape)
-                .background(if (shutterEnabled) Color.White else Color.White.copy(alpha = 0.4f))
-                .pointerInput(shutterEnabled) {
-                    detectTapGestures { if (shutterEnabled) onShutter() }
-                }
-        )
-
-        // Camera switch
-        Box(
-            modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .background(Glass)
-                .border(BorderStroke(1.dp, GlassBorder), CircleShape)
-                .pointerInput(Unit) { detectTapGestures { onSwitch() } },
-            contentAlignment = Alignment.Center
-        ) {
-            Text("⟲", color = Ink, fontSize = 19.sp)
-        }
+@Composable
+private fun SwitchControl(onSwitch: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(50.dp)
+            .clip(CircleShape)
+            .background(Glass)
+            .border(BorderStroke(1.dp, GlassBorder), CircleShape)
+            .pointerInput(Unit) { detectTapGestures { onSwitch() } },
+        contentAlignment = Alignment.Center
+    ) {
+        Text("⟲", color = Ink, fontSize = 19.sp)
     }
 }
 

@@ -2,6 +2,8 @@ package com.geotagcamera.geotagginglocationonphoto.ui.verify
 
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -118,7 +120,10 @@ private fun ResultBlock(done: VerifyUiState.Done) {
             Triple(MaterialTheme.colorScheme.onSurfaceVariant, "Couldn't read this file", "The file couldn't be opened or decoded.")
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+    Column(
+        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
         AsyncImage(
             model = done.previewUri,
             contentDescription = "Photo being verified",
