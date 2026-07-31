@@ -13,6 +13,8 @@ import androidx.lifecycle.viewModelScope
 import com.geotagcamera.geotagginglocationonphoto.data.AppDatabase
 import com.geotagcamera.geotagginglocationonphoto.data.PhotoEntity
 import com.geotagcamera.geotagginglocationonphoto.exif.ExifWriter
+import com.geotagcamera.geotagginglocationonphoto.exif.UserCommentCodec
+import com.geotagcamera.geotagginglocationonphoto.exif.XmpWriter
 import com.geotagcamera.geotagginglocationonphoto.location.LocationProvider
 import com.geotagcamera.geotagginglocationonphoto.location.GeocoderRepository
 import com.geotagcamera.geotagginglocationonphoto.security.PhotoIntegrity
@@ -139,8 +141,14 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
                 FileOutputStream(file).use { out -> signed.compress(Bitmap.CompressFormat.JPEG, 92, out) }
                 signed.recycle()
 
-                ExifWriter.write(file, fix, capturedAtEpochMs)
+                // Sign the canonical image first — the hash is blind to metadata
+                // (see JpegCanonical), so embedding the proof below can't invalidate
+                // it — then carry the proof in EXIF UserComment and mirror it in XMP
+                // so any device can verify this photo, not just the one that shot it.
                 val integrity = PhotoIntegrity.sign(file)
+                val proof = UserCommentCodec.encode(integrity, capturedAtEpochMs)
+                ExifWriter.write(file, fix, capturedAtEpochMs, proof)
+                XmpWriter.write(file, proof)
 
                 val uri = MediaStoreImageSaver.save(context, file, file.name)
                 file.delete()
