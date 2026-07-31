@@ -1,8 +1,18 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
 }
+
+// Stadia Maps tile key lives in the gitignored local.properties (same pattern
+// as sdk.dir), never in version control. Absent key -> empty string; the map
+// feature degrades to "no tile" rather than failing the build.
+val stadiaApiKey: String = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}.getProperty("stadiaMaps.apiKey", "")
 
 android {
     namespace = "com.geotagcamera.geotagginglocationonphoto"
@@ -16,6 +26,8 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "STADIA_API_KEY", "\"$stadiaApiKey\"")
     }
 
     buildTypes {
@@ -40,6 +52,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
