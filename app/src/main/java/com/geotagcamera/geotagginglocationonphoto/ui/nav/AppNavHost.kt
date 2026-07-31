@@ -139,7 +139,12 @@ fun GeoTagCameraApp(shareUri: String? = null, onShareConsumed: () -> Unit = {}) 
                     }
                 )
             }
-            composable(Tab.Settings.route) { SettingsScreen() }
+            composable(Tab.Settings.route) {
+                SettingsScreen(
+                    onOpenVerify = { navController.navigate(Routes.verify()) },
+                    onOpenAboutLegal = { navController.navigate(Routes.ABOUT_LEGAL) }
+                )
+            }
             composable(
                 route = Routes.PHOTO_DETAIL,
                 arguments = listOf(navArgument("photoId") { type = NavType.LongType })

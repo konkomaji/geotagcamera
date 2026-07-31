@@ -42,6 +42,7 @@ class StampPreferences(private val context: Context) {
         val SIGNATURE_FIELD = booleanPreferencesKey("show_signature_field")
         val REQUIRE_SIGNATURE = booleanPreferencesKey("require_signature")
         val BRAND_MARK = booleanPreferencesKey("show_brand_mark")
+        val AUTO_DISMISS_REVIEW = booleanPreferencesKey("auto_dismiss_review")
     }
 
     val fields: Flow<StampFields> = context.stampDataStore.data.map { prefs ->
@@ -68,6 +69,18 @@ class StampPreferences(private val context: Context) {
             requireSignature = prefs[Keys.REQUIRE_SIGNATURE] ?: false,
             showBrandMark = prefs[Keys.BRAND_MARK] ?: true
         )
+    }
+
+    /** Post-capture review auto-dismiss — a capture default, off by default (design section 04). */
+    val autoDismissReview: Flow<Boolean> = context.stampDataStore.data.map { it[Keys.AUTO_DISMISS_REVIEW] ?: false }
+
+    suspend fun setAutoDismissReview(enabled: Boolean) {
+        context.stampDataStore.edit { it[Keys.AUTO_DISMISS_REVIEW] = enabled }
+    }
+
+    /** Removes the org-logo key entirely — update() only ever writes it when non-null, so it can't clear it. */
+    suspend fun clearOrgLogo() {
+        context.stampDataStore.edit { it.remove(Keys.ORG_LOGO_URI) }
     }
 
     suspend fun update(fields: StampFields) {

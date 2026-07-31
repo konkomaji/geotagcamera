@@ -121,6 +121,7 @@ private fun CameraContent(viewModel: CaptureViewModel) {
     val locationChip by viewModel.locationChip.collectAsStateWithLifecycle()
     val liveSpec by viewModel.liveSpec.collectAsStateWithLifecycle()
     val lastCaptureUri by viewModel.lastCaptureUri.collectAsStateWithLifecycle()
+    val autoDismiss by viewModel.autoDismissReview.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     // Landscape (design section 10: controls float clear of the letterbox, never
     // fixed widths). The shutter cluster becomes a right-edge vertical rail and
@@ -187,6 +188,15 @@ private fun CameraContent(viewModel: CaptureViewModel) {
         if (state is CaptureUiState.Error) {
             snackbarHostState.showSnackbar(state.message)
             viewModel.acknowledgeMessage()
+        }
+    }
+
+    // Auto-dismiss the review takeover if the user turned it on (off by default).
+    // Keyed on uiState, so any manual action cancels the pending dismiss.
+    LaunchedEffect(uiState, autoDismiss) {
+        if (autoDismiss && uiState is CaptureUiState.Review) {
+            kotlinx.coroutines.delay(4000)
+            viewModel.dismissReview()
         }
     }
 

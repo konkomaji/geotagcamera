@@ -40,6 +40,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -104,16 +106,28 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
     private val _lastCaptureUri = MutableStateFlow<String?>(null)
     val lastCaptureUri: StateFlow<String?> = _lastCaptureUri.asStateFlow()
 
+    /** Org logo bitmap, decoded from the path Settings stored (app storage, survives restarts). */
+    val orgLogo: StateFlow<Bitmap?> = stampFields
+        .map { it.orgLogoUri }
+        .distinctUntilChanged()
+        .map { path ->
+            path?.let { withContext(Dispatchers.IO) { runCatching { BitmapFactory.decodeFile(it) }.getOrNull() } }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
+    val autoDismissReview: StateFlow<Boolean> = stampPreferences.autoDismissReview
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+
     /** The live overlay spec — the same [StampSpec] type the burn-in draws, so the preview is exact. */
     val liveSpec: StateFlow<StampSpec?> =
-        combine(stampFields, _liveData) { fields, data ->
+        combine(stampFields, _liveData, orgLogo) { fields, data, logo ->
             if (data == null) null else buildStampSpec(
                 fix = data.fix,
                 addressParts = data.geocode,
                 capturedAtEpochMs = System.currentTimeMillis(),
                 fields = fields,
                 mapTile = if (fields.showMap) data.mapTile else null,
-                orgLogo = null,
+                orgLogo = if (fields.showOrgLogo) logo else null,
                 hasSignature = false,
                 weatherChipText = data.weather?.chipText
             )
@@ -233,7 +247,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
                     capturedAtEpochMs = capturedAtEpochMs,
                     fields = fields,
                     mapTile = if (fields.showMap) snapshot?.mapTile else null,
-                    orgLogo = null,
+                    orgLogo = if (fields.showOrgLogo) orgLogo.value else null,
                     hasSignature = signature != null,
                     weatherChipText = snapshot?.weather?.chipText
                 )
