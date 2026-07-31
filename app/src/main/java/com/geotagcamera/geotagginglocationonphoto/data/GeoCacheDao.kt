@@ -24,4 +24,7 @@ interface GeoCacheDao {
         """
     )
     suspend fun getNearby(latKey: Long, lngKey: Long, radius: Long): GeoCacheEntity?
+
+    @Query("DELETE FROM geo_cache")
+    suspend fun deleteAll()
 }

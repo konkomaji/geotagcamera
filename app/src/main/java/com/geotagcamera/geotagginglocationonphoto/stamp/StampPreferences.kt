@@ -83,6 +83,11 @@ class StampPreferences(private val context: Context) {
         context.stampDataStore.edit { it.remove(Keys.ORG_LOGO_URI) }
     }
 
+    /** Wipes every stamp preference back to defaults — for About & legal's delete-all-data path. */
+    suspend fun clearAll() {
+        context.stampDataStore.edit { it.clear() }
+    }
+
     suspend fun update(fields: StampFields) {
         context.stampDataStore.edit { prefs ->
             prefs[Keys.TEMPLATE] = fields.template.name
