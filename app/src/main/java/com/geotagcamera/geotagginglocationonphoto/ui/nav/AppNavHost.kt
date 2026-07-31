@@ -130,7 +130,15 @@ fun GeoTagCameraApp(shareUri: String? = null, onShareConsumed: () -> Unit = {}) 
             // triggers (gallery shortcut, photo detail, verify FAB, about/legal link) into these
             // routes, which already exist and are reachable in the graph starting now.
             composable(Tab.Capture.route) { CaptureScreen() }
-            composable(Tab.Gallery.route) { GalleryScreen() }
+            composable(Tab.Gallery.route) {
+                GalleryScreen(
+                    onOpenPhoto = { id -> navController.navigate(Routes.photoDetail(id)) },
+                    onVerifyExternal = { uriStr ->
+                        pendingVerifyUri = uriStr
+                        navController.navigate(Routes.verify())
+                    }
+                )
+            }
             composable(Tab.Settings.route) { SettingsScreen() }
             composable(
                 route = Routes.PHOTO_DETAIL,
