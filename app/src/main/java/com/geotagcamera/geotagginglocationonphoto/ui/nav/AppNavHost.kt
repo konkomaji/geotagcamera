@@ -59,7 +59,10 @@ fun GeoTagCameraApp(shareUri: String? = null, onShareConsumed: () -> Unit = {}) 
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
-    val showBottomBar = currentRoute in tabRoutes
+    // Capture is the immersive dark camera layer — the light tab bar would clash
+    // over it, so it's hidden there; Gallery/Settings still show it (with a
+    // Capture tab to return), and Capture reaches them via its own controls.
+    val showBottomBar = currentRoute in tabRoutes && currentRoute != Tab.Capture.route
 
     // A shared "verify this photo" image is held here (not threaded through the
     // route's query arg, which can't safely carry a content:// Uri) and read by
@@ -129,7 +132,12 @@ fun GeoTagCameraApp(shareUri: String? = null, onShareConsumed: () -> Unit = {}) 
             // Phase 9 (Gallery), and Phase 10 (Settings) are what actually wire real navigation
             // triggers (gallery shortcut, photo detail, verify FAB, about/legal link) into these
             // routes, which already exist and are reachable in the graph starting now.
-            composable(Tab.Capture.route) { CaptureScreen() }
+            composable(Tab.Capture.route) {
+                CaptureScreen(
+                    onOpenGallery = { navController.navigate(Tab.Gallery.route) { launchSingleTop = true } },
+                    onOpenSettings = { navController.navigate(Tab.Settings.route) { launchSingleTop = true } }
+                )
+            }
             composable(Tab.Gallery.route) {
                 GalleryScreen(
                     onOpenPhoto = { id -> navController.navigate(Routes.photoDetail(id)) },

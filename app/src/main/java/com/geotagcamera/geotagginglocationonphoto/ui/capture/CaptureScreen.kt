@@ -90,7 +90,11 @@ private val AccentVerified = Color(0xFF56CB98)
 private val AccentPending = Color(0xFFE5A24B)
 
 @Composable
-fun CaptureScreen(viewModel: CaptureViewModel = viewModel()) {
+fun CaptureScreen(
+    onOpenGallery: () -> Unit = {},
+    onOpenSettings: () -> Unit = {},
+    viewModel: CaptureViewModel = viewModel()
+) {
     val context = LocalContext.current
     var hasPermissions by remember { mutableStateOf(hasCapturePermissions(context)) }
 
@@ -104,7 +108,7 @@ fun CaptureScreen(viewModel: CaptureViewModel = viewModel()) {
 
     GeoTagChromeTheme {
         if (hasPermissions) {
-            CameraContent(viewModel)
+            CameraContent(viewModel, onOpenGallery, onOpenSettings)
         } else {
             PermissionRationale(onRequest = { launcher.launch(CAPTURE_PERMISSIONS) })
         }
@@ -112,7 +116,11 @@ fun CaptureScreen(viewModel: CaptureViewModel = viewModel()) {
 }
 
 @Composable
-private fun CameraContent(viewModel: CaptureViewModel) {
+private fun CameraContent(
+    viewModel: CaptureViewModel,
+    onOpenGallery: () -> Unit,
+    onOpenSettings: () -> Unit
+) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
@@ -142,7 +150,12 @@ private fun CameraContent(viewModel: CaptureViewModel) {
     var viewSize by remember { mutableStateOf(IntSize.Zero) }
 
     val previewView = remember {
-        PreviewView(context).apply { scaleType = PreviewView.ScaleType.FILL_CENTER }
+        PreviewView(context).apply {
+            scaleType = PreviewView.ScaleType.FILL_CENTER
+            // TextureView-backed preview re-attaches without the ~1-2s black flash
+            // a SurfaceView shows when returning to this screen from another tab.
+            implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+        }
     }
     // ImageCapture rebuilds when the aspect ratio changes (it's a build-time property). 1:1 captures 4:3 then crops.
     val imageCapture = remember(aspect) {
@@ -242,6 +255,7 @@ private fun CameraContent(viewModel: CaptureViewModel) {
                 onFlash = { flashMode = nextFlash(flashMode) },
                 onAspect = { aspect = nextAspect(aspect) },
                 onGrid = { gridOn = !gridOn },
+                onSettings = onOpenSettings,
                 modifier = Modifier.align(Alignment.TopCenter)
             )
 
@@ -301,6 +315,7 @@ private fun CameraContent(viewModel: CaptureViewModel) {
                 lastCaptureUri = lastCaptureUri,
                 shutterEnabled = uiState is CaptureUiState.Idle,
                 shutterScale = shutterScale.value,
+                onThumbnailClick = onOpenGallery,
                 onShutter = {
                     scope.launch {
                         shutterScale.animateTo(0.9f, tween(90))
@@ -394,17 +409,21 @@ private fun TopControlRow(
     onFlash: () -> Unit,
     onAspect: () -> Unit,
     onGrid: () -> Unit,
+    onSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 14.dp, vertical = 40.dp),
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(7.dp)
     ) {
         GlassPill(text = flashLabel(flashMode), onClick = onFlash)
         GlassPill(text = aspectLabel(aspect), onClick = onAspect)
         GlassPill(text = "Grid", onClick = onGrid, filled = gridOn)
+        Spacer(Modifier.weight(1f))
+        GlassPill(text = "⚙", onClick = onSettings)
     }
 }
 
@@ -506,6 +525,7 @@ private fun BottomBar(
     lastCaptureUri: String?,
     shutterEnabled: Boolean,
     shutterScale: Float,
+    onThumbnailClick: () -> Unit,
     onShutter: () -> Unit,
     onSwitch: () -> Unit,
     vertical: Boolean,
@@ -520,7 +540,7 @@ private fun BottomBar(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            ThumbnailControl(lastCaptureUri)
+            ThumbnailControl(lastCaptureUri, onThumbnailClick)
             ShutterControl(shutterEnabled, shutterScale, onShutter)
             SwitchControl(onSwitch)
         }
@@ -533,7 +553,7 @@ private fun BottomBar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            ThumbnailControl(lastCaptureUri)
+            ThumbnailControl(lastCaptureUri, onThumbnailClick)
             ShutterControl(shutterEnabled, shutterScale, onShutter)
             SwitchControl(onSwitch)
         }
@@ -541,13 +561,14 @@ private fun BottomBar(
 }
 
 @Composable
-private fun ThumbnailControl(lastCaptureUri: String?) {
+private fun ThumbnailControl(lastCaptureUri: String?, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .size(50.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(Color(0xFF2C3237))
             .border(BorderStroke(1.5.dp, Color.White.copy(alpha = 0.35f)), RoundedCornerShape(12.dp))
+            .pointerInput(Unit) { detectTapGestures { onClick() } }
     ) {
         lastCaptureUri?.let {
             AsyncImage(model = it, contentDescription = "Last capture", modifier = Modifier.fillMaxSize())
