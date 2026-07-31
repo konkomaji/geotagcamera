@@ -46,9 +46,10 @@ object StampRenderer {
         fields: StampFields,
         mapTile: Bitmap? = null,
         orgLogo: Bitmap? = null,
-        hasSignature: Boolean = false
+        hasSignature: Boolean = false,
+        weatherChipText: String? = null
     ): Bitmap {
-        val spec = buildStampSpec(fix, addressParts, capturedAtEpochMs, fields, mapTile, orgLogo, hasSignature)
+        val spec = buildStampSpec(fix, addressParts, capturedAtEpochMs, fields, mapTile, orgLogo, hasSignature, weatherChipText)
 
         val output = source.copy(Bitmap.Config.ARGB_8888, true)
         val density = Density(density = output.width / REFERENCE_WIDTH_DP, fontScale = 1f)

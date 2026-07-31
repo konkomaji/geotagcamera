@@ -59,7 +59,8 @@ fun buildStampSpec(
     fields: StampFields,
     mapTile: Bitmap?,
     orgLogo: Bitmap?,
-    hasSignature: Boolean
+    hasSignature: Boolean,
+    weatherChipText: String? = null
 ): StampSpec {
     val countryCode = if (fields.showCountry) {
         addressParts?.countryCode?.let { code ->
@@ -91,8 +92,10 @@ fun buildStampSpec(
         if (fields.showAltitude) fix.altitudeMeters?.let { add(StampChip("ALT ${it.roundToInt()} m")) }
         if (fields.showAccuracy) fix.accuracyMeters?.let { add(StampChip("±${it.roundToInt()} m")) }
         if (fields.showBearing) fix.bearingDegrees?.let { add(StampChip("${it.roundToInt()}°")) }
-        // Weather chip is appended by the caller once Phase 3's WeatherRepository exists;
-        // fields.showWeather is read there, not here, since this function has no network access.
+        // Weather text is fetched by the caller (WeatherRepository needs network,
+        // which this pure function has none of) and passed in already-formatted;
+        // gated here so the live overlay and the burn-in stay identical.
+        if (fields.showWeather) weatherChipText?.takeIf { it.isNotBlank() }?.let { add(StampChip(it)) }
     }
 
     val placeName = if (addressParts != null) addressParts.place else null
