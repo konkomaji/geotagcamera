@@ -31,6 +31,7 @@ import com.geotagcamera.geotagginglocationonphoto.stamp.StampRenderer
 import com.geotagcamera.geotagginglocationonphoto.stamp.StampSpec
 import com.geotagcamera.geotagginglocationonphoto.stamp.buildStampSpec
 import com.geotagcamera.geotagginglocationonphoto.storage.MediaStoreImageSaver
+import com.geotagcamera.geotagginglocationonphoto.ui.review.ReviewFilename
 import java.io.File
 import java.io.FileOutputStream
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +48,8 @@ sealed interface CaptureUiState {
     data object Idle : CaptureUiState
     data object Processing : CaptureUiState
     data object AwaitingSignature : CaptureUiState
-    data class Saved(val filePath: String) : CaptureUiState
+    /** Post-capture review takeover: the saved, signed photo plus its quotable name/size. */
+    data class Review(val uri: String, val filename: String, val sizeBytes: Long) : CaptureUiState
     data class Error(val message: String) : CaptureUiState
 }
 
@@ -191,6 +193,13 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
         _uiState.value = CaptureUiState.Idle
     }
 
+    /** Leave the review takeover (Retake or Done) back to the live viewfinder. */
+    fun dismissReview() {
+        _uiState.value = CaptureUiState.Idle
+    }
+
+    private data class SaveResult(val uri: String, val filename: String, val sizeBytes: Long)
+
     private fun processCapturedPhoto(file: File, signature: Bitmap?, squareCrop: Boolean) {
         val context = getApplication<Application>()
         viewModelScope.launch {
@@ -209,7 +218,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
                 ?: runCatching { geocoderRepository.reverseGeocode(fix.latitude, fix.longitude) }.getOrNull()
             val fields = stampFields.value
 
-            val mediaUri = withContext(Dispatchers.IO) {
+            val saveResult = withContext(Dispatchers.IO) {
                 var upright = loadUprightBitmap(file)
                 if (squareCrop) {
                     val cropped = centerSquare(upright)
@@ -246,12 +255,16 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
                 ExifWriter.write(file, fix, capturedAtEpochMs, proof)
                 XmpWriter.write(file, proof)
 
-                val uri = MediaStoreImageSaver.save(context, file, file.name)
+                // Address-derived filename doubles as the MediaStore display name and
+                // the review screen's quotable caption; measure size before publishing.
+                val filename = ReviewFilename.generate(geocode?.place, capturedAtEpochMs)
+                val sizeBytes = file.length()
+                val uri = MediaStoreImageSaver.save(context, file, filename)
                 file.delete()
-                uri?.let {
+                if (uri == null) null else {
                     photoDao.insert(
                         PhotoEntity(
-                            filePath = it.toString(),
+                            filePath = uri.toString(),
                             capturedAtEpochMs = capturedAtEpochMs,
                             latitude = fix.latitude,
                             longitude = fix.longitude,
@@ -267,17 +280,17 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
                             fieldWorkerSignature = signature != null
                         )
                     )
+                    SaveResult(uri.toString(), filename, sizeBytes)
                 }
-                uri
             }
 
-            if (mediaUri == null) {
+            if (saveResult == null) {
                 _uiState.value = CaptureUiState.Error("Couldn't save photo to gallery.")
                 return@launch
             }
 
-            _lastCaptureUri.value = mediaUri.toString()
-            _uiState.value = CaptureUiState.Saved(mediaUri.toString())
+            _lastCaptureUri.value = saveResult.uri
+            _uiState.value = CaptureUiState.Review(saveResult.uri, saveResult.filename, saveResult.sizeBytes)
         }
     }
 

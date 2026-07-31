@@ -1,6 +1,8 @@
 package com.geotagcamera.geotagginglocationonphoto.ui.capture
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.AspectRatio
@@ -68,6 +70,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.geotagcamera.geotagginglocationonphoto.stamp.StampPainter
+import com.geotagcamera.geotagginglocationonphoto.ui.review.ReviewScreen
 import com.geotagcamera.geotagginglocationonphoto.ui.common.anchorForFraction
 import com.geotagcamera.geotagginglocationonphoto.ui.permissions.CAPTURE_PERMISSIONS
 import com.geotagcamera.geotagginglocationonphoto.ui.permissions.hasCapturePermissions
@@ -173,16 +176,10 @@ private fun CameraContent(viewModel: CaptureViewModel) {
     }
 
     LaunchedEffect(uiState) {
-        when (val state = uiState) {
-            is CaptureUiState.Saved -> {
-                snackbarHostState.showSnackbar("Saved and signed")
-                viewModel.acknowledgeMessage()
-            }
-            is CaptureUiState.Error -> {
-                snackbarHostState.showSnackbar(state.message)
-                viewModel.acknowledgeMessage()
-            }
-            else -> Unit
+        val state = uiState
+        if (state is CaptureUiState.Error) {
+            snackbarHostState.showSnackbar(state.message)
+            viewModel.acknowledgeMessage()
         }
     }
 
@@ -326,6 +323,14 @@ private fun CameraContent(viewModel: CaptureViewModel) {
                 SignatureCaptureDialog(
                     onConfirm = { bitmap -> viewModel.submitSignature(bitmap) },
                     onSkip = { viewModel.submitSignature(null) }
+                )
+            }
+
+            (uiState as? CaptureUiState.Review)?.let { review ->
+                ReviewScreen(
+                    review = review,
+                    onDismiss = { viewModel.dismissReview() },
+                    onShare = { shareImage(context, review.uri) }
                 )
             }
 
@@ -586,4 +591,13 @@ private fun aspectLabel(a: CaptureAspect): String = when (a) {
 private suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCoroutine { cont ->
     val future = ProcessCameraProvider.getInstance(this)
     future.addListener({ cont.resume(future.get()) }, ContextCompat.getMainExecutor(this))
+}
+
+private fun shareImage(context: Context, uriString: String) {
+    val intent = Intent(Intent.ACTION_SEND).apply {
+        type = "image/jpeg"
+        putExtra(Intent.EXTRA_STREAM, Uri.parse(uriString))
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    }
+    context.startActivity(Intent.createChooser(intent, "Share photo"))
 }
