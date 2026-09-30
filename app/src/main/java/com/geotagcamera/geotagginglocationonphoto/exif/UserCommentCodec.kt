@@ -47,7 +47,7 @@ object UserCommentCodec {
             .put("h", result.sha256Hex)
             .put("sig", result.signatureBase64)
             .put("pk", result.publicKeyBase64)
-            .put("t", iso8601(capturedAtEpochMs))
+            .put("t", iso8601(result.claims?.epochMs ?: capturedAtEpochMs))
             .apply {
                 result.claims?.let {
                     put("lat", it.latitude)
@@ -64,7 +64,8 @@ object UserCommentCodec {
             val o = JSONObject(userComment)
             val version = o.getInt("v")
             val claims = if (version >= 2) {
-                ProofClaims(o.getDouble("lat"), o.getDouble("lon"), o.getLong("ms"))
+                // Corrupt claims stay null; ProofVerifier rejects v2+ without them (Edited, not NoProof).
+                runCatching { ProofClaims(o.getDouble("lat"), o.getDouble("lon"), o.getLong("ms")) }.getOrNull()
             } else null
             val payload = SignedPayload(
                 version = version,

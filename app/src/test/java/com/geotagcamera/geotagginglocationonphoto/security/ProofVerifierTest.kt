@@ -111,6 +111,25 @@ class ProofVerifierTest {
         assertFalse(ProofVerifier.verify(jpeg, forged, ObservedMeta(28.6139, 77.2090, 1_700_000_000L)))
     }
 
+    /** A v2 proof that lost its claims must fail, not fall back to the hash-only check. */
+    @Test
+    fun v2WithMissingClaimsFails() {
+        val jpeg = TestJpeg.minimal()
+        assertFalse(ProofVerifier.verify(jpeg, v2Payload(jpeg).copy(claims = null), goodMeta))
+    }
+
+    @Test
+    fun longitudeWrapsAcrossAntimeridian() {
+        val c = ProofClaims(0.0, 179.9999999, 1_700_000_000_000L)
+        assertTrue(ObservedMeta(0.0, -180.0, 1_700_000_000L).matches(c))
+        assertFalse(ObservedMeta(0.0, -179.0, 1_700_000_000L).matches(c))
+    }
+
+    @Test
+    fun timeMustMatchExactly() {
+        assertFalse(ObservedMeta(12.971599, 77.594566, 1_700_000_001L).matches(claims))
+    }
+
     /** Stripping the claims and relabelling as v1 must not bypass the claim-bound signature. */
     @Test
     fun v2SignatureDoesNotVerifyAsV1() {

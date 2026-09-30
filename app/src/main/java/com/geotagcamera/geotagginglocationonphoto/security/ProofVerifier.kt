@@ -31,6 +31,8 @@ object ProofVerifier {
             .generatePublic(X509EncodedKeySpec(Base64.getDecoder().decode(payload.publicKeyBase64)))
 
         val claims = payload.claims
+        // A v2+ proof whose claims are missing/corrupt must not fall back to the hash-only check.
+        if (payload.version >= 2 && claims == null) return false
         // v2 proofs also require the file's EXIF GPS/time to match what was signed;
         // a missing or rewritten EXIF fails closed.
         if (claims != null && (observed == null || !observed.matches(claims))) return false

@@ -40,6 +40,7 @@ Most geotagging camera apps on the Play Store make you sit through ads before yo
 
 **Trust and verification**
 - Every photo is SHA-256 hashed and signed on-device using a key generated in the Android Keystore, so you can later prove it hasn't been edited since capture
+- The signature also covers the capture latitude, longitude and time, so rewriting the photo's GPS or time EXIF fails verification. A pass means the file is unchanged since signing; it does not prove which device signed it. Sharing apps that strip EXIF will show "location not checked". Photos signed by 1.1.0 only have their pixels covered
 - Field workers can add a signature directly onto the photo before saving, useful for inspection reports and muster-roll style documentation
 
 **No ads, no tracking, ever**

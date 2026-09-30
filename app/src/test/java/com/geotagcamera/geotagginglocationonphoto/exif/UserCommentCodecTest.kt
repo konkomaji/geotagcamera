@@ -64,7 +64,8 @@ class UserCommentCodecTest {
     }
 
     @Test
-    fun v2WithoutClaimsIsRejected() {
-        assertNull(UserCommentCodec.decode("{\"v\":2,\"h\":\"a\",\"sig\":\"b\",\"pk\":\"c\"}"))
+    fun v2WithoutClaimsDecodesWithNullClaims() {
+        val p = UserCommentCodec.decode("{\"v\":2,\"h\":\"a\",\"sig\":\"b\",\"pk\":\"c\"}")!!
+        assertNull(p.claims)
     }
 }

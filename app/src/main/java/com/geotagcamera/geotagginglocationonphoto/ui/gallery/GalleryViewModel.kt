@@ -48,6 +48,7 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
                 val status = when (PhotoVerification.verifyUri(context, Uri.parse(photo.filePath))) {
                     is VerificationOutcome.Untampered -> TileStatus.VERIFIED
                     is VerificationOutcome.Edited -> TileStatus.TAMPERED
+                    is VerificationOutcome.MetadataUnavailable -> TileStatus.UNKNOWN
                     is VerificationOutcome.NoProof -> TileStatus.UNSIGNED
                     is VerificationOutcome.Unreadable -> TileStatus.UNKNOWN
                 }

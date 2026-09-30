@@ -25,13 +25,20 @@ data class ObservedMeta(val latitude: Double?, val longitude: Double?, val gpsEp
         val lon = longitude ?: return false
         val sec = gpsEpochSec ?: return false
         return abs(lat - claims.latitude) <= COORD_TOLERANCE_DEG &&
-            abs(lon - claims.longitude) <= COORD_TOLERANCE_DEG &&
-            abs(sec - Math.floorDiv(claims.epochMs, 1000L)) <= TIME_TOLERANCE_SEC
+            lonDelta(lon, claims.longitude) <= COORD_TOLERANCE_DEG &&
+            sec == Math.floorDiv(claims.epochMs, 1000L)
+    }
+
+    fun hasAny(): Boolean = latitude != null || longitude != null || gpsEpochSec != null
+
+    /** Shortest angular distance, so -180 and +180 count as the same meridian. */
+    private fun lonDelta(a: Double, b: Double): Double {
+        val d = abs(a - b) % 360.0
+        return if (d > 180.0) 360.0 - d else d
     }
 
     companion object {
-        /** ~1 m; EXIF DMS rational rounding is far finer than this. */
-        const val COORD_TOLERANCE_DEG = 1e-5
-        const val TIME_TOLERANCE_SEC = 1L
+        /** ~0.1 m, matching the signed %.6f precision; ExifWriter's DMS rounding is ~1e-8. */
+        const val COORD_TOLERANCE_DEG = 1e-6
     }
 }

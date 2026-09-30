@@ -14,8 +14,15 @@ object PhotoVerification {
 
     fun verify(bytes: ByteArray): VerificationOutcome {
         val payload = ProofReader.read(bytes) ?: return VerificationOutcome.NoProof
-        return if (ProofVerifier.verify(bytes, payload, ProofReader.readObserved(bytes))) VerificationOutcome.Untampered(payload)
-        else VerificationOutcome.Edited(payload)
+        val claims = payload.claims
+        // v1 proofs carry no claims, so skip the second EXIF parse entirely.
+        val observed = if (claims != null) ProofReader.readObserved(bytes) else null
+        if (ProofVerifier.verify(bytes, payload, observed)) return VerificationOutcome.Untampered(payload)
+        // No GPS/time to compare at all: distinguish "metadata gone" from "metadata changed".
+        if (claims != null && observed != null && !observed.hasAny() &&
+            ProofVerifier.verify(bytes, payload, ObservedMeta(claims.latitude, claims.longitude, Math.floorDiv(claims.epochMs, 1000L)))
+        ) return VerificationOutcome.MetadataUnavailable(payload)
+        return VerificationOutcome.Edited(payload)
     }
 
     fun verifyUri(context: Context, uri: Uri): VerificationOutcome {
