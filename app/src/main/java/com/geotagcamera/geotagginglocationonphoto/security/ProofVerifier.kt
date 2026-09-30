@@ -21,8 +21,8 @@ import java.util.Base64
  */
 object ProofVerifier {
 
-    /** True iff [jpeg]'s canonical hash matches the proof AND the signature verifies under the proof's public key. */
-    fun verify(jpeg: ByteArray, payload: SignedPayload): Boolean = runCatching {
+    /** True iff [jpeg]'s canonical hash matches the proof AND the signature verifies under the proof's public key (and, for v2, [observed] EXIF matches the signed claims). */
+    fun verify(jpeg: ByteArray, payload: SignedPayload, observed: ObservedMeta?): Boolean = runCatching {
         val hash = JpegCanonical.canonicalDigest(jpeg)
         val hashHex = hash.joinToString("") { "%02x".format(it) }
         if (!hashHex.equals(payload.sha256Hex, ignoreCase = true)) return false
@@ -30,9 +30,14 @@ object ProofVerifier {
         val publicKey = KeyFactory.getInstance("EC")
             .generatePublic(X509EncodedKeySpec(Base64.getDecoder().decode(payload.publicKeyBase64)))
 
+        val claims = payload.claims
+        // v2 proofs also require the file's EXIF GPS/time to match what was signed;
+        // a missing or rewritten EXIF fails closed.
+        if (claims != null && (observed == null || !observed.matches(claims))) return false
+
         Signature.getInstance("SHA256withECDSA").run {
             initVerify(publicKey)
-            update(hash)
+            update(claims?.signedMessage(hashHex) ?: hash)
             verify(Base64.getDecoder().decode(payload.signatureBase64))
         }
     }.getOrDefault(false)

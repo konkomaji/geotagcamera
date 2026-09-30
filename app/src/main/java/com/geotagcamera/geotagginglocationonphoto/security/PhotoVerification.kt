@@ -14,7 +14,7 @@ object PhotoVerification {
 
     fun verify(bytes: ByteArray): VerificationOutcome {
         val payload = ProofReader.read(bytes) ?: return VerificationOutcome.NoProof
-        return if (ProofVerifier.verify(bytes, payload)) VerificationOutcome.Untampered(payload)
+        return if (ProofVerifier.verify(bytes, payload, ProofReader.readObserved(bytes))) VerificationOutcome.Untampered(payload)
         else VerificationOutcome.Edited(payload)
     }
 

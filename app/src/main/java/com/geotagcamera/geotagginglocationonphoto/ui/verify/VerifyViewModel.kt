@@ -4,8 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.geotagcamera.geotagginglocationonphoto.exif.ProofReader
-import com.geotagcamera.geotagginglocationonphoto.security.ProofVerifier
+import com.geotagcamera.geotagginglocationonphoto.security.PhotoVerification
 import com.geotagcamera.geotagginglocationonphoto.security.VerificationOutcome
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +22,7 @@ sealed interface VerifyUiState {
 /**
  * Verifies any image the user points at — a share-target file, a gallery pick,
  * anything — with zero captures ever taken on this device. Reads the proof
- * ([ProofReader]) and checks it portably ([ProofVerifier], public key from the
+ * and checks it portably via [PhotoVerification] (public key from the
  * file, no Keystore).
  */
 class VerifyViewModel(application: Application) : AndroidViewModel(application) {
@@ -38,9 +37,7 @@ class VerifyViewModel(application: Application) : AndroidViewModel(application) 
                 val bytes = runCatching {
                     context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
                 }.getOrNull() ?: return@withContext VerificationOutcome.Unreadable
-                val payload = ProofReader.read(bytes) ?: return@withContext VerificationOutcome.NoProof
-                if (ProofVerifier.verify(bytes, payload)) VerificationOutcome.Untampered(payload)
-                else VerificationOutcome.Edited(payload)
+                PhotoVerification.verify(bytes)
             }
             _state.value = VerifyUiState.Done(outcome, uri.toString())
         }
