@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Security
+- Proof v2: the signature now also commits to the capture latitude, longitude and time, and verification checks them against the photo's EXIF. Previously the hash ignored all metadata, so EXIF GPS/time could be rewritten without failing verification. Photos signed by 1.1.0 (v1 proofs) still verify, but only their pixels are covered.
+- Verify screen wording clarifies that a pass means "unchanged since signing", not proof of which device signed it.
+
 ## [1.1.0] - 2026-07-31
 
 A full UI rebuild against a new design system, plus portable verification.

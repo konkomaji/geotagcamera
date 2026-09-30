@@ -111,9 +111,11 @@ private fun EmptyPrompt() {
 private fun ResultBlock(done: VerifyUiState.Done) {
     val (accent, title, detail) = when (val o = done.outcome) {
         is VerificationOutcome.Untampered ->
-            Triple(MaterialTheme.colorScheme.primary, "Untampered", "Signed ${o.payload.timestampIso}. The image matches its proof exactly.")
+            Triple(MaterialTheme.colorScheme.primary, "Untampered", "Signed ${o.payload.timestampIso}. " + (if (o.payload.claims != null) "The image and its GPS/time metadata match the embedded proof." else "The image matches the embedded proof; this older proof does not cover GPS/time metadata.") + " This shows the file is unchanged since signing, not which device signed it.")
         is VerificationOutcome.Edited ->
-            Triple(MaterialTheme.colorScheme.error, "Edited since capture", "A proof is present, but the image no longer matches it.")
+            Triple(MaterialTheme.colorScheme.error, "Edited since capture", "A proof is present, but the image or its GPS/time metadata no longer matches it.")
+        is VerificationOutcome.MetadataUnavailable ->
+            Triple(MaterialTheme.colorScheme.onSurfaceVariant, "Image intact, location not checked", "The image matches its proof, but this copy has no readable GPS/time metadata (it may have been stripped by sharing or hidden by Android). Verify the original file.")
         is VerificationOutcome.NoProof ->
             Triple(MaterialTheme.colorScheme.onSurfaceVariant, "No proof found", "This photo carries no GeoTag proof. That isn't a failure — it just wasn't signed by this app.")
         is VerificationOutcome.Unreadable ->

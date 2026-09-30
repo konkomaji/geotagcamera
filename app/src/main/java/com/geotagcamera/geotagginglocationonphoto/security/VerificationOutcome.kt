@@ -15,6 +15,13 @@ sealed interface VerificationOutcome {
     /** A proof is present but the image no longer matches it — edited since capture. */
     data class Edited(val payload: SignedPayload) : VerificationOutcome
 
+    /**
+     * Image and signature are intact, but the file carries no readable EXIF GPS/time to
+     * check against the signed claims (stripped by a share, or redacted by Android).
+     * Not proof of editing, and not a full pass either.
+     */
+    data class MetadataUnavailable(val payload: SignedPayload) : VerificationOutcome
+
     /** No GeoTag proof found in EXIF or XMP — neutral, not a failure. */
     data object NoProof : VerificationOutcome
 

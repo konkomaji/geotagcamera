@@ -40,10 +40,11 @@ Most geotagging camera apps on the Play Store make you sit through ads before yo
 
 **Trust and verification**
 - Every photo is SHA-256 hashed and signed on-device using a key generated in the Android Keystore, so you can later prove it hasn't been edited since capture
+- The signature also covers the capture latitude, longitude and time, so rewriting the photo's GPS or time EXIF fails verification. A pass means the file is unchanged since signing; it does not prove which device signed it. Sharing apps that strip EXIF will show "location not checked". Photos signed by 1.1.0 only have their pixels covered
 - Field workers can add a signature directly onto the photo before saving, useful for inspection reports and muster-roll style documentation
 
 **No ads, no tracking, ever**
-- No ad SDKs, no analytics SDKs, no hidden network calls
+- No ad SDKs, no analytics SDKs, no hidden network calls. The only network use is two optional, off-by-default stamp features (map thumbnail via Stadia Maps, weather via Open-Meteo); capture, geocoding, signing and verification all work offline
 - No account, no cloud sync, no server collecting anything, because there is no server
 
 ## Tech stack
@@ -52,6 +53,7 @@ Most geotagging camera apps on the Play Store make you sit through ads before yo
 - CameraX for capture
 - Fused Location Provider for GPS
 - Android's built-in Geocoder for reverse geocoding (no third party API key)
+- Stadia Maps tiles (OpenStreetMap data) and Open-Meteo, both optional and off by default
 - Room for local storage
 - Android Keystore for on-device photo signing
 - Material 3
@@ -62,7 +64,7 @@ Version 1.0.0 shipped with everything listed under Features above. 1.1.0 is a fu
 
 ## Roadmap
 
-**1.1.0, in design**
+**1.1.0, shipped**
 - Redesigned stamp: card background, real hierarchy, an optional map thumbnail (OpenStreetMap only, never Google Maps, so the app stays offline-first with no API key)
 - Live, accurate stamp preview inside the viewfinder itself, not a guess you check after the fact
 - Share straight from the app, right after capture and from the gallery
@@ -105,9 +107,10 @@ Minimum SDK is 26 (Android 8.0), target SDK is 34.
 |---|---|
 | Camera | To take the photo |
 | Location (fine and coarse) | To read GPS coordinates for the stamp and EXIF data |
+| Internet | Only for the optional map thumbnail and weather chip; core capture never needs it |
 | Storage (Android 9 / API 28 and below only) | To save the finished photo into the gallery — Android 10+ does this without any storage permission |
 
-That's the complete list. No broad storage access on modern Android, no contacts, no network state beyond what the OS grants by default, no background location.
+That's the complete list. No broad storage access on modern Android, no contacts, no background location.
 
 ## Contributing
 

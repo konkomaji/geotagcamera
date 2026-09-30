@@ -1,6 +1,7 @@
 package com.geotagcamera.geotagginglocationonphoto.exif
 
 import com.geotagcamera.geotagginglocationonphoto.security.IntegrityResult
+import com.geotagcamera.geotagginglocationonphoto.security.ProofClaims
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -48,5 +49,23 @@ class UserCommentCodecTest {
         )
         val bytes = json.toByteArray(Charsets.UTF_8).size
         assertTrue("proof is $bytes bytes, expected < 512", bytes < 512)
+    }
+
+    @Test
+    fun claimsRoundTripAsV2() {
+        val claims = ProofClaims(12.971599, 77.594566, 1_700_000_000_123L)
+        val json = UserCommentCodec.encode(
+            IntegrityResult("deadbeef", "c2ln", "k", "cGs=", claims), claims.epochMs
+        )
+        val payload = UserCommentCodec.decode(json)!!
+        assertEquals(2, payload.version)
+        assertEquals(claims, payload.claims)
+        assertTrue("v2 proof is ${json.length} bytes", json.length < 512)
+    }
+
+    @Test
+    fun v2WithoutClaimsDecodesWithNullClaims() {
+        val p = UserCommentCodec.decode("{\"v\":2,\"h\":\"a\",\"sig\":\"b\",\"pk\":\"c\"}")!!
+        assertNull(p.claims)
     }
 }

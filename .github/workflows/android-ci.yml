@@ -46,6 +46,9 @@ jobs:
       - name: Lint
         run: ./gradlew lintDebug --no-daemon
 
+      - name: Unit tests
+        run: ./gradlew testDebugUnitTest --no-daemon
+
       - name: Assemble debug APK
         run: ./gradlew assembleDebug --no-daemon
 

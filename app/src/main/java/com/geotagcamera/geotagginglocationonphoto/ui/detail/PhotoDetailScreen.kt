@@ -114,6 +114,7 @@ private fun OutcomeChip(outcome: VerificationOutcome) {
     val (accent, label) = when (outcome) {
         is VerificationOutcome.Untampered -> MaterialTheme.colorScheme.primary to "Untampered since capture"
         is VerificationOutcome.Edited -> MaterialTheme.colorScheme.error to "Edited since capture"
+        is VerificationOutcome.MetadataUnavailable -> MaterialTheme.colorScheme.onSurfaceVariant to "Image intact, GPS/time unreadable"
         is VerificationOutcome.NoProof -> MaterialTheme.colorScheme.onSurfaceVariant to "No proof embedded"
         is VerificationOutcome.Unreadable -> MaterialTheme.colorScheme.onSurfaceVariant to "Couldn't read this file"
     }
