@@ -2,7 +2,7 @@
 # so these stay on the last lines that support AGP 8.x + compileSdk 36.
 # Moving to AGP 9 is a separate migration (built-in Kotlin, new DSL).
 [versions]
-agp = "8.13.2"
+agp = "9.4.1"
 kotlin = "2.3.21"
 ksp = "2.3.12"
 
