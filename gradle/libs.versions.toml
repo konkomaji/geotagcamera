@@ -3,7 +3,7 @@
 # Moving to AGP 9 is a separate migration (built-in Kotlin, new DSL).
 [versions]
 agp = "8.13.2"
-kotlin = "2.3.21"
+kotlin = "2.4.21"
 ksp = "2.3.12"
 
 coreKtx = "1.17.0"
