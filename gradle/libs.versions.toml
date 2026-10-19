@@ -3,7 +3,7 @@
 # Moving to AGP 9 is a separate migration (built-in Kotlin, new DSL).
 [versions]
 agp = "8.13.2"
-kotlin = "2.3.21"
+kotlin = "2.4.21"
 ksp = "2.3.12"
 
 coreKtx = "1.17.0"
@@ -22,7 +22,7 @@ coroutines = "1.11.0"
 coil = "2.7.0"
 maplibre = "13.6.1"
 # room-testing needs serialization 1.8+; pin the whole family so app and tests agree.
-serialization = "1.8.1"
+serialization = "1.11.0"
 
 junit = "4.13.2"
 orgJson = "20240303"
