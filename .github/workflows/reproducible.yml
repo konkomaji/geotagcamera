@@ -35,14 +35,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ env.REF }}
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: "17"
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
         with:
           cache-read-only: true
       - name: Build unsigned foss release (all splits, like release.yml)
@@ -52,7 +52,7 @@ jobs:
           for abi in armeabi-v7a arm64-v8a x86_64; do
             cp "app/build/outputs/apk/foss/release/app-foss-${abi}-release-unsigned.apk" "release-style-${abi}.apk"
           done
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: release-style
           path: release-style-*.apk
@@ -77,7 +77,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y --no-install-recommends openjdk-${{ matrix.server.jdk }}-jdk-headless git wget unzip ca-certificates
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ env.REF }}
           # A different checkout path than the other job, like F-Droid's build server.
@@ -96,7 +96,7 @@ jobs:
           ./gradlew assembleFossRelease -Pabi=${{ matrix.abi }} --no-daemon --no-build-cache --stacktrace
           cp "app/build/outputs/apk/foss/release/app-foss-${{ matrix.abi }}-release-unsigned.apk" \
             "$GITHUB_WORKSPACE/fdroid-${{ matrix.abi }}-jdk${{ matrix.server.jdk }}.apk"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: fdroid-${{ matrix.abi }}-jdk${{ matrix.server.jdk }}
           path: fdroid-${{ matrix.abi }}-jdk${{ matrix.server.jdk }}.apk
@@ -106,10 +106,10 @@ jobs:
     if: always() && needs.release-style.result == 'success'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           sparse-checkout: .github/scripts
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           merge-multiple: true
       - name: Compare the F-Droid-style builds with the release-style build
