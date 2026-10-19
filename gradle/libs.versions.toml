@@ -20,7 +20,7 @@ datastore = "1.1.7"
 exifinterface = "1.4.1"
 coroutines = "1.11.0"
 coil = "2.7.0"
-maplibre = "13.6.1"
+maplibre = "13.7.1"
 # room-testing needs serialization 1.8+; pin the whole family so app and tests agree.
 serialization = "1.8.1"
 
