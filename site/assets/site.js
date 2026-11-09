@@ -6,8 +6,7 @@
 var STORES = {
   "github": {"live": true, "url": "https://github.com/konkomaji/geotagcamera/releases/latest", "img": "get-it-on-github.png", "alt": "Get it on GitHub", "note": "Signed APKs and SHA-256 checksums"},
   "fdroid": {"live": false, "url": "https://f-droid.org/packages/com.geotagcamera.geotagginglocationonphoto/", "img": "get-it-on-fdroid.png", "alt": "Get it on F-Droid", "note": "Built from source by F-Droid"},
-  "izzy": {"live": false, "url": "https://apt.izzysoft.de/fdroid/index/apk/com.geotagcamera.geotagginglocationonphoto", "img": "izzyondroid.png", "alt": "Get it at IzzyOnDroid", "note": "IzzyOnDroid F-Droid repository"},
-  "obtainium": {"live": true, "url": "obtainium://add/https://github.com/konkomaji/geotagcamera", "img": "obtainium.png", "alt": "Get it on Obtainium", "note": "Opens Obtainium if installed. Otherwise add github.com/konkomaji/geotagcamera in Obtainium."}
+  "play": {"live": false, "url": "https://play.google.com/store/apps/details?id=com.geotagcamera.geotagginglocationonphoto", "img": "get-it-on-google-play.png", "alt": "Get it on Google Play", "note": "Automatic updates through Google Play"}
 };
 /* END STORES */
 

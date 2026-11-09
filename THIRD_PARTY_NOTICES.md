@@ -46,8 +46,9 @@ The stamp map is drawn on the phone from vector tiles downloaded at run time. No
 | [MapLibre Native for Android](https://github.com/maplibre/maplibre-native) (`org.maplibre.gl:android-sdk-opengl`) | MapLibre contributors, MapTiler.com, Mapbox | [BSD 2-Clause](LICENSES/MapLibre-BSD-2-Clause.txt). Its own dependencies (GeoJSON/Turf, gestures, Timber) are under Apache 2.0, MIT or BSD |
 | [OkHttp](https://github.com/square/okhttp) and [Okio](https://github.com/square/okio) (pulled in by Coil) | Square, Inc. | [Apache 2.0](LICENSES/Apache-2.0.txt) |
 | [Google Play services Location](https://developers.google.com/android/guides/setup) (`play-services-location`) | Google LLC | [Android Software Development Kit License](https://developer.android.com/studio/terms) and Google APIs Terms of Service. Not open source |
+| [Google Analytics for Firebase](https://firebase.google.com/docs/analytics) (`firebase-analytics`) | Google LLC | [Firebase terms](https://firebase.google.com/terms) and Google APIs Terms of Service. Not open source |
 
-Google Play services Location is proprietary and is only included in the `play` build intended for Google Play. The APKs published on GitHub, F-Droid and IzzyOnDroid are the `foss` build, which contains no Google Play services and no other non-free component.
+Google Play services Location and Google Analytics for Firebase are proprietary and are only included in the `play` build intended for Google Play, where analytics stays off unless the user agrees. The APKs published on GitHub and F-Droid are the `foss` build, which contains no Google Play services, no analytics and no other non-free component.
 
 CameraX Extensions is only the open-source interface. The Night, HDR, Portrait and other modes themselves are provided by the phone maker's own software already on the device, when the phone has them. Nothing from the phone maker is bundled in the app.
 

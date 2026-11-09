@@ -4,6 +4,32 @@ All notable changes to this project are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows [Semantic Versioning](https://semver.org/).
 
+## [1.4.2] - 2026-11-09
+
+Fixes from the F-Droid review and GitHub issue #11, a new way to report problems, and a hardening pass so the app never loses a photo or gives a wrong verdict when something goes wrong. Installs over 1.4.0 and 1.4.1 and keeps your photos, projects and settings.
+
+### Fixed
+- **Bearing** ([#11](https://github.com/konkomaji/geotagcamera/issues/11)) is now the compass direction the camera faces, read from the phone's orientation sensors and corrected to true north, at the moment you press the shutter. Before, it was the GPS direction of travel, which is empty or wrong when you stand still.
+- **Altitude** is now height above sea level. GPS reports height above a mathematical ellipsoid, which was off by up to about 100 m depending on where you are (about 47 m too high in Graz). Works offline.
+- **Stamp date and time** follow your phone's language and region, for example "Mittwoch, 14.10.2026, 23:36" in German, instead of a fixed day/month/year and 12-hour clock.
+- **Verify** no longer says "Edited" when it simply couldn't check a photo (for example when the phone is low on memory). It says it couldn't read it.
+- The **PDF report** says why a photo is missing (deleted, access removed, not enough memory) instead of always "not found".
+
+### Changed
+- **Report a problem** sends your report straight to the developer, no email app needed. You can attach up to 3 screenshots and one screen recording; screenshots are cleaned of hidden data, including GPS, before sending. You see everything that's included first, and nothing is sent until you press Send. Email and GitHub still work too.
+- The app now also notices freezes and crashes in its native parts (maps, camera drivers) on Android 11 and newer, and offers to report them.
+- A photo signed with another phone's key now reads "Matches its signature" in neutral colours instead of a green "Verified": anyone can create a key, so it proves the file is unchanged, not who took it. Photos from your own phone still show Verified.
+- **Buy me a coffee** link in Settings and About (GitHub and F-Droid versions).
+
+### Security and reliability
+- A location from a mock-location app is never signed; the photo is saved without a signature and the app says why.
+- If the phone's secure key store fails, the signing key is renewed automatically; if it still can't sign, the photo is saved unsigned instead of being lost. Low memory while stamping retries at half resolution instead of dropping the shot.
+- Disk, database and settings errors no longer crash the app; they're logged and shown as a short message.
+- Leftover temporary captures (which contain GPS) are removed when the app starts.
+
+### Google Play version (coming soon)
+- The Google Play build can send anonymous usage statistics through Google Analytics, only if you agree; both options are off until you choose, and Settings can change them. The GitHub and F-Droid versions contain no analytics. See [PRIVACY.md](PRIVACY.md).
+
 ## [1.4.1] - 2026-10-14
 
 A maintenance release with no new features. It makes the build reproducible, so F-Droid can publish the same signed APK as GitHub. 1.4.1 installs over 1.4.0 and keeps your photos, projects and settings.

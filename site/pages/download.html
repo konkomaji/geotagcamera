@@ -1,7 +1,7 @@
 <div class="wrap page-head">
   <p class="eyebrow">Download &middot; Version {{version}}</p>
   <h1>Download and install</h1>
-  <p>GeoTag Camera is free and installs from a signed APK, without Google Play. Here's which file to pick, how to check it, and how to install it.</p>
+  <p>GeoTag Camera is free. Right now it installs from a signed APK on GitHub; F-Droid and Google Play are coming soon. Here's which file to pick, how to check it, and how to install it.</p>
 </div>
 
 <div class="wrap page-body">
@@ -12,7 +12,7 @@
     </div>
 
     <h2 id="get-it">Get it from</h2>
-    <p>GitHub is the official source; every other channel pulls from it. F-Droid is <a href="https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52533">reviewing the submission</a> and IzzyOnDroid is next; their badges will light up here once they're live. Because the builds are reproducible, the F-Droid APK will carry the same signature as the GitHub one, so you can switch between them without reinstalling.</p>
+    <p>The signed APK on GitHub is available now. F-Droid is <a href="https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52533">reviewing the submission</a> and the Google Play release is being prepared; their badges light up here once they're live. Because the builds are reproducible, the F-Droid APK will carry the same signature as the GitHub one, so you can switch between them without reinstalling. GeoTag Camera is published only on GitHub, F-Droid and Google Play: an APK from anywhere else is not from this project.</p>
 {{stores}}
 
     <h2 id="which-apk">Which APK do I need?</h2>
@@ -64,10 +64,13 @@ Get-Content .\geotagcamera-v{{version}}-arm64-v8a.apk.sha256</code></pre>
     <h2 id="updating">Updating</h2>
     <p>From 1.4.0 on, every release is signed with the same key, so a newer APK installs over the old one and keeps your photos, projects and settings. Download it the same way and open it.</p>
     <ul>
-      <li><strong>Obtainium</strong> can watch the GitHub releases and update the app for you. Add <code>https://github.com/konkomaji/geotagcamera</code> and, if it asks, filter APKs by <code>arm64-v8a</code>.</li>
       <li><strong>GitHub</strong>: on the repository, choose Watch, Custom, Releases to get an email when a new version is out.</li>
-      <li>Once the F-Droid and IzzyOnDroid listings are live, their client apps will handle updates too, and they install over a GitHub APK.</li>
+      <li>Once the F-Droid listing is live, the F-Droid app will handle updates too, and it installs over a GitHub APK. The Google Play version is a separate listing with its own updates.</li>
     </ul>
+
+    <h2 id="support-project">Support the project</h2>
+    <p>GeoTag Camera is free, with no ads, and one person builds it in their spare time. If it saves you work, you can buy me a coffee. It's entirely optional and doesn't unlock anything.</p>
+    <p><a class="btn btn-filled" href="https://www.buymeacoffee.com/konko" rel="noopener">Buy me a coffee</a></p>
 
     <h2 id="requirements">System requirements</h2>
     <ul class="req-list">

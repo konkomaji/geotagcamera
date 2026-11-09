@@ -13,7 +13,7 @@
 - Google Play services: not needed; location comes from Android's own location services
 - Permissions: camera; location (only while the camera screen is visible); photo location (so Verify can read GPS data in a picked photo); storage only on Android 9 and older; internet only for the stamp map, offline map downloads and the optional weather chip
 - Downloads: signed APKs on GitHub releases, one per CPU type (arm64-v8a, armeabi-v7a, x86_64) plus universal, each with a .sha256 file
-- Stores: GitHub releases and Obtainium now; F-Droid submission in review (reproducible builds, same signature as GitHub), IzzyOnDroid next; not on Google Play
+- Stores: GitHub releases now (the only official download today); F-Droid (submission in review, reproducible builds, same signature as GitHub) and Google Play coming soon. Not published anywhere else.
 - Upgrading from 1.3.0 or older: uninstall first (new permanent signing key); photos stay in the gallery and still verify; Gallery, Import photos re-adds them to the in-app list
 - Author: Konko Maji (konkomaji@gmail.com)
 

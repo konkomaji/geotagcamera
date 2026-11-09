@@ -11,7 +11,7 @@ requests, no analytics, no cookies. All internal links are relative, so the fold
 | `build.py` | Builds, checks and zips the site. Python 3.9+, standard library only |
 | `pages/` | Hand-written page bodies (home, download, support, 404). `{{root}}`, `{{home}}`, `{{version}}`, `{{stores}}`, `{{faq}}`, `{{screens}}`, `{{dl}}`, `{{mailto}}` are filled in by build.py |
 | `assets/site.css`, `assets/site.js` | Styles and the small script (theme toggle, menu, store badges) |
-| `assets/site.js` `STORES` | Which store badges are live. Set `"live": true` for F-Droid or IzzyOnDroid once listed, then rebuild |
+| `assets/site.js` `STORES` | Which store badges are live. Set `"live": true` for F-Droid or Google Play once listed, then rebuild |
 | `assets/fonts/` | Poppins and Roboto Mono, copied from `app/src/main/res/font/` (OFL 1.1) |
 | `assets/badges/` | Official store badges; sources and licences in its README |
 | `assets/screens/1.png`..`6.png` | App screenshots (captions in `SCREENS` in build.py) |

@@ -93,10 +93,10 @@ FAQ = [
      "treats them as different apps. Uninstall the old version first, then install 1.4.0. Your photos stay in the gallery "
      "and still verify, and Gallery, Import photos re-adds them to the in-app list. Later updates install in place."),
     ("Is it on F-Droid or Google Play?",
-     "Not yet. The app is submitted to F-Droid and in review, and IzzyOnDroid is next; the download page will link them "
-     "once they're live. The builds are reproducible, so the F-Droid APK will have the same signature as the GitHub one "
-     "and you can switch without reinstalling. Until then, install the signed APK from GitHub, or let Obtainium keep it "
-     "updated from there. A Play Store release may come later."),
+     "Both are coming soon. The F-Droid submission is in review, and the Google Play release is being prepared. "
+     "Right now the signed APK on GitHub is the only official download. The builds are reproducible, so the F-Droid "
+     "APK will have the same signature as the GitHub one and you can switch without reinstalling. The app won't be "
+     "published anywhere else, so an APK from any other site is not from this project."),
     ("Is the APK really built from the public source code?",
      "Yes, and you can check it. From 1.4.1 the build is reproducible: building a tagged version from the GitHub source "
      "gives a byte-identical APK. A CI job rebuilds every release on Debian with OpenJDK 17 and 21 and compares it with "
@@ -467,6 +467,7 @@ def footer_html():
           <li><a href="{REPO_URL}/releases">All releases</a></li>
           <li><a href="{REPO_URL}/issues">Issues</a></li>
           <li><a href="{{{{root}}}}support/#security">Report a security issue</a></li>
+          <li><a href="{{{{root}}}}support/#donate">Buy me a coffee</a></li>
         </ul>
       </nav>
     </div>
@@ -660,7 +661,7 @@ def read_stores():
 
 
 def stores_html(stores):
-    order = ["github", "fdroid", "izzy", "obtainium"]
+    order = ["github", "fdroid", "play"]
     parts = []
     for key in order:
         c = stores[key]
@@ -738,9 +739,9 @@ def license_texts_html():
 WEBSITE_NOTICES = """<h2 id="this-website">This website<a class="anchor" href="#this-website" aria-label="Link to this section">#</a></h2>
 <p>The website uses the same Poppins and Roboto Mono font files as the app, served from this site under the
 <a href="#license-ofl-1-1">SIL Open Font License 1.1</a>. It loads nothing from other servers.</p>
-<p>The store badges belong to their projects and are used only to link to those listings: the F-Droid badge is
-F-Droid artwork, the IzzyOnDroid badge comes from the IzzyOnDroid repository, the Obtainium badge from the Obtainium
-project, and the "Get it on GitHub" badge from Kunzisoft's Github-badge project. GitHub is a trademark of GitHub, Inc.</p>"""
+<p>The store badges belong to their owners and are used only to link to those listings: the F-Droid badge is
+F-Droid artwork, the "Get it on GitHub" badge comes from Kunzisoft's Github-badge project, and the Google Play badge is
+Google's. GitHub is a trademark of GitHub, Inc. Google Play and the Google Play logo are trademarks of Google LLC.</p>"""
 
 
 def generated_body(page):

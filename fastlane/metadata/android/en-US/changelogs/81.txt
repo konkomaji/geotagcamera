@@ -1,0 +1,7 @@
+- Bearing is now the compass direction the camera faces (#11)
+- Altitude above sea level, not GPS ellipsoid height
+- Stamp date follows your language and region
+- Report a problem sends directly, with screenshots or a screen recording
+- Verify never says Edited when it couldn't check
+- Mock locations are never signed; a photo is never lost to a key or memory error
+- Fewer crashes from storage and database errors

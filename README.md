@@ -9,7 +9,7 @@
 <p align="center">
   <b>Free, open source GPS camera for field work.</b><br>
   Stamps location, address and time on every photo, signs it on the phone, and works with no signal.<br>
-  No ads. No paywall. No account. No tracking.
+  No ads. No paywall. No account.
 </p>
 
 <p align="center">
@@ -23,9 +23,16 @@
   <a href="https://github.com/konkomaji/geotagcamera/actions/workflows/reproducible.yml"><img src="https://github.com/konkomaji/geotagcamera/actions/workflows/reproducible.yml/badge.svg" alt="Reproducible build check"></a>
 </p>
 
+<table align="center">
+  <tr>
+    <td align="center"><a href="https://github.com/konkomaji/geotagcamera/releases/latest"><img src="site/assets/badges/get-it-on-github.png" alt="Get it on GitHub" height="64"></a><br><b>Available now</b></td>
+    <td align="center"><img src="site/assets/badges/get-it-on-fdroid.png" alt="F-Droid (coming soon)" height="64"><br><a href="https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52533">Coming soon</a></td>
+    <td align="center"><img src="site/assets/badges/get-it-on-google-play.png" alt="Google Play (coming soon)" height="64"><br>Coming soon</td>
+  </tr>
+</table>
+
 <p align="center">
-  <a href="https://github.com/konkomaji/geotagcamera/releases/latest"><img src="site/assets/badges/get-it-on-github.png" alt="Get it on GitHub" height="64"></a>
-  <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/konkomaji/geotagcamera"><img src="site/assets/badges/obtainium.png" alt="Get it on Obtainium" height="64"></a>
+  <a href="https://www.buymeacoffee.com/konko" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" height="60" width="217"></a>
 </p>
 
 <p align="center">
@@ -66,7 +73,7 @@ Most geotagging camera apps make you sit through ads before the camera opens, lo
 | **Proof** | Every photo is hashed with SHA-256 and signed in the Android Keystore; any copy of the app can verify it offline |
 | **Offline** | Capture, stamp, sign and verify with no signal; save map areas before a trip |
 | **Export** | CSV, KML (Google Earth), GeoJSON (QGIS, ArcGIS) and PDF site reports |
-| **Privacy** | No ads, analytics, trackers or account; nothing is sent to the developer |
+| **Privacy** | No ads or account. GitHub and F-Droid versions: no analytics or trackers at all. The developer only gets the problem reports you send |
 | **Freedom** | GPL-3.0-or-later, no Google Play services, reproducible builds |
 
 ## Features
@@ -113,10 +120,13 @@ Most geotagging camera apps make you sit through ads before the camera opens, lo
 
 ## Install
 
-<a href="https://github.com/konkomaji/geotagcamera/releases/latest"><img src="site/assets/badges/get-it-on-github.png" alt="Get it on GitHub" height="56"></a>
-<a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/konkomaji/geotagcamera"><img src="site/assets/badges/obtainium.png" alt="Get it on Obtainium" height="56"></a>
+| Where | Status |
+|---|---|
+| [GitHub Releases](https://github.com/konkomaji/geotagcamera/releases/latest) | **Available now.** Signed APKs with SHA-256 checksums |
+| F-Droid | Coming soon ([submission in review](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52533)). Reproducible builds, so the F-Droid APK carries the same signature as GitHub's and you can switch without reinstalling |
+| Google Play | Coming soon |
 
-F-Droid: [submission in review](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52533). Because the builds are reproducible, the F-Droid and GitHub APKs carry the same signature, so you can switch between them without reinstalling.
+GeoTag Camera is published only on GitHub, F-Droid and Google Play. An APK from any other site is not from this project.
 
 1. Download the APK for your phone from the [latest release](https://github.com/konkomaji/geotagcamera/releases/latest):
 
@@ -131,12 +141,10 @@ F-Droid: [submission in review](https://gitlab.com/fdroid/fdroiddata/-/merge_req
 3. Open the APK on your phone. The first time, Android asks you to allow installs from your browser or file manager; allow it for that app only.
 4. Open GeoTag Camera and allow camera and location.
 
-With Obtainium, add `https://github.com/konkomaji/geotagcamera` and filter APKs by `arm64-v8a` (or your phone's ABI).
-
 > [!IMPORTANT]
 > **Coming from 1.3.0 or older?** Those builds were signed with a development key. Uninstall the old version first, then install the latest. Photos already in your gallery stay there and still verify. From 1.4.0 on, every release uses the same permanent key and updates in place.
 
-Requires Android 8.0 or newer. Google Play services are not needed.
+Requires Android 8.0 or newer. The GitHub and F-Droid versions don't need Google Play services.
 
 ## Using the app
 
@@ -195,7 +203,11 @@ App data is excluded from Android backup, cloud backup and device-to-device tran
 | Location | While camera is open | Handled by Android's own location services, which may use Wi-Fi and cell data | Android |
 | Sharing a photo | When you choose | The file with its EXIF (exact GPS, altitude, time), stamp and proof | Whoever you send it to |
 
-There are no ads, analytics, crash reporters or tracking SDKs in the app.
+There are no ads and no automatic crash reporting. The GitHub and F-Droid versions contain no analytics or tracking SDK at all.
+
+The **Google Play version** (coming soon) adds one thing: anonymous usage statistics through Google Analytics for Firebase, **only if you agree** when the app asks. Both options (usage, and approximate demographics) start switched off, and you can change them in Settings. Photos, locations, addresses and anything you type are never sent. Details: [PRIVACY.md](PRIVACY.md#google-play-version-usage-statistics).
+
+**Problem reports** go to the developer only when you press Send, and you see what's included first. Screenshots are cleaned of hidden data (including GPS) before sending.
 
 ## Permissions
 
@@ -247,9 +259,15 @@ Release builds are reproducible: building a tagged version from source gives a b
 
 ## Project status
 
-Current version: **1.4.1**, a maintenance release that makes the build reproducible so F-Droid can ship the same signed APK as GitHub. 1.4.0 was the first full release, with projects, stamp notes, CSV/KML/GeoJSON export, PDF site reports and no Google Play services. Full history: [CHANGELOG.md](CHANGELOG.md).
+Current version: **1.4.2**: compass bearing, sea-level altitude, locale-aware stamp dates, in-app problem reports with screenshots, and a reliability and security pass. 1.4.0 was the first full release, with projects, stamp notes, CSV/KML/GeoJSON export, PDF site reports and no Google Play services. Full history: [CHANGELOG.md](CHANGELOG.md).
 
-Found a bug? [Open an issue](https://github.com/konkomaji/geotagcamera/issues), or use **Report a problem** in the app.
+Found a bug? Use **Report a problem** in the app (it goes straight to the developer, screenshots and screen recordings welcome), or [open an issue](https://github.com/konkomaji/geotagcamera/issues).
+
+## Support the project
+
+GeoTag Camera is free, with no ads and no paid version, built by one person in their spare time. If it's useful to you, a coffee helps keep it going. It's optional and doesn't unlock anything.
+
+<a href="https://www.buymeacoffee.com/konko" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" height="60" width="217"></a>
 
 ## Contributing
 
