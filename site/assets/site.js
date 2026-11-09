@@ -165,13 +165,15 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       return out;
     };
-    var original = demoHash('pixels:original|22.866412,88.401837|2026-11-09T10:42');
+    var original = demoHash('pixels:original|23.221300,88.366000|2026-11-09T10:42');
     signedHash.textContent = original.slice(0, 32) + '…';
     var render = function () {
       var edits = $$('[data-edit][aria-pressed="true"]', proof).map(function (b) { return b.getAttribute('data-edit'); });
       shot.classList.toggle('bright', edits.indexOf('bright') >= 0);
       shot.classList.toggle('cropped', edits.indexOf('crop') >= 0);
-      if (gps) gps.textContent = edits.indexOf('gps') >= 0 ? '28.613900, 77.209000' : '22.866412, 88.401837';
+      var where = edits.indexOf('gps') >= 0 ? '22.572600, 88.363900' : '23.221300, 88.366000';
+      if (gps) gps.textContent = where;
+      var st = $('[data-proof="stamp"]', proof); if (st) st.textContent = where + ' \u00B7 09/11/2026 10:42';
       var now = edits.length ? demoHash('pixels:' + edits.join(',') + '|x') : original;
       nowHash.textContent = now.slice(0, 32) + '…';
       nowHash.classList.toggle('diff', edits.length > 0);
