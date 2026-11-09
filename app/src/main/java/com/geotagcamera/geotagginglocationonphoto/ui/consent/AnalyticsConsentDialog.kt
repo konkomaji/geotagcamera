@@ -16,6 +16,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,7 +37,7 @@ import com.geotagcamera.geotagginglocationonphoto.analytics.Analytics
 @Composable
 fun AnalyticsConsentDialog(onDone: () -> Unit) {
     val context = LocalContext.current
-    val current = Analytics.consent.value
+    val current by Analytics.consent.collectAsState()
     var usage by rememberSaveable { mutableStateOf(current.usage) }
     var demographics by rememberSaveable { mutableStateOf(current.demographics) }
 

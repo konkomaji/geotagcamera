@@ -53,6 +53,42 @@ Builds:
     gradleprops:
       - abi=x86_64
 
+  - versionName: 1.4.2
+    versionCode: 81
+    commit: b1fab5b852975f444e9588abbc79768f4d1ce93f
+    subdir: app
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/app-foss-armeabi-v7a-release-unsigned.apk
+    binary: 
+      https://github.com/konkomaji/geotagcamera/releases/download/v%v/geotagcamera-v%v-armeabi-v7a.apk
+    gradleprops:
+      - abi=armeabi-v7a
+
+  - versionName: 1.4.2
+    versionCode: 82
+    commit: b1fab5b852975f444e9588abbc79768f4d1ce93f
+    subdir: app
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/app-foss-arm64-v8a-release-unsigned.apk
+    binary: 
+      https://github.com/konkomaji/geotagcamera/releases/download/v%v/geotagcamera-v%v-arm64-v8a.apk
+    gradleprops:
+      - abi=arm64-v8a
+
+  - versionName: 1.4.2
+    versionCode: 83
+    commit: b1fab5b852975f444e9588abbc79768f4d1ce93f
+    subdir: app
+    gradle:
+      - foss
+    output: build/outputs/apk/foss/release/app-foss-x86_64-release-unsigned.apk
+    binary: 
+      https://github.com/konkomaji/geotagcamera/releases/download/v%v/geotagcamera-v%v-x86_64.apk
+    gradleprops:
+      - abi=x86_64
+
 AllowedAPKSigningKeys: eae984802fad821182bc3147c0f5067564f402833f56491146f25b600026f797
 
 AutoUpdateMode: Version
@@ -62,5 +98,5 @@ VercodeOperation:
   - 10 * %c + 2
   - 10 * %c + 3
 UpdateCheckData: app/build.gradle.kts|versionCode\s*=\s*(\d+)|.|versionName\s*=\s*"([^"]+)"
-CurrentVersion: 1.4.1
-CurrentVersionCode: 73
+CurrentVersion: 1.4.2
+CurrentVersionCode: 83
