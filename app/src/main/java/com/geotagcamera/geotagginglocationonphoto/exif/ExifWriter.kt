@@ -41,7 +41,7 @@ object ExifWriter {
         val offset = SimpleDateFormat("XXX", Locale.US).format(capturedAtEpochMs)
         exif.setAttribute(ExifInterface.TAG_OFFSET_TIME, offset)
         exif.setAttribute(ExifInterface.TAG_OFFSET_TIME_ORIGINAL, offset)
-        // Horizontal accuracy and direction of travel, when the fix has them.
+        // Horizontal accuracy, and the compass direction the camera faced (true north).
         fix.accuracyMeters?.takeIf { it.isFinite() && it >= 0f }?.let {
             exif.setAttribute(ExifInterface.TAG_GPS_H_POSITIONING_ERROR, "${(it * 100).toInt()}/100")
         }

@@ -14,6 +14,7 @@ import androidx.core.location.LocationRequestCompat
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
@@ -28,6 +29,7 @@ import kotlin.coroutines.resume
  * Last-known fixes older than [MAX_LAST_KNOWN_AGE_MS] are never used.
  */
 class LocationProvider(context: Context) {
+    private val appContext = context.applicationContext
     private val manager = context.applicationContext.getSystemService(LocationManager::class.java)
     private val executor = ContextCompat.getMainExecutor(context.applicationContext)
 
@@ -42,7 +44,7 @@ class LocationProvider(context: Context) {
 
     /** Fixes every couple of seconds until the collector stops. Needs a location permission. */
     @SuppressLint("MissingPermission")
-    fun updates(intervalMs: Long = 2_000L): Flow<LocationFix> = callbackFlow {
+    fun updates(intervalMs: Long = 2_000L): Flow<LocationFix> = callbackFlow<Location> {
         val lm = manager
         if (lm == null) { close(); return@callbackFlow }
         val request = LocationRequestCompat.Builder(intervalMs)
@@ -53,7 +55,7 @@ class LocationProvider(context: Context) {
         val listener = LocationListenerCompat { location ->
             if (isBetter(location, best)) {
                 best = location
-                trySend(location.toFix())
+                trySend(location)
             }
         }
         val registered = providers().count { provider ->
@@ -61,7 +63,7 @@ class LocationProvider(context: Context) {
         }
         if (registered == 0) close()
         awaitClose { runCatching { LocationManagerCompat.removeUpdates(lm, listener) } }
-    }
+    }.map { it.toLocationFix(appContext) }
 
     @SuppressLint("MissingPermission")
     suspend fun getFreshFix(freshFixTimeoutMs: Long = 8_000L): LocationFix? {
@@ -74,24 +76,25 @@ class LocationProvider(context: Context) {
     private suspend fun requestCurrentLocation(): LocationFix? {
         val lm = manager ?: return null
         val provider = providers().firstOrNull() ?: return null
-        return suspendCancellableCoroutine { cont ->
+        val location = suspendCancellableCoroutine<Location?> { cont ->
             val signal = CancellationSignal()
             cont.invokeOnCancellation { signal.cancel() }
             runCatching {
                 LocationManagerCompat.getCurrentLocation(lm, provider, signal, executor) { location ->
-                    if (cont.isActive) cont.resume(location?.toFix())
+                    if (cont.isActive) cont.resume(location)
                 }
             }.onFailure { if (cont.isActive) cont.resume(null) }
         }
+        return location?.toLocationFix(appContext)
     }
 
     @SuppressLint("MissingPermission")
-    private fun getLastKnownFix(): LocationFix? {
+    private suspend fun getLastKnownFix(): LocationFix? {
         val lm = manager ?: return null
         return providers()
             .mapNotNull { runCatching { lm.getLastKnownLocation(it) }.getOrNull() }
             .maxByOrNull { it.elapsedRealtimeNanos }
-            ?.toFix()
+            ?.toLocationFix(appContext)
     }
 
     /** Newer wins unless it is much less accurate than a fix that is still recent. */
@@ -105,15 +108,6 @@ class LocationProvider(context: Context) {
         return accDelta <= 0f || (accDelta < 50f && candidate.provider == current.provider)
     }
 
-    private fun Location.toFix() = LocationFix(
-        latitude = latitude,
-        longitude = longitude,
-        altitudeMeters = if (hasAltitude()) altitude else null,
-        accuracyMeters = if (hasAccuracy()) accuracy else null,
-        bearingDegrees = if (hasBearing()) bearing else null,
-        timestampEpochMs = time,
-        elapsedRealtimeNanos = elapsedRealtimeNanos.takeIf { it > 0L }
-    )
 
     companion object {
         /** Same limit the capture path applies to streamed fixes: nothing older is ever stamped. */

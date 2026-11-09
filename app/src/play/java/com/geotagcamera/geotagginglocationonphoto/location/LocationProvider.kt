@@ -2,6 +2,7 @@ package com.geotagcamera.geotagginglocationonphoto.location
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Location
 import android.os.Looper
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationCallback
@@ -13,6 +14,7 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
@@ -32,18 +34,19 @@ import kotlin.coroutines.resume
  * geotag, because it looks right.
  */
 class LocationProvider(context: Context) {
+    private val appContext = context.applicationContext
     private val client = LocationServices.getFusedLocationProviderClient(context.applicationContext)
 
     /** Fixes every couple of seconds until the collector stops. Needs a location permission. */
     @SuppressLint("MissingPermission")
-    fun updates(intervalMs: Long = 2_000L): Flow<LocationFix> = callbackFlow {
+    fun updates(intervalMs: Long = 2_000L): Flow<LocationFix> = callbackFlow<Location> {
         val request = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, intervalMs)
             .setMinUpdateIntervalMillis(intervalMs / 2)
             .setWaitForAccurateLocation(false)
             .build()
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
-                result.lastLocation?.let { trySend(it.toFix()) }
+                result.lastLocation?.let { trySend(it) }
             }
         }
         val registered = runCatching {
@@ -51,7 +54,7 @@ class LocationProvider(context: Context) {
         }.isSuccess
         if (!registered) close()
         awaitClose { client.removeLocationUpdates(callback) }
-    }
+    }.map { it.toLocationFix(appContext) }
 
     @SuppressLint("MissingPermission")
     suspend fun getFreshFix(freshFixTimeoutMs: Long = 8_000L): LocationFix? {
@@ -61,7 +64,7 @@ class LocationProvider(context: Context) {
     }
 
     @SuppressLint("MissingPermission")
-    private suspend fun requestCurrentLocation(): LocationFix? = suspendCancellableCoroutine { cont ->
+    private suspend fun requestCurrentLocation(): LocationFix? = suspendCancellableCoroutine<Location?> { cont ->
         val cancellationSource = CancellationTokenSource()
         cont.invokeOnCancellation { cancellationSource.cancel() }
 
@@ -72,29 +75,20 @@ class LocationProvider(context: Context) {
 
         runCatching {
             client.getCurrentLocation(request, cancellationSource.token)
-                .addOnSuccessListener { location -> if (cont.isActive) cont.resume(location?.toFix()) }
+                .addOnSuccessListener { location -> if (cont.isActive) cont.resume(location) }
                 .addOnFailureListener { if (cont.isActive) cont.resume(null) }
         }.onFailure { if (cont.isActive) cont.resume(null) }
-    }
+    }?.toLocationFix(appContext)
 
     @SuppressLint("MissingPermission")
-    private suspend fun getLastKnownFix(): LocationFix? = suspendCancellableCoroutine { cont ->
+    private suspend fun getLastKnownFix(): LocationFix? = suspendCancellableCoroutine<Location?> { cont ->
         runCatching {
             client.lastLocation
-                .addOnSuccessListener { location -> if (cont.isActive) cont.resume(location?.toFix()) }
+                .addOnSuccessListener { location -> if (cont.isActive) cont.resume(location) }
                 .addOnFailureListener { if (cont.isActive) cont.resume(null) }
         }.onFailure { if (cont.isActive) cont.resume(null) }
-    }
+    }?.toLocationFix(appContext)
 
-    private fun android.location.Location.toFix() = LocationFix(
-        latitude = latitude,
-        longitude = longitude,
-        altitudeMeters = if (hasAltitude()) altitude else null,
-        accuracyMeters = if (hasAccuracy()) accuracy else null,
-        bearingDegrees = if (hasBearing()) bearing else null,
-        timestampEpochMs = time,
-        elapsedRealtimeNanos = elapsedRealtimeNanos.takeIf { it > 0L }
-    )
 
     companion object {
         /** Same limit the capture path applies to streamed fixes: nothing older is ever stamped. */

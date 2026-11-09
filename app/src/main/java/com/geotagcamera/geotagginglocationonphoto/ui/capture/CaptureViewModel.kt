@@ -24,6 +24,7 @@ import com.geotagcamera.geotagginglocationonphoto.exif.UserCommentCodec
 import com.geotagcamera.geotagginglocationonphoto.exif.XmpWriter
 import com.geotagcamera.geotagginglocationonphoto.location.AddressParts
 import com.geotagcamera.geotagginglocationonphoto.location.GeocoderRepository
+import com.geotagcamera.geotagginglocationonphoto.location.CompassHeading
 import com.geotagcamera.geotagginglocationonphoto.location.LocationFix
 import com.geotagcamera.geotagginglocationonphoto.location.LocationProvider
 import com.geotagcamera.geotagginglocationonphoto.location.map.MapEngine
@@ -52,6 +53,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
@@ -119,6 +121,7 @@ data class LiveStampData(
  */
 class CaptureViewModel(application: Application) : AndroidViewModel(application) {
     private val locationProvider = LocationProvider(application)
+    private val compass = CompassHeading(application)
     private val geocoderRepository = GeocoderRepository(application, AppDatabase.get(application).geoCacheDao())
     private val mapEngine = MapEngine(application)
     private val weatherRepository = WeatherRepository()
@@ -177,6 +180,8 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
     val locationChip: StateFlow<LocationChipState> = _locationChip.asStateFlow()
 
     private val _latestFix = MutableStateFlow<LocationFix?>(null)
+    /** Magnetic heading of the back camera while the bearing field is on, else null. */
+    private val _heading = MutableStateFlow<Float?>(null)
     private val _liveData = MutableStateFlow<LiveStampData?>(null)
 
     /** Newest photo in the index: survives restarts and follows deletes made anywhere. */
@@ -213,8 +218,8 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
      * weather from the last resolve near it.
      */
     val liveSpec: StateFlow<StampSpec?> =
-        combine(combine(stampFields, captureNote) { f, n -> f to n }, _liveData, _latestFix, orgLogo, minuteTicker) { (fields, note), data, latest, logo, now ->
-            val fix = latest ?: data?.fix ?: return@combine null
+        combine(combine(stampFields, captureNote) { f, n -> f to n }, _liveData, combine(_latestFix, _heading) { f, h -> f to h }, orgLogo, minuteTicker) { (fields, note), data, (latest, heading), logo, now ->
+            val fix = (latest ?: data?.fix)?.withHeading(heading) ?: return@combine null
             val near = data?.takeIf { distanceMeters(it.fix, fix) <= REUSE_RESOLVE_WITHIN_M }
             runCatching { buildStampSpec(
                 fix = fix,
@@ -238,7 +243,9 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
         val capturedAtEpochMs: Long,
         val squareCrop: Boolean,
         val note: String? = null,
-        val projectId: Long? = null
+        val projectId: Long? = null,
+        /** Magnetic camera heading at the shutter press, like the capture time. */
+        val headingDegrees: Float? = null
     )
 
     init {
@@ -281,6 +288,17 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
                     }
                 }
             }
+            // Compass only while the bearing field is on: the sensors cost battery.
+            launch {
+                try {
+                    stampFields.map { it.showBearing }.distinctUntilChanged().collectLatest { on ->
+                        _heading.value = null
+                        if (on) compass.headings().collect { _heading.value = it }
+                    }
+                } finally {
+                    _heading.value = null
+                }
+            }
             locationProvider.updates().collect { fix ->
                 noFixTimeout.cancel()
                 _latestFix.value = fix
@@ -289,6 +307,10 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
             }
         }
     }
+
+    /** The stamp's bearing: the camera's compass heading, corrected to true north at [this] fix. */
+    private fun LocationFix.withHeading(magneticDegrees: Float?): LocationFix =
+        copy(bearingDegrees = magneticDegrees?.let { CompassHeading.toTrueNorth(it, this) })
 
     private fun locationServicesOn(): Boolean = runCatching {
         val lm = getApplication<Application>().getSystemService(android.location.LocationManager::class.java)
@@ -361,7 +383,8 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
         val capture = PendingCapture(
             file, capturedAt, squareCrop = aspect == CaptureAspect.RATIO_1_1,
             note = captureNote.value.trim().ifEmpty { null },
-            projectId = activeProject.value?.id
+            projectId = activeProject.value?.id,
+            headingDegrees = _heading.value
         )
 
         _uiState.value = CaptureUiState.Processing
@@ -503,7 +526,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             var held = false
             try {
-                val fix = knownFix ?: pickFix(capturedAtEpochMs)
+                val fix = (knownFix ?: pickFix(capturedAtEpochMs))?.withHeading(capture.headingDegrees)
                 if (fix == null) {
                     if (_locationChip.value == LocationChipState.PermissionDenied) {
                         _uiState.value = CaptureUiState.Error("Location is off. Allow location to geotag photos.")

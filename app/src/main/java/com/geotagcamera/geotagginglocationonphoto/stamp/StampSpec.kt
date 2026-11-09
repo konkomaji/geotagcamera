@@ -91,7 +91,7 @@ fun buildStampSpec(
     } else null
 
     val dateTimeText = if (fields.showTimestamp) {
-        SimpleDateFormat("EEEE, dd/MM/yyyy hh:mm a", Locale.getDefault()).format(Date(capturedAtEpochMs))
+        SimpleDateFormat(stampDateTimePattern(Locale.getDefault()), Locale.getDefault()).format(Date(capturedAtEpochMs))
     } else null
 
     val gmtOffsetText = if (fields.showTimestamp && fields.showGmtOffset) formatGmtOffset(capturedAtEpochMs) else null
@@ -129,6 +129,25 @@ fun buildStampSpec(
             fields.customText.trim().takeIf { fields.showCustomText && it.isNotEmpty() }
         ).joinToString("  ·  ").ifEmpty { null }
     )
+}
+
+/**
+ * Weekday plus the locale's own short date and time, with a four-digit year:
+ * "Wednesday, 10/14/2026, 11:36 PM" in the US, "Mittwoch, 14.10.2026, 23:36"
+ * in Germany, "Wednesday, 14/10/2026, 11:36 pm" in India. A fixed
+ * dd/MM/yyyy hh:mm a pattern read wrong outside English locales (F-Droid
+ * review of 1.4.1).
+ */
+internal fun stampDateTimePattern(locale: Locale): String {
+    val short = runCatching {
+        java.time.format.DateTimeFormatterBuilder.getLocalizedDateTimePattern(
+            java.time.format.FormatStyle.SHORT, java.time.format.FormatStyle.SHORT,
+            java.time.chrono.IsoChronology.INSTANCE, locale
+        )
+    }.getOrNull() ?: return "EEEE, dd/MM/yyyy HH:mm"
+    // Short date styles often use a two-digit year; a field record needs all four.
+    val fullYear = Regex("(?<![y'])y{1,2}(?![y'])").replace(short, "yyyy")
+    return "EEEE, $fullYear"
 }
 
 private fun formatGmtOffset(epochMs: Long): String {
