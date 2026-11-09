@@ -972,6 +972,8 @@ def copy_assets():
             (OUT / f.name).write_text(render(f.read_text(encoding="utf-8"), "", {}), encoding="utf-8")
         else:
             shutil.copy2(f, OUT / f.name)
+    # In-app report endpoint (PHP on the Hostinger site, see site/api/report.php).
+    shutil.copytree(SITE / "api", OUT / "api")
 
 
 def write(rel, text):

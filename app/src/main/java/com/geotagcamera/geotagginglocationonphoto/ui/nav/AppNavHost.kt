@@ -98,7 +98,7 @@ fun GeoTagCameraApp(shareUri: String? = null, onShareConsumed: () -> Unit = {}) 
     if (crashOffer) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = {},
-            title = { androidx.compose.material3.Text("GeoTag Camera closed unexpectedly") },
+            title = { androidx.compose.material3.Text("GeoTag Camera closed or froze unexpectedly") },
             text = { androidx.compose.material3.Text("Send the crash details to the developer? You'll see the email before anything is sent. Your photos and locations are not included.") },
             confirmButton = {
                 androidx.compose.material3.TextButton(onClick = { crashOffer = false; navController.navigate(Routes.report(crash = true)) }) {

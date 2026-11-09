@@ -1,0 +1,16 @@
+name: Question
+description: Ask how something works, or whether the app can do something.
+labels: ["question"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: App version and phone (optional)
+      description: The in-app report form fills this in for you.
+      render: text
