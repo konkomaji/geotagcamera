@@ -40,14 +40,17 @@ if (strlen($raw) > 200000) done(413, 'too large');
 // ---- signature ---------------------------------------------------------------------------
 $cfg = @parse_ini_file("$data/bmc.ini");
 $secret = is_array($cfg) ? (string)($cfg['webhook_secret'] ?? '') : '';
-$sig = '';
-foreach (['HTTP_X_SIGNATURE_SHA256', 'HTTP_X_BMC_SIGNATURE', 'HTTP_X_SIGNATURE'] as $h) {
-    if (!empty($_SERVER[$h])) { $sig = trim((string)$_SERVER[$h]); break; }
-}
-$sig = preg_replace('/^sha256=/i', '', $sig) ?? '';
+// BMC's docs name the header differently in different places, so accept any
+// header whose name contains SIGNATURE, as hex or base64, optional "sha256=".
 $hmac = $secret !== '' ? hash_hmac('sha256', $raw, $secret, true) : '';
-$valid = $secret !== '' && $sig !== '' &&
-    (hash_equals(bin2hex($hmac), strtolower($sig)) || hash_equals(base64_encode($hmac), $sig));
+$sig = ''; $valid = false;
+foreach ($_SERVER as $h => $v) {
+    if (!is_string($v) || !str_starts_with($h, 'HTTP_') || !str_contains($h, 'SIGNATURE')) continue;
+    $cand = preg_replace('/^sha256=/i', '', trim($v)) ?? '';
+    $sig = $cand;
+    if ($secret !== '' && $cand !== '' &&
+        (hash_equals(bin2hex($hmac), strtolower($cand)) || hash_equals(base64_encode($hmac), $cand))) { $valid = true; break; }
+}
 
 if (!$valid) {
     // Header names only, so a misconfiguration can be diagnosed without storing the payload.
