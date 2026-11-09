@@ -15,6 +15,8 @@ class GeoTagCameraApp : Application() {
     override fun onCreate() {
         super.onCreate()
         com.geotagcamera.geotagginglocationonphoto.support.AppLog.init(this)
+        // Google Play build only, and only after consent; a no-op in the foss build.
+        com.geotagcamera.geotagginglocationonphoto.analytics.Analytics.init(this)
         com.geotagcamera.geotagginglocationonphoto.support.CrashCatcher.install(this)
         // Native crashes and freezes from the last run (Android 11+), kept for the crash offer.
         appScope.launch(Dispatchers.IO) { runCatching { com.geotagcamera.geotagginglocationonphoto.support.CrashCatcher.collectSystemExits(this@GeoTagCameraApp) } }

@@ -17,3 +17,5 @@
 /docs/
 # Release signing secrets: never committed
 /keystore.properties
+/firebase.properties
+google-services.json

@@ -1,5 +1,6 @@
 package com.geotagcamera.geotagginglocationonphoto.ui.nav
 
+import androidx.compose.runtime.collectAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -91,6 +92,17 @@ fun GeoTagCameraApp(shareUri: String? = null, onShareConsumed: () -> Unit = {}) 
 
     // After a crash, offer (never force) to email the details, once the camera is up.
     val appContext = androidx.compose.ui.platform.LocalContext.current
+
+    // Google Play build: ask about usage statistics once, on the camera after onboarding.
+    val analyticsConsent by com.geotagcamera.geotagginglocationonphoto.analytics.Analytics.consent.collectAsState()
+    if (com.geotagcamera.geotagginglocationonphoto.analytics.Analytics.isAvailable &&
+        !analyticsConsent.asked && currentRoute == Tab.Capture.route
+    ) {
+        com.geotagcamera.geotagginglocationonphoto.ui.consent.AnalyticsConsentDialog(onDone = {})
+    }
+    androidx.compose.runtime.LaunchedEffect(currentRoute) {
+        com.geotagcamera.geotagginglocationonphoto.analytics.Analytics.screen(currentRoute)
+    }
 
     // Errors from background work anywhere in the app (see util/SafeCoroutines.kt).
     androidx.compose.runtime.LaunchedEffect(Unit) {

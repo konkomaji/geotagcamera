@@ -206,6 +206,7 @@ fun ReportProblemScreen(onBack: () -> Unit, fromCrash: Boolean = false) {
                             when (result) {
                                 is ReportSender.Result.Sent -> {
                                     sentId = result.id
+                                    com.geotagcamera.geotagginglocationonphoto.analytics.Analytics.event("report_sent", mapOf("kind" to kind.name.lowercase(), "attachments" to attachments.size))
                                     if (crash != null) CrashCatcher.clear(context)
                                     attachments.clear()
                                     ReportAttachments.clear(context)

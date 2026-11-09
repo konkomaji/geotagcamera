@@ -1,5 +1,7 @@
 package com.geotagcamera.geotagginglocationonphoto.ui.settings
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.material.icons.outlined.Insights
 import com.geotagcamera.geotagginglocationonphoto.BuildConfig
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.material.icons.outlined.LocalCafe
@@ -324,6 +326,20 @@ private fun SettingsContent(
             NavRow(Icons.Outlined.Info, "About & legal", "Privacy, terms, licences, delete app data", onOpenAboutLegal)
             HorizontalDivider(Modifier.padding(start = 56.dp))
             NavRow(Icons.Outlined.BugReport, "Report a problem", "Email the developer, with device details if you like", onOpenReport)
+            if (com.geotagcamera.geotagginglocationonphoto.analytics.Analytics.isAvailable) {
+                var showConsent by remember { mutableStateOf(false) }
+                val consent by com.geotagcamera.geotagginglocationonphoto.analytics.Analytics.consent.collectAsState()
+                HorizontalDivider(Modifier.padding(start = 56.dp))
+                NavRow(
+                    Icons.Outlined.Insights, "Usage statistics",
+                    when {
+                        consent.demographics -> "On, with approximate demographics"
+                        consent.usage -> "On, anonymous usage only"
+                        else -> "Off"
+                    }
+                ) { showConsent = true }
+                if (showConsent) com.geotagcamera.geotagginglocationonphoto.ui.consent.AnalyticsConsentDialog(onDone = { showConsent = false })
+            }
             if (BuildConfig.DONATE_URL.isNotEmpty()) {
                 val uriHandler = LocalUriHandler.current
                 HorizontalDivider(Modifier.padding(start = 56.dp))

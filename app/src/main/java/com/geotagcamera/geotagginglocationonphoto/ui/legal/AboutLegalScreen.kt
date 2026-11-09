@@ -73,10 +73,16 @@ fun AboutLegalScreen(
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold
             )
-            Body("Free and open source. No ads, no accounts, no tracking.")
-
-            Section("No data collected") {
-                Body("No accounts, no analytics, no ad SDK, no crash reporting. The stamp map downloads map tiles for where you are (and areas you choose to save); weather is off by default.")
+            if (com.geotagcamera.geotagginglocationonphoto.analytics.Analytics.isAvailable) {
+                Body("Free and open source. No ads, no accounts.")
+                Section("Usage statistics (Google Play version)") {
+                    Body("Only if you agree: anonymous usage statistics through Google Analytics, and optionally approximate demographics. Off until you choose; change it in Settings > Usage statistics. Never your photos, locations, addresses or anything you type. The GitHub and F-Droid versions have no analytics at all.")
+                }
+            } else {
+                Body("Free and open source. No ads, no accounts, no tracking.")
+                Section("No data collected") {
+                    Body("No accounts, no analytics, no ad SDK, no automatic crash reporting. The stamp map downloads map tiles for where you are (and areas you choose to save); weather is off by default. Problem reports are sent only when you press Send.")
+                }
             }
 
             Section("What the signature proves") {

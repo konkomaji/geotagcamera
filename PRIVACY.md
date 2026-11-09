@@ -2,9 +2,19 @@
 
 **App:** GeoTag Camera (`com.geotagcamera.geotagginglocationonphoto`)
 **Developer:** Konko Maji, https://github.com/konkomaji
-**Last updated:** 14 October 2026
+**Last updated:** 9 November 2026
 
-GeoTag Camera is a camera app that puts the location and time on your photos. This policy explains, in plain terms, what the app does with your data. The short version: we don't collect anything. There's no account, no server of ours, no ads and no analytics. Your photos and their locations stay on your phone unless you share them or turn on one of the optional online features described below.
+GeoTag Camera is a camera app that puts the location and time on your photos. This policy explains, in plain terms, what the app does with your data.
+
+The short version: there's no account and no ads, and your photos and their locations stay on your phone unless you share them or turn on one of the optional online features described below. The developer only receives something when you send a problem report yourself.
+
+There are two builds of the app, and they differ in one way:
+
+| | GitHub and F-Droid version | Google Play version |
+|---|---|---|
+| Usage statistics | None. No analytics code is included at all. | Only if you agree: Google Analytics for Firebase (see [Google Play version: usage statistics](#google-play-version-usage-statistics)). Off until you choose. |
+| Location provider | Android's own location services | Google Play services (fused location) |
+| Everything else in this policy | Same | Same |
 
 ## What the app stores on your phone
 
@@ -21,7 +31,7 @@ Android backup is turned off for this app, and the app's data is also excluded f
 
 ## What leaves your phone
 
-Nothing is sent to the developer. The only network traffic comes from the features below.
+Nothing is sent to the developer unless you send a problem report. The only network traffic comes from the features below.
 
 ### Stamp map (on by default, can be turned off)
 
@@ -39,7 +49,7 @@ To turn coordinates into an address, the app uses the geocoder built into your p
 
 ### Location
 
-The app gets your location from Android's own location services (GPS, and the phone's network location or fused provider where available). It does not use Google Play services. Depending on your phone's location settings, the system may use Wi-Fi and mobile network information to improve accuracy. That is controlled by your phone's settings, not by this app. GeoTag Camera only receives location updates while the camera screen is open and visible. It stops as soon as you leave the camera screen or the app, and it never uses location in the background.
+The GitHub and F-Droid version gets your location from Android's own location services (GPS, and the phone's network location or fused provider where available) and does not use Google Play services. The Google Play version uses the fused location provider in Google Play services, which Google runs under its own privacy policy. Depending on your phone's location settings, the system may use Wi-Fi and mobile network information to improve accuracy. That is controlled by your phone's settings, not by this app. GeoTag Camera only receives location updates while the camera screen is open and visible. It stops as soon as you leave the camera screen or the app, and it never uses location in the background.
 
 ### When you share a photo
 
@@ -52,23 +62,49 @@ Anyone who receives the file can read all of this. If you don't want to share yo
 
 ### Problem reports (only when you send one)
 
-Report a problem (in About & legal) opens your own email app with a message addressed to konkomaji@gmail.com. Nothing is sent until you press send there. The draft contains what you typed and, if you leave the box ticked, basic device facts: app version, Android version, phone model, CPU type and screen size. It never includes photos, locations or your capture list. If you choose "Attach app log", a short log of the app's own recent messages is attached; you can read it before sending.
+Report a problem (Settings, or About & legal) shows you everything a report will contain before anything is sent. Nothing is sent until you press **Send report**. You can instead send it from your own email app, or post it on GitHub (GitHub issues are public).
 
-If the app crashes, the crash details are kept on the phone only. The next time you open the app it offers to send them the same way; if you decline, they are deleted.
+**What a report contains:** what you typed; if you leave the box ticked, basic device facts (app version and build, Android version, phone model, CPU type, screen size); if you add one, your email address for a reply; and only if you choose them:
+- **Crash details**, from the last time the app closed or froze unexpectedly. These are kept on the phone until you send or delete them; nothing is sent on its own.
+- **App log**, the app's own recent messages. The app's log never records coordinates, addresses or what you type, and lines from map libraries that could name a map area are left out.
+- **Screenshots** (up to 3) and **one screen recording** (up to 20 MB) that you pick. Screenshots are resized and re-saved on your phone before sending, which removes their hidden metadata, including any GPS location. A video can't be cleaned that way: a screen recording has no location, but a video filmed with a camera may contain where it was filmed.
+
+A report never includes your photos, your capture list or your locations.
+
+**Where it goes:** **Send report** uploads it over an encrypted connection (HTTPS) to a small script on this app's own website (konkomaji.com, hosted by Hostinger). The script emails it to the developer at konkomaji@gmail.com and keeps a copy on the web host, outside the public website, so a report isn't lost if email fails. Stored reports and attachments are deleted automatically after 30 days. Screen recordings are not emailed; they are kept on the host for those 30 days only.
+
+To limit abuse, the script also handles your IP address: it stores only a salted one-way hash of it (for IPv6, of its /64 network), used to limit how many reports can be sent per hour and per day, and deletes it within a day. Your IP address itself is not stored. Reports that look like spam are set aside and not emailed.
+
+To have a report deleted sooner, email konkomaji@gmail.com with its reference (shown after sending).
+
+## Google Play version: usage statistics
+
+Only the version installed from Google Play has this, and only if you agree. The first time you open the camera it asks; both options start switched off, and "No thanks" means nothing is collected. You can change your choice at any time in Settings, Usage statistics.
+
+- **Usage statistics:** which screens you open and which features you use (for example, which stamp template, whether the map or weather is on, whether a photo was signed), with the app version, Android version, phone model, country and language. This is sent to **Google Analytics for Firebase**, run by Google, and handled under [Google's privacy policy](https://policies.google.com/privacy) and the [Firebase privacy information](https://firebase.google.com/support/privacy). Google keeps this data for up to 14 months.
+- **Approximate demographics (separate choice):** if you also turn this on, Google estimates an age range, gender and interests using your phone's advertising ID, and the developer sees these only as totals across many users. You can reset or delete your advertising ID in your phone's settings (Google, Ads, or Privacy, Ads).
+
+**Never sent to analytics:** your photos, coordinates, addresses, place names, notes, organization name, or anything you type. Analytics is never used to show you ads: the app has none, and ad personalization is always switched off.
+
+When analytics is off, the Firebase library included in the Google Play version stays switched off and does not send usage data.
+
+The GitHub and F-Droid versions contain no analytics code at all.
 
 ## What we don't do
 
 - No ads.
-- No analytics, telemetry or automatic crash reporting. Crash details are only sent if you choose to email them.
+- No analytics in the GitHub and F-Droid versions. In the Google Play version, only with your consent (above).
+- No automatic crash reporting. Crash details are only sent if you choose to send them.
 - No account or sign-in.
-- No selling or sharing of data, because we don't have any.
+- No selling of data, and nothing is shared for advertising.
 - No background location. Location is only used while the camera screen is visible.
 
 ## Permissions
 
 - **Camera:** to take photos.
 - **Location:** to stamp and tag photos with where they were taken, only while the camera screen is visible.
-- **Internet and network state:** only for the stamp map, offline map downloads and the optional weather feature above (and the Android geocoder, which may use it on its own). Network state is used to warn you before a large download on mobile data.
+- **Internet and network state:** for the stamp map, offline map downloads, the optional weather feature and problem reports you send (and the Android geocoder, which may use it on its own). In the Google Play version also for usage statistics, if you agreed. Network state is used to warn you before a large download on mobile data.
+- **Advertising ID (Google Play version only):** used only if you turn on approximate demographics, so Google can estimate them. Never used for ads.
 - **Photo location (Android 10 and newer):** so Verify can read the GPS data inside a photo you pick and check it against the signature. Without it Android hides that data from the app.
 - **Storage (Android 9 and older only):** to save photos to the gallery.
 
@@ -78,11 +114,11 @@ If the app crashes, the crash details are kept on the phone only. The next time 
 - Uninstalling the app removes all of the above and the signing key.
 - Photos already saved to your gallery are yours. They stay until you delete them yourself.
 
-Because we never receive your data, there's nothing for us to delete on our side.
+On our side: problem reports are deleted automatically after 30 days, or sooner if you ask. Usage statistics in the Google Play version can be stopped any time in Settings; to have data already collected deleted, email konkomaji@gmail.com.
 
 ## Children
 
-The app doesn't collect personal data from anyone, including children.
+The app is not directed at children under 13. The GitHub and F-Droid versions don't collect personal data from anyone. The Google Play version only collects usage statistics after an explicit choice in the app, as described above.
 
 ## Changes to this policy
 

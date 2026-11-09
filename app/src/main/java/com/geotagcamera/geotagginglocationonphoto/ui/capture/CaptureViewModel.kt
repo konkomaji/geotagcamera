@@ -673,6 +673,14 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
                 placeName = geocode?.place
             )
         )
+        com.geotagcamera.geotagginglocationonphoto.analytics.Analytics.event(
+            "photo_captured",
+            mapOf(
+                "template" to fields.template.name, "map" to fields.showMap, "weather" to fields.showWeather,
+                "bearing" to fields.showBearing, "signed" to (integrity != null), "worker_signature" to (signature != null),
+                "in_project" to (capture.projectId != null)
+            )
+        )
         return CaptureUiState.Review(id, uri.toString(), filename, sizeBytes)
     }
 

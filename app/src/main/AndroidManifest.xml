@@ -8,11 +8,13 @@
     <!-- Verify: read GPS EXIF of gallery photos unredacted (Android 10+), so signed locations can be checked. -->
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
     <!--
-      INTERNET (1.1.0): used ONLY by the stamp map (OpenStreetMap vector tiles
-      from OpenFreeMap, rendered on the phone, cached for offline use) and the
-      weather chip (Open-Meteo). Capture, stamping, signing and saving
-      stay fully offline; a network miss on either feature never blocks a
-      capture. No ads, analytics, or telemetry — see About & Legal.
+      INTERNET (1.1.0): used by the stamp map (OpenStreetMap vector tiles
+      from OpenFreeMap, rendered on the phone, cached for offline use), the
+      weather chip (Open-Meteo) and problem reports the user sends
+      (konkomaji.com, support/ReportSender.kt). Capture, stamping, signing and
+      saving stay fully offline; a network miss never blocks a capture.
+      No ads. No analytics in foss; the play flavor adds consent-gated
+      Firebase Analytics (src/play/AndroidManifest.xml). See PRIVACY.md.
     -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Offline maps: warn before a big download on mobile data, pause when offline. -->

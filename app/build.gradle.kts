@@ -18,6 +18,15 @@ val keystoreProps = Properties().apply {
 fun signingValue(env: String, prop: String): String? = System.getenv(env) ?: keystoreProps.getProperty(prop)
 val releaseStoreFile: String? = signingValue("RELEASE_STORE_FILE", "storeFile")
 
+// Firebase (Google Play flavor only): env vars in CI, or the gitignored
+// firebase.properties (appId, apiKey, projectId, senderId). Missing values
+// leave analytics switched off in the play build too.
+val firebaseProps = Properties().apply {
+    val f = rootProject.file("firebase.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+fun firebaseValue(env: String, prop: String): String = (System.getenv(env) ?: firebaseProps.getProperty(prop) ?: "").trim()
+
 android {
     namespace = "com.geotagcamera.geotagginglocationonphoto"
     compileSdk = 36
@@ -47,6 +56,10 @@ android {
         create("play") {
             dimension = "distribution"
             buildConfigField("String", "DONATE_URL", "\"\"")
+            buildConfigField("String", "FIREBASE_APP_ID", "\"${firebaseValue("FIREBASE_APP_ID", "appId")}\"")
+            buildConfigField("String", "FIREBASE_API_KEY", "\"${firebaseValue("FIREBASE_API_KEY", "apiKey")}\"")
+            buildConfigField("String", "FIREBASE_PROJECT_ID", "\"${firebaseValue("FIREBASE_PROJECT_ID", "projectId")}\"")
+            buildConfigField("String", "FIREBASE_SENDER_ID", "\"${firebaseValue("FIREBASE_SENDER_ID", "senderId")}\"")
         }
     }
 
@@ -191,6 +204,9 @@ dependencies {
 
     // Location
     "playImplementation"(libs.play.services.location)
+    // Google Analytics for Firebase: Play build only, consent-gated (analytics/Analytics.kt).
+    "playImplementation"(platform(libs.firebase.bom))
+    "playImplementation"(libs.firebase.analytics)
 
     // Map thumbnail + offline maps: MapLibre renders OpenFreeMap vector tiles
     // on the phone. No API key, no Google services, works offline.

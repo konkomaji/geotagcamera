@@ -17,6 +17,8 @@ navigation = "2.9.5"
 material = "1.13.0"
 camerax = "1.5.1"
 playServicesLocation = "21.4.0"
+# Google Play flavor only (analytics). Never in foss.
+firebaseBom = "34.4.0"
 room = "2.8.3"
 datastore = "1.1.7"
 exifinterface = "1.4.1"
@@ -56,6 +58,8 @@ androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", versi
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "camerax" }
 androidx-camera-extensions = { module = "androidx.camera:camera-extensions", version.ref = "camerax" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
