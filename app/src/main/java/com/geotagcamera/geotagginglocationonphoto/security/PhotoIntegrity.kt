@@ -1,5 +1,6 @@
 package com.geotagcamera.geotagginglocationonphoto.security
 
+import com.geotagcamera.geotagginglocationonphoto.support.AppLog
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import com.geotagcamera.geotagginglocationonphoto.exif.JpegCanonical
@@ -43,14 +44,24 @@ object PhotoIntegrity {
     private const val KEY_ALIAS = "geotagcamera_signing_key"
     private const val KEYSTORE = "AndroidKeyStore"
 
+    /**
+     * Signs [file]. If the Keystore key is unusable (invalidated after a
+     * security update or lock-screen change, or a broken Keystore), it is
+     * replaced once and signing retried. Photos signed earlier still verify:
+     * their proof carries the public key they were signed with. Throws only
+     * when the Keystore can't sign at all; the caller then saves the photo
+     * unsigned rather than losing it.
+     */
     fun sign(file: File, claims: ProofClaims): IntegrityResult {
         val hash = JpegCanonical.canonicalDigest(file.readBytes())
         val hashHex = hash.joinToString("") { "%02x".format(it) }
-        val privateKey = getOrCreateKeyPair()
-        val signatureBytes = Signature.getInstance("SHA256withECDSA").run {
-            initSign(privateKey)
-            update(claims.signedMessage(hashHex))
-            sign()
+        val signatureBytes = try {
+            signWith(getOrCreateKeyPair(), claims, hashHex)
+        } catch (e: Exception) {
+            if (e is java.io.IOException) throw e
+            AppLog.w("Integrity", "signing key unusable, replacing it", e)
+            runCatching { KeyStore.getInstance(KEYSTORE).apply { load(null) }.deleteEntry(KEY_ALIAS) }
+            signWith(getOrCreateKeyPair(), claims, hashHex)
         }
         return IntegrityResult(
             sha256Hex = hashHex,
@@ -60,6 +71,17 @@ object PhotoIntegrity {
             claims = claims
         )
     }
+
+    /** The canonical hash alone, for a photo that has to be saved unsigned. */
+    fun hashOnly(file: File): String =
+        JpegCanonical.canonicalDigest(file.readBytes()).joinToString("") { "%02x".format(it) }
+
+    private fun signWith(privateKey: PrivateKey, claims: ProofClaims, hashHex: String): ByteArray =
+        Signature.getInstance("SHA256withECDSA").run {
+            initSign(privateKey)
+            update(claims.signedMessage(hashHex))
+            sign()
+        }
 
     /**
      * This device's signing public key (base64 SPKI), or null if this install
@@ -75,7 +97,8 @@ object PhotoIntegrity {
     /** X.509 SubjectPublicKeyInfo bytes for the signing key (from the Keystore self-cert). */
     private fun publicKeyEncoded(): ByteArray {
         val keyStore = KeyStore.getInstance(KEYSTORE).apply { load(null) }
-        return keyStore.getCertificate(KEY_ALIAS).publicKey.encoded
+        return keyStore.getCertificate(KEY_ALIAS)?.publicKey?.encoded
+            ?: throw java.security.KeyStoreException("signing key has no certificate")
     }
 
     private fun getOrCreateKeyPair(): PrivateKey {

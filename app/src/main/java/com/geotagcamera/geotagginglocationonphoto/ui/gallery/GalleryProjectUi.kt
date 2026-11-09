@@ -1,5 +1,6 @@
 package com.geotagcamera.geotagginglocationonphoto.ui.gallery
 
+import com.geotagcamera.geotagginglocationonphoto.util.launchSafely
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -203,7 +204,7 @@ fun MoveToProjectDialog(
             }
         },
         confirmButton = {
-            if (creating) TextButton(onClick = { scope.launch { error = onCreate(name); if (error == null) onDismiss() } }) { Text("Create and move") }
+            if (creating) TextButton(onClick = { scope.launchSafely(tag = "Projects") { error = onCreate(name); if (error == null) onDismiss() } }) { Text("Create and move") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
     )

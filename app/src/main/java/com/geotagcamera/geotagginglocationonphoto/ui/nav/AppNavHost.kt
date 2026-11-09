@@ -91,6 +91,13 @@ fun GeoTagCameraApp(shareUri: String? = null, onShareConsumed: () -> Unit = {}) 
 
     // After a crash, offer (never force) to email the details, once the camera is up.
     val appContext = androidx.compose.ui.platform.LocalContext.current
+
+    // Errors from background work anywhere in the app (see util/SafeCoroutines.kt).
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        com.geotagcamera.geotagginglocationonphoto.util.AppErrors.events.collect { message ->
+            android.widget.Toast.makeText(appContext, message, android.widget.Toast.LENGTH_LONG).show()
+        }
+    }
     var crashOffer by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf(false) }
     androidx.compose.runtime.LaunchedEffect(currentRoute == Tab.Capture.route) {
         if (currentRoute == Tab.Capture.route && com.geotagcamera.geotagginglocationonphoto.support.CrashCatcher.pending(appContext) != null) crashOffer = true

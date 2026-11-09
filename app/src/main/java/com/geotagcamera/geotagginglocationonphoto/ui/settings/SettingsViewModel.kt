@@ -1,5 +1,7 @@
 package com.geotagcamera.geotagginglocationonphoto.ui.settings
 
+import com.geotagcamera.geotagginglocationonphoto.util.launchSafely
+import com.geotagcamera.geotagginglocationonphoto.util.safeStateIn
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -27,29 +29,29 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     /** People who onboarded before profiles existed are treated as Field. */
     val profile: StateFlow<UserProfile> = onboardingPreferences.profile
         .map { it ?: UserProfile.FIELD }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), UserProfile.FIELD)
+        .safeStateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), UserProfile.FIELD)
 
     /** Switching profile also applies its recommended stamp defaults. */
     fun setProfile(profile: UserProfile) {
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "Settings") {
             onboardingPreferences.setProfile(profile)
             stampPreferences.edit { profile.applyDefaults(it) }
         }
     }
 
     val fields: StateFlow<StampFields?> = stampPreferences.fields
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+        .safeStateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     val autoDismissReview: StateFlow<Boolean> = stampPreferences.autoDismissReview
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+        .safeStateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
 
     /** Applied inside one DataStore transaction against the stored value, never a UI snapshot. */
     fun update(transform: (StampFields) -> StampFields) {
-        viewModelScope.launch { stampPreferences.edit(transform) }
+        viewModelScope.launchSafely(tag = "Settings") { stampPreferences.edit(transform) }
     }
 
     fun setAutoDismissReview(enabled: Boolean) {
-        viewModelScope.launch { stampPreferences.setAutoDismissReview(enabled) }
+        viewModelScope.launchSafely(tag = "Settings") { stampPreferences.setAutoDismissReview(enabled) }
     }
 
     /**
@@ -63,7 +65,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
      * decoded logo by path, can never keep burning in the old one.
      */
     fun setOrgLogo(uri: Uri) {
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "Settings") {
             val context = getApplication<Application>()
             val path = withContext(Dispatchers.IO) {
                 val bitmap = decodeDownsampled(uri) ?: return@withContext null
@@ -74,7 +76,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                 }.getOrDefault(false)
                 bitmap.recycle()
                 if (ok) file.absolutePath else { file.delete(); null }
-            } ?: return@launch
+            } ?: return@launchSafely
             stampPreferences.edit { it.copy(orgLogoUri = path, showOrgLogo = true) }
             // Old logos go only after the new one is written and saved.
             withContext(Dispatchers.IO) {
@@ -85,7 +87,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun clearOrgLogo() {
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "Settings") {
             withContext(Dispatchers.IO) {
                 val context = getApplication<Application>()
                 File(context.filesDir, LOGO_DIR).deleteRecursively()

@@ -1,5 +1,7 @@
 package com.geotagcamera.geotagginglocationonphoto.ui.capture
 
+import com.geotagcamera.geotagginglocationonphoto.util.launchSafely
+import com.geotagcamera.geotagginglocationonphoto.util.safeStateIn
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flatMapLatest
 import com.geotagcamera.geotagginglocationonphoto.data.ProjectWithCount
@@ -32,6 +34,7 @@ import com.geotagcamera.geotagginglocationonphoto.location.WeatherReading
 import com.geotagcamera.geotagginglocationonphoto.location.WeatherRepository
 import com.geotagcamera.geotagginglocationonphoto.location.ageMs
 import com.geotagcamera.geotagginglocationonphoto.security.PhotoIntegrity
+import com.geotagcamera.geotagginglocationonphoto.support.AppLog
 import com.geotagcamera.geotagginglocationonphoto.security.ProofClaims
 import com.geotagcamera.geotagginglocationonphoto.stamp.LogoDecoder
 import com.geotagcamera.geotagginglocationonphoto.stamp.StampAnchor
@@ -132,32 +135,32 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
 
     /** The sticky note burned into every stamp until the user changes it. */
     val captureNote: StateFlow<String> = capturePreferences.note
-        .stateIn(viewModelScope, SharingStarted.Eagerly, "")
+        .safeStateIn(viewModelScope, SharingStarted.Eagerly, "")
 
     /** All projects (archived last), for the picker. */
     val projects: StateFlow<List<ProjectWithCount>> = projectDao.observeAll()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+        .safeStateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     /** The project new photos go into; null = none. A deleted project quietly becomes none. */
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     val activeProject: StateFlow<ProjectEntity?> = capturePreferences.activeProjectId
         .flatMapLatest { id -> if (id == null) flowOf(null) else projectDao.observeById(id) }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+        .safeStateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /** Survives leaving the camera and app restarts; it used to reset to Auto on every return. */
     val flashMode: StateFlow<Int> = capturePreferences.flashMode
-        .stateIn(viewModelScope, SharingStarted.Eagerly, androidx.camera.core.ImageCapture.FLASH_MODE_AUTO)
+        .safeStateIn(viewModelScope, SharingStarted.Eagerly, androidx.camera.core.ImageCapture.FLASH_MODE_AUTO)
 
     fun setFlashMode(mode: Int) {
-        viewModelScope.launch { capturePreferences.setFlashMode(mode) }
+        viewModelScope.launchSafely(tag = "Capture") { capturePreferences.setFlashMode(mode) }
     }
 
     fun setCaptureNote(note: String) {
-        viewModelScope.launch { capturePreferences.setNote(note) }
+        viewModelScope.launchSafely(tag = "Capture") { capturePreferences.setNote(note) }
     }
 
     fun selectProject(id: Long?) {
-        viewModelScope.launch { capturePreferences.setActiveProject(id) }
+        viewModelScope.launchSafely(tag = "Capture") { capturePreferences.setActiveProject(id) }
     }
 
     /** Creates a project and makes it active. Returns an error message, or null. */
@@ -171,7 +174,11 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
     }
 
     val stampFields: StateFlow<StampFields> = stampPreferences.fields
-        .stateIn(viewModelScope, SharingStarted.Eagerly, StampFields())
+        .safeStateIn(viewModelScope, SharingStarted.Eagerly, StampFields())
+
+    /** One-off messages that don't change the screen state (shown as snackbars). */
+    private val _notices = kotlinx.coroutines.flow.MutableSharedFlow<String>(extraBufferCapacity = 4)
+    val notices: kotlinx.coroutines.flow.SharedFlow<String> = _notices
 
     private val _uiState = MutableStateFlow<CaptureUiState>(CaptureUiState.Idle)
     val uiState: StateFlow<CaptureUiState> = _uiState.asStateFlow()
@@ -186,7 +193,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
 
     /** Newest photo in the index: survives restarts and follows deletes made anywhere. */
     val lastCaptureUri: StateFlow<String?> = photoDao.observeLatestPath()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+        .safeStateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     /**
      * Org logo bitmap, decoded from the path Settings stored. Settings writes
@@ -198,10 +205,10 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
         .map { path ->
             path?.let { withContext(Dispatchers.IO) { LogoDecoder.decode(it) } }
         }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+        .safeStateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     val autoDismissReview: StateFlow<Boolean> = stampPreferences.autoDismissReview
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+        .safeStateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
 
     /** Ticks once per minute boundary so the overlay's clock never freezes. */
     private val minuteTicker: Flow<Long> = flow {
@@ -232,7 +239,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
                 weatherChipText = near?.weather?.chipText,
                 note = note
             ) }.getOrNull()
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+        }.safeStateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     private var resolveJob: Job? = null
     private var pending: PendingCapture? = null
@@ -251,7 +258,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
     init {
         // Turning the map or weather on in Settings should show up on the next
         // look at the viewfinder, not after the user walks 30 m.
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "Capture") {
             stampFields.map { it.showMap to it.showWeather }
                 .distinctUntilChanged()
                 .drop(1)
@@ -330,7 +337,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
         if (!force && (fresh || resolveJob?.isActive == true)) return
 
         resolveJob?.cancel()
-        resolveJob = viewModelScope.launch {
+        resolveJob = viewModelScope.launchSafely(tag = "Capture") {
             val fields = stampFields.value
             val geocode = runCatching { geocoderRepository.reverseGeocode(fix.latitude, fix.longitude) }.getOrNull()
             // Publish the address first; tile and weather follow when they land.
@@ -357,7 +364,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
 
     fun updatePosition(anchor: StampAnchor) {
         if (stampFields.value.position == anchor) return
-        viewModelScope.launch { stampPreferences.edit { it.copy(position = anchor) } }
+        viewModelScope.launchSafely(tag = "Capture") { stampPreferences.edit { it.copy(position = anchor) } }
     }
 
     /**
@@ -453,7 +460,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
     fun retake() {
         val review = _uiState.value as? CaptureUiState.Review ?: return
         _uiState.value = CaptureUiState.Idle
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launchSafely(Dispatchers.IO, tag = "Capture") {
             val outcome = MediaStoreImageSaver.delete(getApplication(), listOf(Uri.parse(review.uri)))
             // Keep the index row if the file couldn't be removed, so it isn't orphaned.
             if (outcome.deleted.isNotEmpty()) photoDao.delete(review.photoId)
@@ -469,7 +476,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
         heldSignature = signature
         _uiState.value = CaptureUiState.AwaitingLocation(timedOut = false)
         waitJob?.cancel()
-        waitJob = viewModelScope.launch {
+        waitJob = viewModelScope.launchSafely(tag = "Capture") {
             val deadline = capture.capturedAtEpochMs + LATE_FIX_WINDOW_MS
             val remaining = (deadline - System.currentTimeMillis()).coerceAtLeast(10_000L)
             val fix = kotlinx.coroutines.withTimeoutOrNull(remaining) {
@@ -493,7 +500,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
         val capture = pending ?: return
         waitJob?.cancel()
         _uiState.value = CaptureUiState.AwaitingLocation(timedOut = false)
-        waitJob = viewModelScope.launch {
+        waitJob = viewModelScope.launchSafely(tag = "Capture") {
             launch { runCatching { locationProvider.getFreshFix() }.getOrNull()?.let { _latestFix.value = it } }
             val fix = kotlinx.coroutines.withTimeoutOrNull(LATE_FIX_WINDOW_MS) {
                 _latestFix.first { it != null && it.ageMs() <= MAX_FIX_AGE_MS }
@@ -523,7 +530,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
         val context = getApplication<Application>()
         val file = capture.file
         val capturedAtEpochMs = capture.capturedAtEpochMs
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "Capture") {
             var held = false
             try {
                 val fix = (knownFix ?: pickFix(capturedAtEpochMs))?.withHeading(capture.headingDegrees)
@@ -535,7 +542,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
                         held = true
                         holdForLocation(capture, signature)
                     }
-                    return@launch
+                    return@launchSafely
                 }
                 // Reuse what the viewfinder showed only if it was resolved for
                 // this spot; otherwise geocode the actual capture position.
@@ -545,11 +552,19 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
                 val fields = stampPreferences.fields.first()
 
                 val saved = withContext(Dispatchers.IO) {
-                    saveStampedPhoto(file, capture, fix, geocode, near, fields, signature, capturedAtEpochMs)
+                    try {
+                        saveStampedPhoto(file, capture, fix, geocode, near, fields, signature, capturedAtEpochMs)
+                    } catch (e: OutOfMemoryError) {
+                        // Never lose the shot to memory: try again at half size.
+                        AppLog.w("Capture", "out of memory stamping, retrying at half size")
+                        System.gc()
+                        saveStampedPhoto(file, capture, fix, geocode, near, fields, signature?.takeUnless { it.isRecycled }, capturedAtEpochMs, sampleSize = 2)
+                            ?.also { _notices.tryEmit("Saved at reduced resolution: the phone was low on memory.") }
+                    }
                 }
                 if (saved == null) {
                     _uiState.value = CaptureUiState.Error("Couldn't save the photo to your gallery.")
-                    return@launch
+                    return@launchSafely
                 }
                 _uiState.value = saved
             } catch (e: CancellationException) {
@@ -559,6 +574,7 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
             } catch (e: java.io.IOException) {
                 _uiState.value = CaptureUiState.Error(if (lowOnStorage(context)) STORAGE_FULL else "Couldn't save the photo. Try again.")
             } catch (e: Exception) {
+                AppLog.e("Capture", "processing failed", e)
                 _uiState.value = CaptureUiState.Error("Couldn't process the photo. Try again.")
             } finally {
                 if (!held) withContext(Dispatchers.IO + kotlinx.coroutines.NonCancellable) { file.delete() }
@@ -582,10 +598,11 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
         near: LiveStampData?,
         fields: StampFields,
         signature: Bitmap?,
-        capturedAtEpochMs: Long
+        capturedAtEpochMs: Long,
+        sampleSize: Int = 1
     ): CaptureUiState.Review? {
         val context = getApplication<Application>()
-        var image = loadUprightBitmap(file) ?: return null
+        var image = loadUprightBitmap(file, sampleSize) ?: return null
         if (capture.squareCrop) image = centerSquare(image)
 
         // Both draws go into the same bitmap when it is mutable: no extra
@@ -613,10 +630,24 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
         // JpegCanonical), so embedding the proof below can't invalidate it —
         // then carry the proof in EXIF UserComment and mirror it in XMP so any
         // device can verify this photo, not just the one that shot it.
-        val integrity = PhotoIntegrity.sign(file, ProofClaims(fix.latitude, fix.longitude, capturedAtEpochMs))
-        val proof = UserCommentCodec.encode(integrity, capturedAtEpochMs)
+        // A Keystore that can't sign must never cost the user the photo: it is
+        // saved unsigned, with a notice, and simply shows "no proof" in Verify.
+        val integrity = if (fix.isMock) {
+            // A signature would vouch for a location a mock-location app made up.
+            _notices.tryEmit("Saved without a signature: the location comes from a mock-location app.")
+            null
+        } else try {
+            PhotoIntegrity.sign(file, ProofClaims(fix.latitude, fix.longitude, capturedAtEpochMs))
+        } catch (e: java.io.IOException) {
+            throw e
+        } catch (e: Exception) {
+            AppLog.e("Capture", "signing failed, saving unsigned", e)
+            null
+        }
+        val proof = integrity?.let { UserCommentCodec.encode(it, capturedAtEpochMs) }
         ExifWriter.write(file, fix, capturedAtEpochMs, proof)
-        XmpWriter.write(file, proof)
+        if (proof != null) XmpWriter.write(file, proof)
+        else if (!fix.isMock) _notices.tryEmit("Saved without a signature: this phone's secure key store isn't working. The photo can't be verified later.")
 
         val filename = ReviewFilename.generate(geocode?.place, capturedAtEpochMs)
         val sizeBytes = file.length()
@@ -633,9 +664,9 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
                 address = geocode?.addressLine,
                 addressFromCache = geocode?.fromCache ?: false,
                 orgLabel = fields.orgLabel.ifBlank { null },
-                sha256Hash = integrity.sha256Hex,
-                signatureBase64 = integrity.signatureBase64,
-                signingKeyAlias = integrity.keyAlias,
+                sha256Hash = integrity?.sha256Hex ?: PhotoIntegrity.hashOnly(file),
+                signatureBase64 = integrity?.signatureBase64.orEmpty(),
+                signingKeyAlias = integrity?.keyAlias.orEmpty(),
                 fieldWorkerSignature = signature != null,
                 projectId = capture.projectId,
                 note = capture.note,
@@ -697,12 +728,13 @@ class CaptureViewModel(application: Application) : AndroidViewModel(application)
         }
 
         /** Decodes mutable (so the stamp draws in place) and applies the EXIF orientation. */
-        fun loadUprightBitmap(file: File): Bitmap? {
+        fun loadUprightBitmap(file: File, sampleSize: Int = 1): Bitmap? {
             val orientation = ExifInterface(file.absolutePath)
                 .getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
             val opts = BitmapFactory.Options().apply {
                 inMutable = true
                 inPreferredConfig = Bitmap.Config.ARGB_8888
+                inSampleSize = sampleSize
             }
             val bitmap = BitmapFactory.decodeFile(file.absolutePath, opts) ?: return null
 

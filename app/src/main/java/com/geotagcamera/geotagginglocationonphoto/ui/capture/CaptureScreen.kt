@@ -483,6 +483,10 @@ private fun CameraContent(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.notices.collect { snackbarHostState.showSnackbar(it) }
+    }
+
     LaunchedEffect(uiState) {
         val state = uiState
         if (state is CaptureUiState.Error) {

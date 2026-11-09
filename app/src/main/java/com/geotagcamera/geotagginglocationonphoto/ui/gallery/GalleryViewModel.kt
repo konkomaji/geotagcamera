@@ -1,5 +1,7 @@
 package com.geotagcamera.geotagginglocationonphoto.ui.gallery
 
+import com.geotagcamera.geotagginglocationonphoto.util.launchSafely
+import com.geotagcamera.geotagginglocationonphoto.util.safeStateIn
 import android.app.Application
 import android.content.IntentSender
 import android.net.Uri
@@ -48,7 +50,7 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
     private val projectDao = AppDatabase.get(application).projectDao()
 
     val projects: StateFlow<List<ProjectWithCount>> = projectDao.observeAll()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+        .safeStateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     fun setFilter(filter: GalleryFilter) { _filter.value = filter }
 
@@ -69,7 +71,7 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
         if (photos.isEmpty()) return
         exportJob?.cancel()
         _export.value = ExportState.Working("Exporting ${photos.size} location" + if (photos.size == 1) "" else "s")
-        exportJob = viewModelScope.launch {
+        exportJob = viewModelScope.launchSafely(tag = "Gallery") {
             _export.value = runCatching {
                 withContext(Dispatchers.IO) {
                     val context = getApplication<Application>()
@@ -87,7 +89,7 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
         if (photos.isEmpty()) return
         exportJob?.cancel()
         _export.value = ExportState.Working("Building report", 0, photos.size)
-        exportJob = viewModelScope.launch {
+        exportJob = viewModelScope.launchSafely(tag = "Gallery") {
             _export.value = runCatching {
                 val context = getApplication<Application>()
                 val file = com.geotagcamera.geotagginglocationonphoto.export.ExportFiles.newFile(context, title, "pdf")
@@ -113,7 +115,7 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
     /** Adds picked GeoTag photos to the list, into the filtered project if one is shown. */
     fun importPhotos(uris: List<android.net.Uri>) {
         if (uris.isEmpty()) return
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "Gallery") {
             val project = (_filter.value as? GalleryFilter.Project)?.id
             val result = withContext(Dispatchers.IO) {
                 runCatching { com.geotagcamera.geotagginglocationonphoto.data.PhotoImporter(getApplication()).import(uris, project) }.getOrNull()
@@ -123,7 +125,7 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun moveToProject(ids: Collection<Long>, projectId: Long?) {
-        viewModelScope.launch { photoDao.moveToProject(ids.toList(), projectId) }
+        viewModelScope.launchSafely(tag = "Gallery") { photoDao.moveToProject(ids.toList(), projectId) }
     }
 
     /** Creates a project and moves [ids] into it. Returns an error message or null. */
@@ -138,13 +140,13 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
 
     fun renameProject(id: Long, name: String) {
         val clean = name.trim().take(80)
-        if (clean.isNotEmpty()) viewModelScope.launch { projectDao.rename(id, clean) }
+        if (clean.isNotEmpty()) viewModelScope.launchSafely(tag = "Gallery") { projectDao.rename(id, clean) }
     }
 
-    fun setArchived(id: Long, archived: Boolean) { viewModelScope.launch { projectDao.setArchived(id, archived) } }
+    fun setArchived(id: Long, archived: Boolean) { viewModelScope.launchSafely(tag = "Gallery") { projectDao.setArchived(id, archived) } }
 
     fun deleteProject(id: Long) {
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "Gallery") {
             projectDao.delete(id)
             if ((_filter.value as? GalleryFilter.Project)?.id == id) _filter.value = GalleryFilter.All
         }
@@ -152,7 +154,7 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
 
     /** Null until the first database emission, so the screen can tell "loading" from "empty". */
     val photos: StateFlow<List<PhotoEntity>?> = photoDao.observeAll()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+        .safeStateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     /** [photos] narrowed to the current filter. */
     val visiblePhotos: StateFlow<List<PhotoEntity>?> = kotlinx.coroutines.flow.combine(photos, _filter) { list, f ->
@@ -163,7 +165,7 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
                 is GalleryFilter.Project -> p.projectId == f.id
             }
         }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+    }.safeStateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     private val _tileStatus = MutableStateFlow<Map<Long, TileStatus>>(emptyMap())
     val tileStatus: StateFlow<Map<Long, TileStatus>> = _tileStatus.asStateFlow()
@@ -176,7 +178,7 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
     init {
         // One verification pass at a time: a new list cancels the old pass,
         // and results are cached so each photo is only read once per session.
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "Gallery") {
             photoDao.observeAll().collectLatest { list -> verifyMissing(list) }
         }
     }
@@ -221,7 +223,7 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
     /** Deletes the photos from the device gallery and the index. May ask for consent first. */
     fun delete(photos: List<PhotoEntity>) {
         if (photos.isEmpty()) return
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "Gallery") {
             val byUri = photos.associateBy { it.filePath }
             val outcome = withContext(Dispatchers.IO) {
                 MediaStoreImageSaver.delete(getApplication(), photos.map { Uri.parse(it.filePath) })
@@ -242,6 +244,6 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
         _deleteConsent.value = null
         val ids = idsAwaitingConsent
         idsAwaitingConsent = emptyList()
-        if (granted && ids.isNotEmpty()) viewModelScope.launch { photoDao.deleteByIds(ids) }
+        if (granted && ids.isNotEmpty()) viewModelScope.launchSafely(tag = "Gallery") { photoDao.deleteByIds(ids) }
     }
 }

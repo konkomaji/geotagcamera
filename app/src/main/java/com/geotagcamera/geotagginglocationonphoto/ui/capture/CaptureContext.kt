@@ -1,5 +1,6 @@
 package com.geotagcamera.geotagginglocationonphoto.ui.capture
 
+import com.geotagcamera.geotagginglocationonphoto.util.launchSafely
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -150,14 +151,14 @@ fun CaptureContextSheet(
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
-                        scope.launch { error = onCreateProject(newName); if (error == null) { creating = false; newName = "" } }
+                        scope.launchSafely(tag = "Projects") { error = onCreateProject(newName); if (error == null) { creating = false; newName = "" } }
                     }),
                     modifier = Modifier.fillMaxWidth()
                 )
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = { creating = false; newName = ""; error = null }) { Text("Cancel") }
                     TextButton(onClick = {
-                        scope.launch { error = onCreateProject(newName); if (error == null) { creating = false; newName = "" } }
+                        scope.launchSafely(tag = "Projects") { error = onCreateProject(newName); if (error == null) { creating = false; newName = "" } }
                     }) { Text("Create") }
                 }
             } else {

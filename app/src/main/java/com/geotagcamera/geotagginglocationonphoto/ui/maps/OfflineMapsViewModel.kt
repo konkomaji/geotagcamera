@@ -1,5 +1,6 @@
 package com.geotagcamera.geotagginglocationonphoto.ui.maps
 
+import com.geotagcamera.geotagginglocationonphoto.util.launchSafely
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -38,16 +39,16 @@ class OfflineMapsViewModel(application: Application) : AndroidViewModel(applicat
     val network = Network.state(application)
 
     init {
-        viewModelScope.launch { runCatching { OfflineMaps.load(application) } }
+        viewModelScope.launchSafely(tag = "OfflineMaps") { runCatching { OfflineMaps.load(application) } }
         locate()
     }
 
     fun locate() {
         _here.value = HereState.Locating
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "OfflineMaps") {
             // Throws without location permission; that's just "unavailable" here.
             val fix = runCatching { locationProvider.getFreshFix() }.getOrNull()
-            if (fix == null) { _here.value = HereState.Unavailable; return@launch }
+            if (fix == null) { _here.value = HereState.Unavailable; return@launchSafely }
             _here.value = HereState.Found(fix, null)
             val place = runCatching { geocoder.reverseGeocode(fix.latitude, fix.longitude)?.place }.getOrNull()
             _here.value = HereState.Found(fix, place)
@@ -57,7 +58,7 @@ class OfflineMapsViewModel(application: Application) : AndroidViewModel(applicat
     fun download(radiusKm: Int) {
         val found = _here.value as? HereState.Found ?: return
         val name = found.placeName ?: "%.4f, %.4f".format(java.util.Locale.US, found.fix.latitude, found.fix.longitude)
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "OfflineMaps") {
             val error = runCatching {
                 OfflineMaps.download(getApplication(), name, found.fix.latitude, found.fix.longitude, radiusKm)
             }.getOrElse { it.message ?: "Couldn't start the download" }
@@ -65,10 +66,10 @@ class OfflineMapsViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    fun pause(id: Long) = viewModelScope.launch { runCatching { OfflineMaps.pause(id) } }
-    fun resume(id: Long) = viewModelScope.launch { runCatching { OfflineMaps.resume(id) } }
+    fun pause(id: Long) = viewModelScope.launchSafely(tag = "OfflineMaps") { runCatching { OfflineMaps.pause(id) } }
+    fun resume(id: Long) = viewModelScope.launchSafely(tag = "OfflineMaps") { runCatching { OfflineMaps.resume(id) } }
 
-    fun delete(id: Long) = viewModelScope.launch {
+    fun delete(id: Long) = viewModelScope.launchSafely(tag = "OfflineMaps") {
         val ok = runCatching { OfflineMaps.delete(id) }.getOrDefault(false)
         _message.value = if (ok) "Area deleted" else "Couldn't delete the area. Try again."
     }

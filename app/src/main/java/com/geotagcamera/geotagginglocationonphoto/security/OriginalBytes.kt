@@ -25,9 +25,23 @@ object OriginalBytes {
         val resolver = context.contentResolver
         val original = originalUri(context, uri)
         if (original != null) {
-            runCatching { resolver.openInputStream(original)?.use { return it.readBytes() } }
+            runCatching { resolver.openInputStream(original)?.use { return it.readCapped() } }
         }
-        return runCatching { resolver.openInputStream(uri)?.use { it.readBytes() } }.getOrNull()
+        return runCatching { resolver.openInputStream(uri)?.use { it.readCapped() } }.getOrNull()
+    }
+
+    /** No real photo is this big; a provider that never stops sending must not exhaust memory. */
+    private const val MAX_BYTES = 64 * 1024 * 1024
+
+    private fun java.io.InputStream.readCapped(): ByteArray? {
+        val out = java.io.ByteArrayOutputStream()
+        val buf = ByteArray(64 * 1024)
+        while (true) {
+            val n = read(buf)
+            if (n < 0) return out.toByteArray()
+            if (out.size() + n > MAX_BYTES) return null
+            out.write(buf, 0, n)
+        }
     }
 
     private fun originalUri(context: Context, uri: Uri): Uri? {

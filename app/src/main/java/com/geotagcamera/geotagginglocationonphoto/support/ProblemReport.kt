@@ -12,7 +12,7 @@ import com.geotagcamera.geotagginglocationonphoto.BuildConfig
 import com.geotagcamera.geotagginglocationonphoto.export.ExportFiles
 import java.io.File
 
-/** Builds the report email. No server: the user's own email app sends it, or nothing is sent. */
+/** Builds the report for the user's email app or GitHub. Direct sending is [ReportSender]. */
 object ProblemReport {
 
     const val EMAIL = "konkomaji@gmail.com"
@@ -47,9 +47,12 @@ object ProblemReport {
      */
     fun captureLog(context: Context): File? = runCatching {
         val process = Runtime.getRuntime().exec(arrayOf("logcat", "-d", "-t", "800", "--pid", android.os.Process.myPid().toString()))
+        // Only our own lines and crash traces: library logs may name map tiles, which reveal a rough location.
         val lines = process.inputStream.bufferedReader().readLines()
+            .filter { it.contains("GeoTag/") || it.contains("AndroidRuntime") }
             .filterNot { it.contains("openfreemap", ignoreCase = true) || it.contains(".pbf") }
-        ExportFiles.newFile(context, "geotag-app-log", "txt").apply { writeText(lines.joinToString("\n")) }
+        val own = AppLog.read()?.let { "--- App log (this phone only) ---\n$it\n\n--- System log ---\n" }.orEmpty()
+        ExportFiles.newFile(context, "geotag-app-log", "txt").apply { writeText(own + lines.joinToString("\n")) }
     }.getOrNull()
 
     /** Opens an email app. Returns false when the phone has none. */
@@ -109,6 +112,10 @@ object ProblemReport {
     /** For phones with no email app: the whole report, ready to paste anywhere. */
     fun copyToClipboard(context: Context, subject: String, body: String) {
         val cm = context.getSystemService(ClipboardManager::class.java) ?: return
-        cm.setPrimaryClip(ClipData.newPlainText("GeoTag Camera report", "To: $EMAIL\nSubject: $subject\n\n$body"))
+        val clip = ClipData.newPlainText("GeoTag Camera report", "To: $EMAIL\nSubject: $subject\n\n$body")
+        if (Build.VERSION.SDK_INT >= 33) {
+            clip.description.extras = android.os.PersistableBundle().apply { putBoolean(android.content.ClipDescription.EXTRA_IS_SENSITIVE, true) }
+        }
+        cm.setPrimaryClip(clip)
     }
 }

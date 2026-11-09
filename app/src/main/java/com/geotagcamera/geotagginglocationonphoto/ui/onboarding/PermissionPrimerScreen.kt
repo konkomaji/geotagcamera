@@ -1,5 +1,6 @@
 package com.geotagcamera.geotagginglocationonphoto.ui.onboarding
 
+import com.geotagcamera.geotagginglocationonphoto.util.launchSafely
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -79,7 +80,9 @@ fun PermissionPrimerScreen(onContinue: () -> Unit) {
     var step by rememberSaveable { mutableStateOf(0) }
     var profile by rememberSaveable { mutableStateOf(UserProfile.FIELD) }
 
-    fun finish() = scope.launch {
+    // A settings write that fails must not trap the user in onboarding:
+    // log it, keep the defaults, and go on to the camera.
+    fun finish() = scope.launchSafely(tag = "Onboarding", onError = { onContinue() }) {
         val prefs = OnboardingPreferences(context)
         prefs.setProfile(profile)
         StampPreferences(context).edit { profile.applyDefaults(it) }

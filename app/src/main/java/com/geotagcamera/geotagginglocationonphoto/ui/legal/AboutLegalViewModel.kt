@@ -1,5 +1,6 @@
 package com.geotagcamera.geotagginglocationonphoto.ui.legal
 
+import com.geotagcamera.geotagginglocationonphoto.util.launchSafely
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,7 +22,7 @@ class AboutLegalViewModel(application: Application) : AndroidViewModel(applicati
      * to keep or delete. The UI says so plainly.
      */
     fun deleteAllData(onDone: () -> Unit) {
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "AboutLegal") {
             withContext(Dispatchers.IO) {
                 db.photoDao().deleteAll()
                 db.geoCacheDao().deleteAll()

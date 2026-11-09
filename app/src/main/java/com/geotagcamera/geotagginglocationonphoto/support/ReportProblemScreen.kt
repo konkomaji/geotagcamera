@@ -80,6 +80,7 @@ fun ReportProblemScreen(onBack: () -> Unit, fromCrash: Boolean = false) {
     var contact by rememberSaveable { mutableStateOf("") }
     var sending by remember { mutableStateOf(false) }
     var sentId by rememberSaveable { mutableStateOf<String?>(null) }
+    val openedAt = rememberSaveable { System.currentTimeMillis() }
     val attachments = remember { mutableStateListOf<ReportAttachments.Prepared>() }
     DisposableEffect(Unit) { onDispose { ReportAttachments.clear(context) } }
     val picker = rememberLauncherForActivityResult(
@@ -200,7 +201,7 @@ fun ReportProblemScreen(onBack: () -> Unit, fromCrash: Boolean = false) {
                         sending = true
                         scope.launch {
                             val log = if (includeLog) withContext(Dispatchers.IO) { ProblemReport.captureLog(context) } else null
-                            val result = ReportSender.send(context, kind, message, includeDevice, if (includeCrash) crash else null, log, contact, attachments.toList())
+                            val result = ReportSender.send(context, kind, message, includeDevice, if (includeCrash) crash else null, log, contact, attachments.toList(), System.currentTimeMillis() - openedAt)
                             sending = false
                             when (result) {
                                 is ReportSender.Result.Sent -> {

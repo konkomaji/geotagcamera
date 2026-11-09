@@ -58,9 +58,9 @@ object ReportAttachments {
                     }
                     val ext = if (mime == "video/webm") "webm" else "mp4"
                     val out = File(dir, "recording-${System.nanoTime()}.$ext")
-                    resolver.openInputStream(uri)?.use { input -> out.outputStream().use { input.copyTo(it) } }
+                    val copied = resolver.openInputStream(uri)?.use { input -> out.outputStream().use { copyCapped(input, it) } }
                         ?: return@withContext Outcome.Refused("That video couldn't be read.")
-                    if (out.length() > MAX_VIDEO_BYTES) { out.delete(); return@withContext Outcome.Refused("That video is too large.") }
+                    if (!copied) { out.delete(); return@withContext Outcome.Refused("That video is too large.") }
                     Outcome.Ok(Prepared(out, mime, "Recording ${out.length() / 1024 / 1024} MB"))
                 }
                 else -> Outcome.Refused("Only screenshots (images) and MP4 or WebM videos can be attached.")
@@ -75,6 +75,19 @@ object ReportAttachments {
     /** Removes everything prepared for reports (after sending, or leaving the screen). */
     fun clear(context: Context) {
         File(context.cacheDir, "report-attachments").deleteRecursively()
+    }
+
+    /** False (and stops) once more than [MAX_VIDEO_BYTES] arrive, whatever size the provider claimed. */
+    private fun copyCapped(input: java.io.InputStream, output: java.io.OutputStream): Boolean {
+        val buf = ByteArray(64 * 1024)
+        var total = 0L
+        while (true) {
+            val n = input.read(buf)
+            if (n < 0) return true
+            total += n
+            if (total > MAX_VIDEO_BYTES) return false
+            output.write(buf, 0, n)
+        }
     }
 
     private fun sizeOf(context: Context, uri: Uri): Long? =

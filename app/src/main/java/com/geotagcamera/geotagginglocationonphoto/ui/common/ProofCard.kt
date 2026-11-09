@@ -88,11 +88,19 @@ private fun describe(outcome: VerificationOutcome, deviceKey: String?): ProofCon
     return when (outcome) {
         is VerificationOutcome.Untampered -> {
             val p = outcome.payload
-            val origin = if (deviceKey != null && p.publicKeyBase64.trim() == deviceKey.trim()) {
-                "Signed on this device"
-            } else {
-                "Signed by another device's key"
+            val ownKey = deviceKey != null && p.publicKeyBase64.trim() == deviceKey.trim()
+            if (!ownKey) {
+                // Anyone can generate a key and sign any image with it, so a
+                // foreign key proves the file is consistent, not who made it.
+                return ProofContent(
+                    Icons.Outlined.Info, muted, "Matches its signature",
+                    "Signed with the key below ${formatSigned(p)}, and unchanged since. " +
+                        "Anyone can create a signing key, so this proves who took the photo only if you know this key " +
+                        "belongs to them: compare the fingerprint with the one shown in their app under Verify.",
+                    KeyFingerprint.of(p.publicKeyBase64)
+                )
             }
+            val origin = "Signed on this device"
             ProofContent(
                 Icons.Filled.Verified, ProofColors.verified, "Unaltered since signing",
                 "$origin ${formatSigned(p)}. " + if (p.claims != null) {

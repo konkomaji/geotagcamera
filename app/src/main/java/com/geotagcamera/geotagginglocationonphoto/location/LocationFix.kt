@@ -8,5 +8,7 @@ data class LocationFix(
     val bearingDegrees: Float?,
     val timestampEpochMs: Long,
     /** Monotonic fix time (Location.elapsedRealtimeNanos); immune to wall-clock changes. */
-    val elapsedRealtimeNanos: Long? = null
+    val elapsedRealtimeNanos: Long? = null,
+    /** From a mock-location app (developer options). Such a fix is never signed. */
+    val isMock: Boolean = false
 )

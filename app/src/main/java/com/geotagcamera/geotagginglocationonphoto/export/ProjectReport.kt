@@ -132,7 +132,18 @@ class ProjectReport(private val context: Context) {
         val blockH = (PAGE_H - MARGIN * 2 - FOOTER) / PER_PAGE - 14f
         val imageW = CONTENT_W * 0.58f
         val imageH = blockH
-        val bmp = loadScaled(Uri.parse(p.filePath), (imageW * 2).toInt(), (imageH * 2).toInt())
+        var missingReason = "Photo file not found on this phone"
+        val bmp = try {
+            loadScaled(Uri.parse(p.filePath), (imageW * 2).toInt(), (imageH * 2).toInt())
+        } catch (e: java.io.FileNotFoundException) {
+            null
+        } catch (e: SecurityException) {
+            missingReason = "Photo not readable: access to it was removed"; null
+        } catch (e: OutOfMemoryError) {
+            missingReason = "Photo not shown: not enough memory to include it"; null
+        } catch (e: Exception) {
+            missingReason = "Photo couldn't be read"; null
+        }
         val left = MARGIN.toFloat()
         if (bmp != null) {
             val scale = minOf(imageW / bmp.width, imageH / bmp.height)
@@ -145,7 +156,7 @@ class ProjectReport(private val context: Context) {
         } else {
             val dst = RectF(left, top, left + imageW, top + imageH * 0.6f)
             c.drawRect(dst, placeholder)
-            text(c, "Photo file not found on this phone", left + 10, top + 10, imageW - 20, muted, 2)
+            text(c, missingReason, left + 10, top + 10, imageW - 20, muted, 2)
         }
 
         val x = left + imageW + 14
@@ -211,15 +222,16 @@ class ProjectReport(private val context: Context) {
         return y + layout.height
     }
 
-    private fun loadScaled(uri: Uri, maxW: Int, maxH: Int): Bitmap? = runCatching {
+    /** Null when the file is gone or not an image; throws for the other reasons, so the page can say which. */
+    private fun loadScaled(uri: Uri, maxW: Int, maxH: Int): Bitmap? {
         val resolver = context.contentResolver
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
+        resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) } ?: return null
         if (bounds.outWidth <= 0) return null
         var sample = 1
         while (bounds.outWidth / (sample * 2) >= maxW && bounds.outHeight / (sample * 2) >= maxH) sample *= 2
-        resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, BitmapFactory.Options().apply { inSampleSize = sample }) }
-    }.getOrNull()
+        return resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, BitmapFactory.Options().apply { inSampleSize = sample }) }
+    }
 
     private fun coords(p: PhotoEntity) = "%.6f, %.6f".format(Locale.US, p.latitude, p.longitude)
     private fun dateOnly(ms: Long) = SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(Date(ms))

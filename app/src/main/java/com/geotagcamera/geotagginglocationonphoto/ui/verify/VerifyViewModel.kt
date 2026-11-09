@@ -1,5 +1,6 @@
 package com.geotagcamera.geotagginglocationonphoto.ui.verify
 
+import com.geotagcamera.geotagginglocationonphoto.util.launchSafely
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
@@ -32,7 +33,7 @@ class VerifyViewModel(application: Application) : AndroidViewModel(application) 
     fun verify(uri: Uri) {
         _state.value = VerifyUiState.Verifying
         val context = getApplication<Application>()
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "Verify") {
             val outcome = withContext(Dispatchers.IO) {
                 val bytes = runCatching {
                     com.geotagcamera.geotagginglocationonphoto.security.OriginalBytes.read(context, uri)

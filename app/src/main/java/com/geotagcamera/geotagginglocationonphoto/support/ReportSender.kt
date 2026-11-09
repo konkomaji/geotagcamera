@@ -20,6 +20,38 @@ object ReportSender {
 
     const val ENDPOINT = "https://konkomaji.com/geotagcamera/api/report.php"
 
+    /** Must match POW_BITS in site/api/report.php. */
+    internal const val POW_BITS = 20
+
+    /**
+     * "ts:nonce" such that sha256("geotag-report-v1:ts:contentHash:nonce") starts
+     * with [bits] zero bits. About a million hashes on average, roughly a second
+     * on a phone: nothing for one report, expensive for a spam run. The hash
+     * binds the report's exact content, so a proof can't be reused for another.
+     */
+    internal fun proofOfWork(ts: Long, contentHash: String, bits: Int = POW_BITS): String {
+        val md = java.security.MessageDigest.getInstance("SHA-256")
+        val prefix = "geotag-report-v1:$ts:$contentHash:".toByteArray(Charsets.UTF_8)
+        var nonce = 0L
+        while (true) {
+            md.reset()
+            md.update(prefix)
+            md.update(nonce.toString().toByteArray(Charsets.UTF_8))
+            if (hasLeadingZeroBits(md.digest(), bits)) return "$ts:$nonce"
+            nonce++
+        }
+    }
+
+    internal fun hasLeadingZeroBits(hash: ByteArray, bits: Int): Boolean {
+        val full = bits / 8
+        for (i in 0 until full) if (hash[i] != 0.toByte()) return false
+        val rest = bits % 8
+        return rest == 0 || (hash[full].toInt() and 0xFF) ushr (8 - rest) == 0
+    }
+
+    internal fun sha256Hex(text: String): String =
+        java.security.MessageDigest.getInstance("SHA-256").digest(text.toByteArray(Charsets.UTF_8)).joinToString("") { "%02x".format(it) }
+
     sealed interface Result {
         data class Sent(val id: String) : Result
         /** The server answered but refused (rate limit, too large). [message] is safe to show. */
@@ -36,7 +68,9 @@ object ReportSender {
         crash: String?,
         log: File?,
         contact: String?,
-        attachments: List<ReportAttachments.Prepared> = emptyList()
+        attachments: List<ReportAttachments.Prepared> = emptyList(),
+        /** How long the form was open; part of the server's spam score. */
+        elapsedMs: Long = -1
     ): Result = withContext(Dispatchers.IO) {
         val json = JSONObject().apply {
             put("kind", kind.name.lowercase())
@@ -47,7 +81,9 @@ object ReportSender {
             log?.let { f -> runCatching { f.readText().takeLast(200_000) }.getOrNull()?.let { put("log", it) } }
             contact?.trim()?.takeIf { it.isNotEmpty() }?.let { put("contact", it) }
             put("website", "") // honeypot, always empty from the app
+            if (elapsedMs >= 0) put("elapsed_ms", elapsedMs.coerceAtMost(Int.MAX_VALUE.toLong()).toInt())
         }.toString()
+        val pow = withContext(Dispatchers.Default) { proofOfWork(System.currentTimeMillis() / 1000, sha256Hex(json)) }
         val boundary = "----GeoTagReport" + java.util.UUID.randomUUID().toString().replace("-", "")
 
         var conn: HttpURLConnection? = null
@@ -61,6 +97,9 @@ object ReportSender {
                 setChunkedStreamingMode(64 * 1024)
                 setRequestProperty("Content-Type", "multipart/form-data; boundary=$boundary")
                 setRequestProperty("User-Agent", "GeoTagCamera/${BuildConfig.VERSION_NAME}")
+                // Forces a CORS preflight, so web pages can't post reports through visitors' browsers.
+                setRequestProperty("X-GeoTag-Client", "1")
+                setRequestProperty("X-GeoTag-PoW", pow)
             }
             conn.outputStream.buffered().use { out ->
                 fun line(s: String = "") = out.write((s + "\r\n").toByteArray(Charsets.UTF_8))
@@ -84,7 +123,7 @@ object ReportSender {
             val body = runCatching { JSONObject(text) }.getOrNull()
             when {
                 code in 200..299 && body?.optBoolean("ok") == true -> Result.Sent(body.optString("id"))
-                code == 429 || code == 413 || code == 422 ->
+                code == 429 || code == 413 || code == 422 || code == 400 || code == 403 || code == 503 ->
                     Result.Rejected(body?.optString("error")?.takeIf { it.isNotBlank() } ?: "The report was not accepted.")
                 else -> Result.Offline
             }

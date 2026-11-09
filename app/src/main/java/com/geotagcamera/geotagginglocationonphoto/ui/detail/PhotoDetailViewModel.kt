@@ -1,5 +1,6 @@
 package com.geotagcamera.geotagginglocationonphoto.ui.detail
 
+import com.geotagcamera.geotagginglocationonphoto.util.launchSafely
 import android.app.Application
 import android.net.Uri
 import androidx.exifinterface.media.ExifInterface
@@ -40,11 +41,11 @@ class PhotoDetailViewModel(application: Application) : AndroidViewModel(applicat
     val state: StateFlow<PhotoDetailState> = _state.asStateFlow()
 
     fun load(id: Long) {
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "PhotoDetail") {
             val photo = photoDao.getById(id)
             if (photo == null) {
                 _state.value = PhotoDetailState(loading = false)
-                return@launch
+                return@launchSafely
             }
             val context = getApplication<Application>()
             val read = withContext(Dispatchers.IO) {
@@ -84,7 +85,7 @@ class PhotoDetailViewModel(application: Application) : AndroidViewModel(applicat
 
     fun delete() {
         val photo = _state.value.photo ?: return
-        viewModelScope.launch {
+        viewModelScope.launchSafely(tag = "PhotoDetail") {
             val outcome = withContext(Dispatchers.IO) {
                 MediaStoreImageSaver.delete(getApplication(), listOf(Uri.parse(photo.filePath)))
             }
@@ -103,7 +104,7 @@ class PhotoDetailViewModel(application: Application) : AndroidViewModel(applicat
     fun onDeleteConsentResult(granted: Boolean) {
         _deleteConsent.value = null
         val photo = _state.value.photo ?: return
-        if (granted) viewModelScope.launch {
+        if (granted) viewModelScope.launchSafely(tag = "PhotoDetail") {
             photoDao.delete(photo.id)
             _deleted.value = true
         }

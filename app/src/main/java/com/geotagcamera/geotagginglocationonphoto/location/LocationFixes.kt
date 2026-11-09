@@ -32,7 +32,8 @@ suspend fun Location.toLocationFix(context: Context): LocationFix = withContext(
         accuracyMeters = if (hasAccuracy()) accuracy else null,
         bearingDegrees = null,
         timestampEpochMs = time,
-        elapsedRealtimeNanos = elapsedRealtimeNanos.takeIf { it > 0L }
+        elapsedRealtimeNanos = elapsedRealtimeNanos.takeIf { it > 0L },
+        isMock = LocationCompat.isMock(this@toLocationFix)
     )
 }
 
