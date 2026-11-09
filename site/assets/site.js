@@ -293,21 +293,19 @@ document.addEventListener('DOMContentLoaded', function () {
     $$('[data-stat="released"]').forEach(function (el) { if (d.released) el.textContent = d.released; });
     var s = d.supporters, wall = $('#wall');
     if (!s || !wall) return;
-    $$('[data-stat="coffees"]').forEach(function (el) { animateTo(el, s.coffees || 0); });
+    if (!(s.coffees > 0)) return;
+    $$('[data-stat="coffees"]').forEach(function (el) { animateTo(el, s.coffees); });
     $$('[data-stat="supporters"]').forEach(function (el) { animateTo(el, s.count || 0); });
-    $$('[data-coffee-live]').forEach(function (el) { el.hidden = false; });
-    var list = $('.wall-list', wall), empty = $('.wall-empty', wall);
-    if (!s.recent || !s.recent.length) { if (empty) empty.hidden = false; wall.hidden = false; return; }
-    s.recent.forEach(function (p) {
+    $$('[data-stat="coffees-word"]').forEach(function (el) { el.textContent = s.coffees === 1 ? 'coffee' : 'coffees'; });
+    $$('[data-stat="supporters-word"]').forEach(function (el) { el.textContent = s.count === 1 ? 'supporter' : 'supporters'; });
+    var list = $('.notes', wall);
+    (s.messages || []).forEach(function (m) {
       var li = document.createElement('li');
-      var name = document.createElement('div'); name.className = 'wall-name';
-      var n = document.createElement('span'); n.textContent = p.name;
-      var c = document.createElement('span'); c.className = 'wall-cups'; c.textContent = p.member ? 'member' : p.coffees + (p.coffees === 1 ? ' coffee' : ' coffees');
-      name.appendChild(n); name.appendChild(c); li.appendChild(name);
-      if (p.note) { var q = document.createElement('p'); q.className = 'wall-note'; q.textContent = p.note; li.appendChild(q); }
-      if (p.date) { var dt = document.createElement('div'); dt.className = 'wall-date'; dt.textContent = p.date; li.appendChild(dt); }
-      list.appendChild(li);
+      var q = document.createElement('blockquote'); q.textContent = m.note;
+      var who = document.createElement('p'); who.className = 'note-by'; who.textContent = m.name;
+      li.appendChild(q); li.appendChild(who); list.appendChild(li);
     });
+    if (!list.children.length) list.hidden = true;
     wall.hidden = false;
   }).catch(function () { /* numbers stay at their static fallback */ });
 });

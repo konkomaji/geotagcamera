@@ -92,8 +92,9 @@ if (is_array($hook)) {
         'count' => count($rows),
         'coffees' => array_sum(array_map(fn($r) => (int)$r['coffees'], array_filter($rows, fn($r) => $r['kind'] === 'coffee'))),
         'members' => count(array_filter($rows, fn($r) => $r['kind'] === 'member')),
-        'recent' => array_map(fn($r) => ['name' => $r['name'], 'coffees' => (int)$r['coffees'], 'note' => $r['note'], 'date' => $r['date'], 'member' => $r['kind'] === 'member'],
-                              array_slice($rows, 0, MAX_SHOWN)),
+        // Only supporters who left a public message are listed; everyone counts.
+        'messages' => array_map(fn($r) => ['name' => $r['name'], 'note' => $r['note']],
+                                array_slice(array_values(array_filter($rows, fn($r) => $r['note'] !== '')), 0, MAX_SHOWN)),
     ];
 } elseif (is_array($bmc) && !empty($bmc['token'])) {
     $list = []; $coffees = 0; $count = 0; $ok = false;
@@ -115,7 +116,8 @@ if (is_array($hook)) {
         }
         if (empty($j['next_page_url'])) break;
     }
-    if ($ok) $out['supporters'] = ['count' => $count, 'coffees' => $coffees, 'recent' => $list];
+    if ($ok) $out['supporters'] = ['count' => $count, 'coffees' => $coffees,
+        'messages' => array_values(array_map(fn($r) => ['name' => $r['name'], 'note' => $r['note']], array_filter($list, fn($r) => $r['note'] !== '')))];
 } else {
     $out['supporters'] = null;
 }
