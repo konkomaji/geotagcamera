@@ -108,6 +108,52 @@ function hit(string $file, int $window, int $limit): bool {
     return $ok;
 }
 
+/**
+ * Minimal authenticated SMTP over TLS, so mail goes out through the domain's
+ * own mailbox (DKIM-signed and SPF-aligned by the mail provider) instead of
+ * the web server's mail(). Settings live in geotag-report-data/smtp.ini
+ * outside the web root, never in the public repository:
+ *   host = "smtp.hostinger.com"
+ *   port = 465
+ *   user = "noreply@konkomaji.com"
+ *   pass = "..."
+ */
+function smtp_send(array $cfg, string $to, string $subject, string $body, array $headers): bool {
+    $host = (string)$cfg['host']; $port = (int)($cfg['port'] ?? 465);
+    $ctx = stream_context_create(['ssl' => ['verify_peer' => true, 'verify_peer_name' => true, 'peer_name' => $host]]);
+    $fp = @stream_socket_client("ssl://$host:$port", $errno, $errstr, 15, STREAM_CLIENT_CONNECT, $ctx);
+    if (!$fp) return false;
+    stream_set_timeout($fp, 30);
+    $read = function () use ($fp): string {
+        $out = '';
+        while (($line = fgets($fp, 1024)) !== false) { $out .= $line; if (strlen($line) < 4 || $line[3] === ' ') break; }
+        return $out;
+    };
+    $cmd = function (string $c, string $expect) use ($fp, $read): bool {
+        if ($c !== '') fwrite($fp, $c . "\r\n");
+        return str_starts_with($read(), $expect);
+    };
+    $user = (string)$cfg['user'];
+    $ok = $cmd('', '220')
+        && $cmd('EHLO ' . substr(strrchr($user, '@'), 1), '250')
+        && $cmd('AUTH LOGIN', '334')
+        && $cmd(base64_encode($user), '334')
+        && $cmd(base64_encode((string)$cfg['pass']), '235')
+        && $cmd("MAIL FROM:<$user>", '250')
+        && $cmd("RCPT TO:<$to>", '25')
+        && $cmd('DATA', '354');
+    if ($ok) {
+        $msg = implode("\r\n", array_merge(["To: <$to>", "Subject: $subject"], $headers)) . "\r\n\r\n" . $body;
+        // Dot-stuffing: a line starting with "." must be doubled.
+        $msg = preg_replace('/^\./m', '..', str_replace(["\r\n", "\n"], ["\n", "\r\n"], $msg));
+        fwrite($fp, $msg . "\r\n");
+        $ok = $cmd('.', '250');
+    }
+    @fwrite($fp, "QUIT\r\n");
+    fclose($fp);
+    return $ok;
+}
+
 /** True when sha256($input) starts with $bits zero bits. */
 function leading_zero_bits(string $input, int $bits): bool {
     $h = hash('sha256', $input, true);
@@ -227,7 +273,7 @@ if (isset($_FILES['attachment']) && is_array($_FILES['attachment']['tmp_name'] ?
         if (in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true)) {
             $dims = @getimagesize($tmp);
             if (count($images) >= MAX_IMAGES || $size > MAX_IMAGE_BYTES || !$dims || $dims[0] * $dims[1] > MAX_PIXELS) {
-                $skipped[] = "image $i ($mime, " . round($size / 1048576, 1) . ' MB, ' . ($dims ? "{$dims[0]}x{$dims[1]}" : 'unreadable') . ', not accepted)';
+                $skipped[] = "image " . ($i + 1) . ': ' . round($size / 1048576, 1) . ' MB, ' . ($dims ? "{$dims[0]} x {$dims[1]} px" : 'unreadable') . ', over the limits';
                 continue;
             }
             $n = count($images) + 1;
@@ -246,7 +292,7 @@ if (isset($_FILES['attachment']) && is_array($_FILES['attachment']['tmp_name'] ?
             $dest = "$dir/recording-1." . ($mime === 'video/webm' ? 'webm' : 'mp4');
             if (move_uploaded_file($tmp, $dest)) $videos[] = basename($dest);
         } else {
-            $skipped[] = "file $i ($mime, " . round($size / 1048576, 1) . ' MB, not accepted)';
+            $skipped[] = 'file ' . ($i + 1) . ': ' . round($size / 1048576, 1) . ' MB, not a screenshot or screen recording';
         }
     }
 }
@@ -278,10 +324,13 @@ if ($device !== '')  $text .= "\n-- Device --\n$device\n";
 if ($crash !== '')   $text .= "\n-- Crash details --\n$crash\n";
 if ($log !== '')     $text .= "\n-- App log --\n$log\n";
 if ($videos)         $text .= "\n-- Screen recording kept on the server (hPanel > File Manager) --\ngeotag-report-data/reports/$id/" . implode(', ', $videos) . "\n";
-if ($skipped)        $text .= "\n-- Refused attachments --\n" . implode("\n", $skipped) . "\n";
+if ($skipped)        $text .= "\n-- Attachments not accepted --\n" . implode("\n", $skipped) . "\n";
 
 $boundary = 'b' . bin2hex(random_bytes(12));
+$fromDomain = substr(strrchr(FROM_EMAIL, '@'), 1);
 $headers = [
+    'Date: ' . date(DATE_RFC2822),
+    'Message-ID: <' . $id . '.' . bin2hex(random_bytes(4)) . '@' . $fromDomain . '>',
     'From: GeoTag Camera reports <' . FROM_EMAIL . '>',
     'Reply-To: ' . ($contact !== '' ? $contact : FROM_EMAIL),
     'MIME-Version: 1.0',
@@ -298,7 +347,15 @@ foreach ($images as [$name, $mime, $path]) {
 $body .= "--$boundary--\r\n";
 
 $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
-$mailed = @mail(TO_EMAIL, $encodedSubject, $body, implode("\r\n", $headers), '-f' . FROM_EMAIL);
+$smtp = @parse_ini_file("$data/smtp.ini");
+if (is_array($smtp) && !empty($smtp['host']) && !empty($smtp['user']) && isset($smtp['pass'])) {
+    $mailed = smtp_send($smtp, TO_EMAIL, $encodedSubject, $body, $headers);
+    // Fall back so a broken SMTP setting never loses a report's email entirely.
+    if (!$mailed) $mailed = @mail(TO_EMAIL, $encodedSubject, $body, implode("\r\n", $headers), '-f' . FROM_EMAIL);
+} else {
+    $mailed = @mail(TO_EMAIL, $encodedSubject, $body, implode("\r\n", $headers), '-f' . FROM_EMAIL);
+}
+if (!$mailed) @file_put_contents("$dir/mail-failed", date(DATE_RFC2822));
 
 if (!$mailed && !$saved) reply(502, ['ok' => false, 'error' => 'Could not deliver the report']);
 reply(200, ['ok' => true, 'id' => $id]);
