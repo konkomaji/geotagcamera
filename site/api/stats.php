@@ -3,8 +3,9 @@
  * Live numbers for the website, cached on this server:
  *  - total APK downloads, the latest version and its date, and the star count
  *    (GitHub's public API, no token needed)
- *  - Buy Me a Coffee supporters for the shout-out wall (needs a personal
- *    access token in geotag-report-data/bmc.ini: token = "...")
+ *  - Buy Me a Coffee supporters for the shout-out wall, from the store that
+ *    api/bmc-webhook.php keeps current (or, failing that, BMC's API with a
+ *    personal access token in geotag-report-data/bmc.ini: token = "...")
  *
  * Visitors' browsers only ever talk to this site: GitHub and Buy Me a Coffee
  * never see who is looking, and the BMC token never leaves the server.
@@ -81,8 +82,20 @@ $repo = get_json('https://api.github.com/repos/' . REPO);
 if ($repo !== null) $out['stars'] = (int)($repo['stargazers_count'] ?? 0);
 
 // ---- Buy Me a Coffee ------------------------------------------------------------------------
+// Preferred: the store kept up to date by api/bmc-webhook.php. Fallback: BMC's API with a token.
 $bmc = @parse_ini_file("$data/bmc.ini");
-if (is_array($bmc) && !empty($bmc['token'])) {
+$hook = is_file("$data/bmc-supporters.json") ? json_decode((string)@file_get_contents("$data/bmc-supporters.json"), true) : null;
+if (is_array($hook)) {
+    $rows = array_values(array_filter($hook, fn($r) => is_array($r) && empty($r['gone'])));
+    usort($rows, fn($a, $b) => strcmp((string)$b['date'], (string)$a['date']));
+    $out['supporters'] = [
+        'count' => count($rows),
+        'coffees' => array_sum(array_map(fn($r) => (int)$r['coffees'], array_filter($rows, fn($r) => $r['kind'] === 'coffee'))),
+        'members' => count(array_filter($rows, fn($r) => $r['kind'] === 'member')),
+        'recent' => array_map(fn($r) => ['name' => $r['name'], 'coffees' => (int)$r['coffees'], 'note' => $r['note'], 'date' => $r['date'], 'member' => $r['kind'] === 'member'],
+                              array_slice($rows, 0, MAX_SHOWN)),
+    ];
+} elseif (is_array($bmc) && !empty($bmc['token'])) {
     $list = []; $coffees = 0; $count = 0; $ok = false;
     for ($page = 1; $page <= 5; $page++) {
         $j = get_json(BMC_API . '?page=' . $page, ['Authorization: Bearer ' . $bmc['token']]);

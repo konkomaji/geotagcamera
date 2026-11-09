@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var li = document.createElement('li');
       var name = document.createElement('div'); name.className = 'wall-name';
       var n = document.createElement('span'); n.textContent = p.name;
-      var c = document.createElement('span'); c.className = 'wall-cups'; c.textContent = p.coffees + (p.coffees === 1 ? ' coffee' : ' coffees');
+      var c = document.createElement('span'); c.className = 'wall-cups'; c.textContent = p.member ? 'member' : p.coffees + (p.coffees === 1 ? ' coffee' : ' coffees');
       name.appendChild(n); name.appendChild(c); li.appendChild(name);
       if (p.note) { var q = document.createElement('p'); q.className = 'wall-note'; q.textContent = p.note; li.appendChild(q); }
       if (p.date) { var dt = document.createElement('div'); dt.className = 'wall-date'; dt.textContent = p.date; li.appendChild(dt); }
