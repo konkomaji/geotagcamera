@@ -1,320 +1,317 @@
 <section class="hero" aria-labelledby="hero-title">
-  <div class="hero-blob" aria-hidden="true"></div>
   <div class="wrap hero-grid">
     <div>
-      <p class="eyebrow">Free &middot; Open source &middot; No ads</p>
-      <h1 id="hero-title">Every photo, exactly where and when it happened.</h1>
-      <p class="lede">GeoTag Camera is an Android camera that stamps the GPS location, address and time onto each photo, and signs the photo on the phone so anyone can later check it hasn't been edited. I built it for surveyors, inspectors, students and NGO teams who need proof, not clutter.</p>
-      <p class="quip">No ads. No paywall. I know, it's suspicious.</p>
-      <div class="hero-cta">
-        <a class="btn btn-filled" href="{{root}}download/">
+      <p class="eyebrow">Free and open-source Android camera</p>
+      <h1 id="hero-title">Photos that prove <span class="hl">where and when</span> they were taken.</h1>
+      <p class="lede">GeoTag Camera stamps the GPS location, address, map and time onto every photo, then signs it on your phone so anyone can check later that it hasn't been edited. Made for surveyors, inspectors, NGO teams and students. No ads, no paywall, works offline.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="{{root}}download/">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
-          Download the APK
+          Download for Android
         </a>
-        <a class="btn btn-tonal" href="https://github.com/konkomaji/geotagcamera">Read the source</a>
+        <a class="btn btn-tonal" href="#try">Try the stamp</a>
       </div>
-      <p class="hero-meta">Version {{version}} &middot; Android 8.0 or newer &middot; GPL-3.0-or-later</p>
-      <ul class="badges" aria-label="At a glance">
-        <li class="badge">No ads</li>
-        <li class="badge">No tracking</li>
-        <li class="badge">No Google Play services</li>
-        <li class="badge">Works offline</li>
-        <li class="badge">Built in India</li>
-      </ul>
+      <div class="hero-meta">
+        <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Version {{version}}</span>
+        <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Android 8.0+</span>
+        <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>GPL-3.0</span>
+        <span data-live hidden><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span class="dl-count" data-stat="downloads">0</span>&nbsp;downloads</span>
+      </div>
     </div>
-    <div class="stamp-demo" role="img" aria-label="Example of a photo with the GeoTag Camera stamp: place name, coordinates, date and time, and a signed mark">
-      <div class="frame" aria-hidden="true">
-        <svg class="scene" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice">
-          <path d="M0 250 L70 190 L120 225 L190 150 L300 235 L300 400 L0 400Z" fill="#20322c"/>
-          <path d="M0 300 L90 265 L170 290 L240 255 L300 280 L300 400 L0 400Z" fill="#17241f"/>
-          <circle cx="232" cy="88" r="20" fill="#3b4d48"/>
+    <div class="reveal rel">
+      <div class="phone">
+        <div class="phone-screen">
+          <img src="{{root}}assets/screens/2.png" alt="GeoTag Camera showing a just-taken photo with the compact stamp, a map thumbnail and the Signed badge" width="1080" height="2340">
+          <span class="phone-chip"><i aria-hidden="true"></i>Location locked &middot; &plusmn;4 m</span>
+        </div>
+      </div>
+      <div class="float-card fc-1" aria-hidden="true"><span class="dot"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span><span><strong>Signed on this phone</strong>SHA-256 &middot; ECDSA</span></div>
+      <div class="float-card fc-2" aria-hidden="true"><span class="dot"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg></span><span><strong>Works offline</strong>No signal needed</span></div>
+    </div>
+  </div>
+  <div class="wrap mt6">
+{{stores}}
+  </div>
+</section>
+
+<section id="try" class="alt" aria-labelledby="try-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Your stamp, your fields</p>
+      <h2 id="try-title">Show exactly what the report needs, nothing else</h2>
+      <p class="lede">Other apps lock stamp fields behind a subscription. Here every field is free to switch on or off. Try it: this is the same layout the app draws on the viewfinder and burns into the photo.</p>
+    </div>
+    <div class="builder" id="builder">
+      <div class="shot" role="img" aria-label="Sample photo of a street with a utility pole, with the GeoTag Camera stamp along the bottom">
+        <svg class="scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb7cf"/><stop offset="1" stop-color="#d7e4e0"/></linearGradient>
+          </defs>
+          <rect width="400" height="300" fill="url(#sky)"/>
+          <circle cx="320" cy="58" r="22" fill="#f4efd9" opacity=".9"/>
+          <path d="M0 170 L60 132 L110 152 L180 112 L250 146 L320 118 L400 150 L400 300 L0 300Z" fill="#6f8f7f"/>
+          <path d="M0 200 L90 178 L170 196 L260 172 L400 194 L400 300 L0 300Z" fill="#4f6e5e"/>
+          <rect x="40" y="150" width="70" height="70" fill="#c9c2b2"/><rect x="40" y="142" width="70" height="10" fill="#9b8f7a"/>
+          <rect x="52" y="164" width="14" height="14" fill="#56616b"/><rect x="82" y="164" width="14" height="14" fill="#56616b"/><rect x="66" y="192" width="18" height="28" fill="#6b5a46"/>
+          <path d="M150 300 L196 196 L214 196 L280 300Z" fill="#5d625f"/>
+          <path d="M204 206 L205 300" stroke="#e8e2c9" stroke-width="3" stroke-dasharray="10 12"/>
+          <rect x="296" y="96" width="6" height="150" fill="#5a4636"/><rect x="280" y="104" width="38" height="4" fill="#5a4636"/>
+          <path d="M0 108 Q150 124 299 106 T400 112" stroke="#2c3133" stroke-width="1.2" fill="none"/>
+          <circle cx="340" cy="210" r="26" fill="#3f5d4d"/><rect x="337" y="226" width="6" height="22" fill="#4a3a2c"/>
         </svg>
-        <div class="stamp-card">
-          <div class="place">Bhatpara, West Bengal &nbsp;IN</div>
-          <div>22.866412 N &nbsp;88.401837 E</div>
-          <div>14 Oct 2026 10:42 GMT+05:30</div>
-          <div class="muted">Pole 12, north wall</div>
-          <div class="signed">SIGNED SHA-256</div>
+        <div class="compass" data-field="bearing" aria-hidden="true">
+          <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="rgba(255,255,255,.35)"/><path d="M20 6 L24 20 L20 18 L16 20Z" fill="oklch(0.76 0.13 162)"/><path d="M20 34 L16 20 L20 22 L24 20Z" fill="rgba(255,255,255,.7)"/><text x="20" y="5.5" font-size="5" fill="#fff" text-anchor="middle" font-family="Poppins">N</text></svg>
+        </div>
+        <div class="stamp">
+          <div class="st-map" data-field="map" aria-hidden="true">
+            <svg viewBox="0 0 60 60"><rect width="60" height="60" fill="#dfe8e1"/><path d="M0 22 L60 30" stroke="#fff" stroke-width="5"/><path d="M24 0 L30 60" stroke="#fff" stroke-width="4"/><path d="M0 46 Q30 40 60 50" stroke="#a9c6d8" stroke-width="5" fill="none"/><rect x="36" y="6" width="16" height="14" fill="#c9d6cc"/><circle cx="28" cy="28" r="4" fill="#e04a3a" stroke="#fff" stroke-width="1.5"/></svg>
+          </div>
+          <div class="st-main">
+            <div class="st-place" data-field="place">Bhatpara, West Bengal<b>IND</b></div>
+            <div data-field="address">7MJW+H4, Ghoshpara Road, Bhatpara 743123</div>
+            <div class="st-mono" data-field="coords">Lat 22.866412&deg;  Long 88.401837&deg;</div>
+            <div data-field="time">Monday, 09/11/2026, 10:42 am <span data-field="gmt">GMT +05:30</span></div>
+            <div class="st-meta">
+              <span class="st-chip" data-field="alt">ALT 12 m</span>
+              <span class="st-chip" data-field="acc">&plusmn;4 m</span>
+              <span class="st-chip" data-field="bearing" data-out="bearing">135&deg; SE</span>
+            </div>
+            <div class="st-note" data-field="note">Pole 12, north wall &middot; Contract 44/B</div>
+          </div>
+          <div class="st-side">
+            <span class="st-signed" data-field="signed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>SIGNED</span>
+            <span class="st-brand" data-field="brand"><svg viewBox="0 0 200 200" aria-hidden="true"><rect x="25" y="25" width="150" height="150" rx="50" fill="none" stroke="#fff" stroke-width="16"/><circle cx="108" cy="110" r="19" fill="oklch(0.76 0.13 162)"/></svg>GEOTAG</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="ctrl-group">
+          <h3>Start from a setup</h3>
+          <div class="segmented" role="group" aria-label="Setup">
+            <button type="button" data-preset="field" aria-pressed="false">Field</button>
+            <button type="button" data-preset="pro" aria-pressed="true">Professional</button>
+          </div>
+        </div>
+        <div class="ctrl-group">
+          <h3>Fields on the stamp</h3>
+          <div class="chips">
+            <button type="button" class="chip" data-toggle="place" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Place</button>
+            <button type="button" class="chip" data-toggle="address" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Address &amp; Plus Code</button>
+            <button type="button" class="chip" data-toggle="coords" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Coordinates</button>
+            <button type="button" class="chip" data-toggle="time" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Date &amp; time</button>
+            <button type="button" class="chip" data-toggle="gmt" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>GMT offset</button>
+            <button type="button" class="chip" data-toggle="alt" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Altitude</button>
+            <button type="button" class="chip" data-toggle="acc" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Accuracy</button>
+            <button type="button" class="chip" data-toggle="bearing" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Compass bearing</button>
+            <button type="button" class="chip" data-toggle="note" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Note</button>
+            <button type="button" class="chip" data-toggle="map" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Map</button>
+            <button type="button" class="chip" data-toggle="signed" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Signed mark</button>
+            <button type="button" class="chip" data-toggle="brand" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>App mark</button>
+          </div>
+        </div>
+        <div class="ctrl-group">
+          <h3>Layout</h3>
+          <div class="btn-row">
+            <div class="segmented" role="group" aria-label="Stamp template">
+              <button type="button" data-template="bar" aria-pressed="true">Bar</button>
+              <button type="button" data-template="minimal" aria-pressed="false">Minimal</button>
+            </div>
+            <div class="segmented" role="group" aria-label="Stamp position">
+              <button type="button" data-pos="bottom" aria-pressed="true">Bottom</button>
+              <button type="button" data-pos="top" aria-pressed="false">Top</button>
+            </div>
+          </div>
+        </div>
+        <div class="ctrl-group range">
+          <div class="range-top"><label for="bearing">Turn the camera</label><output for="bearing" data-out="bearing">135&deg; SE</output></div>
+          <input type="range" id="bearing" min="0" max="359" value="135">
+          <p class="hint">The bearing is the direction the camera faces, read from the phone's compass and corrected to true north, the moment you press the shutter.</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="panel" aria-labelledby="why-title">
-  <div class="wrap narrow center">
-    <p class="eyebrow">Why this exists</p>
-    <h2 id="why-title">Most geotagging apps get the basics wrong</h2>
-    <p class="lead">Every app I tried wanted something before it let me take a photo. A video ad before the camera opened. A subscription to remove a stamp field I didn't want. Permissions that have nothing to do with a camera. And the moment there was no signal, half of it stopped working, which is exactly where field work happens.</p>
-    <p class="lead">So I wrote my own and published the code. It does one job: a photo that shows where and when it was taken, that you can check later.</p>
+<section id="verify" class="dark-band" aria-labelledby="verify-title">
+  <div class="wrap proof">
+    <div class="reveal">
+      <p class="eyebrow">Tamper-evident</p>
+      <h2 id="verify-title">Edit the photo. Watch the proof break.</h2>
+      <p class="lede">Every photo is hashed and signed on the phone, together with its GPS location and time. Change one pixel, crop it, or rewrite its location, and the signature no longer matches. Anyone can check, offline, on any phone.</p>
+      <ol class="steps">
+        <li><div><strong>Shoot</strong><p>The stamp is burned in, then the image is hashed with SHA-256.</p></div></li>
+        <li><div><strong>Sign</strong><p>A key created in your phone's secure keystore signs the hash plus latitude, longitude and time. The key never leaves the phone.</p></div></li>
+        <li><div><strong>Verify</strong><p>The proof travels inside the file. Open it in the app's Verify screen to see whether it is unchanged and which key signed it.</p></div></li>
+      </ol>
+    </div>
+    <div class="proof-card" id="proofDemo">
+      <div class="proof-shot">
+        <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="400" height="300" fill="#7ea3b8"/><circle cx="90" cy="70" r="20" fill="#f4efd9"/>
+          <path d="M0 180 L80 140 L150 165 L230 120 L320 160 L400 135 L400 300 L0 300Z" fill="#5f7f6f"/>
+          <rect x="200" y="150" width="120" height="90" fill="#cfc6b3"/><rect x="200" y="140" width="120" height="12" fill="#8f826d"/>
+          <rect x="215" y="168" width="22" height="20" fill="#56616b"/><rect x="283" y="168" width="22" height="20" fill="#56616b"/><rect x="248" y="200" width="24" height="40" fill="#6b5a46"/>
+          <path d="M0 240 L400 226 L400 300 L0 300Z" fill="#4c5a52"/>
+          <rect x="0" y="262" width="400" height="38" fill="rgba(10,12,14,.75)"/>
+          <text x="12" y="279" font-size="11" fill="#fff" font-family="Poppins" font-weight="600">Bhatpara, West Bengal</text>
+          <text x="12" y="293" font-size="9" fill="#cfd5d9" font-family="monospace">22.866412, 88.401837  09/11/2026 10:42</text>
+        </svg>
+      </div>
+      <div class="proof-status" role="status" aria-live="polite">
+        <svg class="icon i-ok" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        <svg class="icon i-bad" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.2v.3"/></svg>
+        <div><strong data-proof="title">Unaltered since signing</strong><span data-proof="detail">Pixels, GPS location and time match the signature exactly.</span></div>
+      </div>
+      <div class="hashline">
+        <span>signed</span><b data-proof="signed">&nbsp;</b>
+        <span>now</span><b data-proof="now">&nbsp;</b>
+        <span>GPS</span><b data-proof="gps">22.866412, 88.401837</b>
+      </div>
+      <div class="edit-row" role="group" aria-label="Try an edit">
+        <button type="button" class="chip" data-edit="bright" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Brighten</button>
+        <button type="button" class="chip" data-edit="crop" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Crop</button>
+        <button type="button" class="chip" data-edit="gps" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Change the GPS</button>
+        <button type="button" class="btn btn-sm btn-ghost on-dark" data-proof-reset>Undo all</button>
+      </div>
+      <p class="hint on-dark-2 mt3">A demo in your browser. The app uses real SHA-256 and ECDSA signatures.</p>
+    </div>
   </div>
+</section>
+
+<section id="compare" aria-labelledby="compare-title">
   <div class="wrap">
-    <div class="problem-grid">
-      <div class="card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M9 7l1.2-2.2h3.6L15 7"/><circle cx="12" cy="13.5" r="3.4"/></svg></div>
-        <h3>1. Frame it</h3>
-        <p>The stamp is drawn live on the viewfinder by the same code that burns it into the photo, so what you frame is what you get.</p>
-      </div>
-      <div class="card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg></div>
-        <h3>2. Shoot it</h3>
-        <p>Location, address and time go onto the image and into its EXIF data. The photo is hashed and signed on the phone and saved to your normal gallery.</p>
-      </div>
-      <div class="card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
-        <h3>3. Prove it</h3>
-        <p>Anyone with the app can verify the photo later, offline. Export the locations or build a PDF site report when the job is done.</p>
-      </div>
+    <div class="section-head center tc">
+      <p class="eyebrow">Why another GPS camera</p>
+      <h2 id="compare-title">The most-installed one has 130 million users and 3.3 stars</h2>
+      <p class="lede mx-auto">People put up with ads over the shutter, paywalled fields and stale addresses because there was nothing cleaner. GeoTag Camera does the same job without any of it.</p>
+    </div>
+    <div class="compare-wrap reveal">
+      <table class="compare">
+        <thead><tr><th scope="col"><span class="visually-hidden">What matters</span></th><th scope="col">Typical GPS camera app</th><th scope="col" class="us">GeoTag Camera</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Ads</th><td class="them"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Video ads, sometimes over the shutter</td><td class="us"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>None, ever</td></tr>
+          <tr><th scope="row">Choosing stamp fields</th><td class="them"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Often behind a subscription</td><td class="us"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Every field free, on or off</td></tr>
+          <tr><th scope="row">Trackers</th><td class="them"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Ad and analytics SDKs, many permissions</td><td class="us"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>None in the GitHub and F-Droid versions</td></tr>
+          <tr><th scope="row">No signal</th><td class="them"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Map and address stop working</td><td class="us"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Stamps, signs and verifies offline; offline maps</td></tr>
+          <tr><th scope="row">Address</th><td class="them"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Sometimes from the previous spot</td><td class="us"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Looked up for where the photo is taken</td></tr>
+          <tr><th scope="row">Proof the photo is unedited</th><td class="them"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>None</td><td class="us"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Signed on the phone, verifiable by anyone</td></tr>
+          <tr><th scope="row">Source code</th><td class="them"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Closed</td><td class="us"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Open (GPL-3.0), reproducible builds</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="source center tc">From Play Store reviews and listings of the most-installed GPS camera apps, October 2026. Ratings change; check the stores for today's numbers.</p>
+  </div>
+</section>
+
+<section id="features" class="alt" aria-labelledby="who-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Built for field work</p>
+      <h2 id="who-title">For people who need proof, not clutter</h2>
+    </div>
+    <div class="grid-4">
+      <div class="card reveal"><div class="ic"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18M5 20V9l7-5 7 5v11"/><path d="M9 20v-6h6v6"/></svg></div><h3>Inspectors and construction</h3><p>Site photos with the address, a note like "Pole 12, north wall" and a signature, grouped by project.</p></div>
+      <div class="card reveal"><div class="ic"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg></div><h3>Surveyors</h3><p>Exact coordinates, sea-level altitude, accuracy and compass bearing, exported to CSV, KML or GeoJSON.</p></div>
+      <div class="card reveal"><div class="ic"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.2c3 .2 5.5 2.6 5.5 5.8"/></svg></div><h3>NGO and government teams</h3><p>Works offline where there's no signal, with your organisation's logo and name on every photo, for free.</p></div>
+      <div class="card reveal"><div class="ic"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></svg></div><h3>Students</h3><p>Fieldwork photos with a PDF report that's ready to submit, without watching an ad first.</p></div>
+    </div>
+    <div class="grid-3 mt4">
+      <div class="card reveal"><h3>Live stamp preview</h3><p>The stamp is drawn on the viewfinder by the same code that burns it in. What you frame is what you get.</p></div>
+      <div class="card reveal"><h3>Exports and PDF reports</h3><p>CSV for Excel, KML for Google Earth, GeoJSON for QGIS, and a PDF site report with an overview map.</p></div>
+      <div class="card reveal"><h3>Respects your phone</h3><p>Location only while the camera is open, never in the background. No account, no background service, no Google Play services needed.</p></div>
     </div>
   </div>
 </section>
 
 <section id="screens" aria-labelledby="screens-title">
   <div class="wrap">
-    <p class="eyebrow">Screens</p>
-    <h2 id="screens-title">What it looks like</h2>
+    <div class="section-head">
+      <p class="eyebrow">Screens</p>
+      <h2 id="screens-title">What it looks like</h2>
+    </div>
   </div>
+  <div class="shots-wrap">
   {{screens}}
+  </div>
+  <div class="shots-nav js-only">
+    <button class="icon-btn" type="button" data-shots="prev" aria-label="Previous screenshots"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <button class="icon-btn" type="button" data-shots="next" aria-label="Next screenshots"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
 </section>
 
-<div class="section-divider" aria-hidden="true">
-  <span class="line"></span>
-  <span class="motif"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="12" cy="13.5" r="3.2"/></svg></span>
-  <span class="line"></span>
-</div>
-
-<section id="features" aria-labelledby="features-title">
+<section id="open-source" class="alt" aria-labelledby="oss-title">
   <div class="wrap">
-    <p class="eyebrow">What's inside</p>
-    <h2 id="features-title">Everything a proof-of-location photo needs</h2>
-    <div class="feature-grid">
-      <article class="feature-card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M6 17h6M15 17h3"/><path d="M5 10l3-4 3 3 3-5 5 6"/></svg></div>
-        <h3>A compact stamp, signed at capture</h3>
-        <p>Place, address with Plus Code, coordinates, date and time with GMT offset, plus accuracy, altitude and bearing if you want them. Every line stays on one line, so the Bar stamp covers about a sixth of a portrait photo. Or pick the small Minimal label.</p>
-      </article>
-      <article class="feature-card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg></div>
-        <h3>A map drawn on the phone</h3>
-        <p>The stamp map comes from OpenStreetMap, rendered on the device with MapLibre and OpenFreeMap tiles. No API key, no account. Places you've shot in stay available offline, and you can save a 2 to 30 km area before a trip.</p>
-      </article>
-      <article class="feature-card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 8.5a15 15 0 0 1 20 0M5.5 12a10 10 0 0 1 13 0M9 15.5a5 5 0 0 1 6 0"/><circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/><line x1="3" y1="3" x2="21" y2="21"/></svg></div>
-        <h3>Works without signal</h3>
-        <p>Capturing, stamping, signing and verifying need no connection. With no signal the stamp uses the nearest address already cached on the phone, and the Plus Code is always worked out on the device. No GPS fix yet? The photo waits for one instead of being lost.</p>
-      </article>
-      <article class="feature-card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
-        <h3>Projects for each site or job</h3>
-        <p>Pick a project under the viewfinder and photos go into it. Filter the gallery by project, move photos between projects, rename or archive them. Deleting a project never deletes photos.</p>
-      </article>
-      <article class="feature-card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v12l-4 4H5z"/><path d="M15 20v-4h4M8 9h8M8 13h5"/></svg></div>
-        <h3>A note and your own text on the stamp</h3>
-        <p>A sticky note such as "Pole 12, north wall" is burned into every photo until you change it. A fixed custom line holds a contract number or an inspector's name.</p>
-      </article>
-      <article class="feature-card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div>
-        <h3>Export to CSV, KML or GeoJSON</h3>
-        <p>Export a project, a selection or everything, with time, place, note and each photo's SHA-256. CSV opens in Excel and Sheets, KML in Google Earth, GeoJSON in QGIS and ArcGIS.</p>
-      </article>
-      <article class="feature-card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 14h3M8 17h6"/></svg></div>
-        <h3>A PDF site report</h3>
-        <p>A cover with an overview map of numbered photo locations and an index, then two photos per page with time, place, coordinates, note and a fresh verification result for each file.</p>
-      </article>
-      <article class="feature-card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
-        <h3>Verify any photo</h3>
-        <p>The proof travels inside the file, so the app can check a photo someone else sent you, on any phone, offline. The result shows the signing key's fingerprint and whether it is your own phone's key.</p>
-      </article>
-      <article class="feature-card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7 9l5-5 5 5"/><rect x="3" y="15" width="18" height="5" rx="2"/></svg></div>
-        <h3>Import your photos back</h3>
-        <p>Reinstalled the app or moved to a new phone? Gallery, Import photos re-adds GeoTag Camera photos already in your gallery to the in-app list. The proofs are inside the files, so they still verify.</p>
-      </article>
-      <article class="feature-card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></div>
-        <h3>A camera that fits your phone</h3>
-        <p>Zoom presets from the real lenses, a flash button only when there is a flash, and the phone maker's Night, HDR and Portrait modes when it offers them. 4:3, 16:9, 1:1 or Full, and the saved photo matches the frame on screen.</p>
-      </article>
-      <article class="feature-card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18c3-4 4-7 4-9.5a2.5 2.5 0 0 1 5 0c0 3-2 4-2 7a2 2 0 0 0 4 0"/><path d="M17 15l3 3-1.5 1.5"/></svg></div>
-        <h3>Your organisation on the stamp</h3>
-        <p>Add your college, company or project name and logo, and a hand-drawn signature inside the stamp. Professional mode can make the signature required. None of it is behind a paywall.</p>
-      </article>
-      <article class="feature-card reveal">
-        <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="5.5" y1="18.5" x2="18.5" y2="5.5"/></svg></div>
-        <h3>No ads, no trackers, no Google</h3>
-        <p>No ad SDKs, no crash reporters, no account, and no analytics in the GitHub and F-Droid versions (the Google Play version asks first, and it's off unless you agree). Location comes from Android's own location services, so the app runs on phones without Google Play services.</p>
-      </article>
+    <div class="section-head">
+      <p class="eyebrow">Open source</p>
+      <h2 id="oss-title">Don't take my word for it. Read the code.</h2>
+      <p class="lede">Every line is public under the GPL. Releases are reproducible: building a tagged version from source gives a byte-identical APK, and CI checks every release.</p>
+    </div>
+    <div class="stats">
+      <div class="stat reveal" data-live><div class="num" data-stat="downloads">&ndash;</div><div class="lbl">APK downloads from GitHub</div></div>
+      <div class="stat reveal"><div class="num">{{version}}</div><div class="lbl">Latest version<span class="muted">, <span data-stat="released">November 2026</span></span></div></div>
+      <div class="stat reveal"><div class="num" data-stat="stars">&ndash;</div><div class="lbl">Stars on GitHub</div></div>
+      <div class="stat reveal"><div class="num">GPL-3.0</div><div class="lbl">Free software licence</div></div>
+    </div>
+    <div class="btn-row mt5">
+      <a class="btn btn-tonal" href="https://github.com/konkomaji/geotagcamera">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1-.3-3.4 1.3a11.7 11.7 0 0 0-6.2 0C6.6 2.8 5.6 3.1 5.6 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4.2 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+        Source on GitHub
+      </a>
+      <a class="btn btn-ghost" href="{{root}}changelog/">Changelog</a>
+      <a class="btn btn-ghost" href="{{root}}privacy/">Privacy policy</a>
     </div>
   </div>
 </section>
 
-<div class="section-divider alt" aria-hidden="true">
-  <span class="line"></span>
-  <span class="motif"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/></svg></span>
-  <span class="line"></span>
-</div>
-
-<section id="verify" aria-labelledby="verify-title">
-  <div class="wrap split">
-    <div>
-      <p class="eyebrow">How verification works</p>
-      <h2 id="verify-title">What the signature proves, and what it doesn't</h2>
-      <ol class="steps">
-        <li><strong>The stamp is burned in</strong> and the photo is saved as a JPEG.</li>
-        <li><strong>The image data is hashed</strong> with SHA-256. Metadata segments are left out, so the proof can be written into the file without changing the hash.</li>
-        <li><strong>The hash, latitude, longitude and time are signed</strong> with an ECDSA P-256 key created on your phone in the Android Keystore. The private key can't be exported.</li>
-        <li><strong>The hash, signature and public key are embedded</strong> in the photo's EXIF and XMP, so the proof goes wherever the file goes.</li>
-      </ol>
-      <p class="lead">Verifying recomputes the hash, checks the signature against the embedded key, and checks the photo's EXIF location and time against what was signed. No network, no account.</p>
-    </div>
-    <div class="terminal" aria-label="Example verification output" role="img">
-      <p>&gt; sha256(image data)</p>
-      <p class="s">9f2c41d0b7e3...a81f5c</p>
-      <p class="gap">&gt; sign(hash, lat, lon, time, <span class="k">keystoreKey</span>)</p>
-      <p class="s">MEUCIQD4x7...signature</p>
-      <p class="gap">&gt; verify(photo.jpg)</p>
-      <p class="ok">Verified: image, location and time unchanged since signing</p>
-      <p class="s">key fingerprint 4F1A 9C02 77DE B3E5</p>
-    </div>
-  </div>
+<section id="coffee" aria-labelledby="coffee-title">
   <div class="wrap">
-    <div class="proves">
-      <div class="card yes reveal">
-        <h3><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>A "verified" result tells you</h3>
-        <ul>
-          <li>The pixels, including the burned-in stamp, haven't changed since signing.</li>
-          <li>The EXIF latitude, longitude and capture time still match what was signed.</li>
-          <li>Which key signed it, as a short fingerprint you can compare with one the photographer gives you.</li>
-        </ul>
+    <div class="coffee">
+      <div class="coffee-art reveal">
+        <img src="{{root}}assets/bmc/support-me.webp" alt="Animated Buy Me a Coffee cup" width="480" height="480" loading="lazy">
+        <span class="credit">GIF by Buy Me a Coffee via GIPHY</span>
       </div>
-      <div class="card no reveal">
-        <h3><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>It does not tell you</h3>
-        <ul>
-          <li>Who took the photo. The key isn't tied to a person; someone can strip the proof and re-sign an edit with their own key. That's what the fingerprint is for.</li>
-          <li>That the GPS or the clock were right. A spoofed fix is stamped like any other.</li>
-          <li>Anything about other metadata such as altitude or camera details, which isn't signed.</li>
-        </ul>
+      <div>
+        <p class="eyebrow">Support the project</p>
+        <h2 id="coffee-title">Free for everyone. Kept going by coffee.</h2>
+        <p class="lede">No ads, no paid version, nothing locked. One person builds this in their spare time. If it saved you a subscription or a headache, a coffee keeps it maintained. Totally optional, and it doesn't unlock anything.</p>
+        <div class="coffee-total" data-coffee-live hidden>
+          <div><b data-stat="coffees">0</b>coffees so far</div>
+          <div><b data-stat="supporters">0</b>supporters</div>
+        </div>
+        <a class="bmc-btn" href="https://www.buymeacoffee.com/konko" rel="noopener"><img src="{{root}}assets/bmc/bmc-button.svg" alt="Buy Me a Coffee" width="217" height="61"></a>
       </div>
     </div>
-    <p class="lead">Messaging apps that recompress photos change the pixels, so the copy no longer verifies even though nobody tampered with it. Send the original file when it matters. The full details are in the <a href="https://github.com/konkomaji/geotagcamera#how-photo-verification-works">README</a>.</p>
-  </div>
-</section>
-
-<section id="who" class="panel" aria-labelledby="who-title">
-  <div class="wrap">
-    <p class="eyebrow">Who it's for</p>
-    <h2 id="who-title">Two setups, picked on first launch</h2>
-    <p class="lead">The app asks once which one fits you. You can switch in Settings any time, and nothing is locked in either mode.</p>
-    <div class="profile-grid">
-      <div class="profile reveal">
-        <p class="tag">Field</p>
-        <h3>Students, NGO and field staff</h3>
-        <p>You're recording a well, a school or a road in a village with no signal, or submitting fieldwork for a report. You want it quick and you can't pay for basics.</p>
-        <ul>
-          <li>Simple stamp with place, address, coordinates and time</li>
-          <li>Fewer settings on screen</li>
-          <li>Optional signature, notes and projects when you need them</li>
-        </ul>
-      </div>
-      <div class="profile reveal">
-        <p class="tag">Professional</p>
-        <h3>Surveyors and inspectors</h3>
-        <p>You need a photo that shows it was taken on site, at that time, and a report the client accepts at the end of the job.</p>
-        <ul>
-          <li>Altitude, accuracy and bearing on the stamp</li>
-          <li>Required signature before a photo is saved</li>
-          <li>Every setting visible, plus exports and PDF reports</li>
-        </ul>
-      </div>
+    <div class="wall" id="wall" hidden>
+      <h3>Thank you
+        <img class="w96" src="{{root}}assets/bmc/support-sticker.webp" alt="" width="96" height="44" loading="lazy">
+      </h3>
+      <p class="muted small">Everyone who bought a coffee, with the name they chose to show. Messages appear only when the supporter made them public.</p>
+      <ul class="wall-list"></ul>
+      <p class="wall-empty" hidden>No coffees yet. Yours could be the first.</p>
     </div>
   </div>
 </section>
 
-<section id="privacy" aria-labelledby="privacy-title">
-  <div class="wrap split">
-    <div>
-      <p class="eyebrow">Privacy</p>
-      <h2 id="privacy-title">Your photos stay on your phone</h2>
-      <p class="lead">I didn't build a server, so there's nothing for me to collect. These are the only times the app touches the network, and the <a href="{{root}}privacy/">privacy policy</a> has the details.</p>
-    </div>
-    <ul class="checklist">
-      <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span><strong>No ads, analytics or trackers.</strong> No account, no cloud sync, no automatic crash reports.</span></li>
-      <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span><strong>Location only while the camera is open.</strong> Never in the background.</span></li>
-      <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span><strong>Map tiles from OpenFreeMap</strong>, for the area around you, cached on the phone. You can turn the map off.</span></li>
-      <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span><strong>Weather is off by default.</strong> If you turn it on, your position is rounded to about 1 km before it goes to Open-Meteo.</span></li>
-      <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span><strong>Addresses come from your phone's own geocoder</strong>, which on phones with Google services is usually Google's.</span></li>
-      <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg><span><strong>Kept out of cloud backups.</strong> Delete all data wipes the app's records; your gallery photos stay yours.</span></li>
-    </ul>
-  </div>
-</section>
-
-<div class="section-divider alt2" aria-hidden="true">
-  <span class="line"></span>
-  <span class="motif"><svg viewBox="0 0 24 24"><path d="M9 9a3 3 0 1 1 4 2.8c-.8.4-1 .9-1 1.7"/><circle cx="12" cy="17.5" r=".4" fill="currentColor" stroke="none"/></svg></span>
-  <span class="line"></span>
-</div>
-
-<section id="faq" aria-labelledby="faq-title">
+<section id="faq" class="alt" aria-labelledby="faq-title">
   <div class="wrap">
-    <p class="eyebrow">Questions</p>
-    <h2 id="faq-title">Frequently asked</h2>
+    <div class="section-head center tc">
+      <p class="eyebrow">Questions</p>
+      <h2 id="faq-title">Frequently asked</h2>
+    </div>
     <div class="faq">
 {{faq}}
     </div>
   </div>
 </section>
 
-<section id="download" aria-labelledby="cta-title">
-  <div class="wrap">
-    <div class="cta-band">
-      <h2 id="cta-title">Take a photo that can prove itself.</h2>
-      <p>Version {{version}} for Android 8.0 and newer. Free, open source, no account.</p>
-      <div class="hero-cta center-row">
-        <a class="btn btn-filled" href="{{root}}download/">Download and install</a>
-        <a class="btn btn-outline" href="https://github.com/konkomaji/geotagcamera">Source on GitHub</a>
-      </div>
-{{stores}}
+<section class="dark-band tight" aria-labelledby="cta-title">
+  <div class="wrap center tc">
+    <h2 id="cta-title">Take your first signed photo</h2>
+    <p class="lede mx-auto">Free, about 15 MB, Android 8.0 or newer.</p>
+    <div class="btn-row jc">
+      <a class="btn btn-primary btn-live" href="{{root}}download/">Download {{version}}</a>
+      <a class="btn btn-ghost on-dark" href="{{root}}support/">Get help</a>
     </div>
-  </div>
-</section>
-
-<section id="roadmap" aria-labelledby="roadmap-title">
-  <div class="wrap">
-    <p class="eyebrow">What's next</p>
-    <h2 id="roadmap-title">Where it's going</h2>
-    <p class="lead">I maintain this on my own time. 1.4.0 was the first full release after three previews, and 1.4.1 makes the build reproducible so F-Droid can ship the same signed APK. The <a href="{{root}}changelog/">changelog</a> has every change. These are the things I'm working towards, roughly in order.</p>
-    <h3 class="eyebrow sub">New in 1.4</h3>
-    <ul class="roadmap-chips">
-      <li class="chip chip-solid">Projects</li>
-      <li class="chip chip-solid">Notes and custom text on the stamp</li>
-      <li class="chip chip-solid">CSV, KML and GeoJSON export</li>
-      <li class="chip chip-solid">PDF site reports</li>
-      <li class="chip chip-solid">Import photos</li>
-      <li class="chip chip-solid">No Google Play services</li>
-      <li class="chip chip-solid">Reproducible builds</li>
-    </ul>
-    <h3 class="eyebrow sub">Next</h3>
-    <ul class="roadmap-chips">
-      <li class="chip">Quick-capture shortcut</li>
-      <li class="chip">Batch mode with numbered notes</li>
-      <li class="chip">Proof pack: photos, manifest and signatures in one zip</li>
-      <li class="chip">Verify a photo on the web, without the app</li>
-      <li class="chip">Before and after pairing</li>
-      <li class="chip">Hindi and Bengali</li>
-    </ul>
-    <h3 class="eyebrow sub">Later</h3>
-    <ul class="roadmap-chips">
-      <li class="chip">Video geotagging</li>
-      <li class="chip">Track log, distance and area</li>
-      <li class="chip">Voice notes</li>
-      <li class="chip">Home screen widget</li>
-      <li class="chip">Biometric app lock</li>
-      <li class="chip">Local backup and restore</li>
-      <li class="chip">Material You colours</li>
-    </ul>
   </div>
 </section>

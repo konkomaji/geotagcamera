@@ -59,21 +59,23 @@ TODAY = datetime.date.today().isoformat()
 # FAQ: rendered on the home page and as FAQPage JSON-LD from this one list.
 FAQ = [
     ("Is GeoTag Camera really free, with no ads or subscriptions?",
-     "Yes. It's open source under the GPL, version 3 or later, and every feature works without paying. "
-     "There are no ads and no trackers in the app, and there won't be."),
+     "Yes. It's open source under the GPL, version 3 or later, and every feature works without paying. There are no ads "
+     "and nothing is locked. The GitHub and F-Droid versions contain no analytics or trackers at all; the Google Play "
+     "version can send anonymous usage statistics only if you agree. If you'd like to support it, you can buy me a coffee."),
     ("Does it work without an internet connection?",
      "Yes. Taking, stamping, signing and verifying photos need no connection. Addresses come from your phone's "
      "built-in geocoder, which usually needs the network, so I cache them on the phone: out of signal, the stamp uses "
      "the nearest address already looked up, and the Plus Code is always worked out on the device. The map works "
      "offline for places you've already shot in, and you can save a whole area before a trip."),
     ("What data does it collect?",
-     "None. Nothing is sent to me, because I didn't build a server. Location is only used while the camera screen is "
+     "Nothing is sent to me unless you send a problem report yourself. Location is only used while the camera screen is "
      "visible. The stamp map downloads OpenStreetMap tiles for your area from OpenFreeMap (no account, no key) and keeps "
      "them on the phone. The weather chip is off by default; if you turn it on, your position is rounded to about 1 km "
      "before it goes to Open-Meteo. Address lookup uses your phone's own geocoder, which on phones with Google services "
-     "is usually Google's. App data is kept out of cloud backups and device transfers."),
+     "is usually Google's. App data is kept out of cloud backups and device transfers. The Google Play version also asks "
+     "once whether you want to share anonymous usage statistics; both choices start switched off."),
     ("Do I need Google Play services?",
-     "No. Since 1.4.0 the app gets your location from Android's own location services, so it runs on phones without "
+     "Not for the GitHub and F-Droid versions. Since 1.4.0 the app gets your location from Android's own location services, so it runs on phones without "
      "Google, including de-Googled ones. Without a geocoder on the phone the stamp still shows coordinates and the Plus Code."),
     ("How does the tamper-evident photo feature work?",
      "Every photo's image data is hashed with SHA-256 and signed together with the capture latitude, longitude and time, "
@@ -112,6 +114,10 @@ FAQ = [
     ("Can I export photo locations to Excel, Google Earth or QGIS?",
      "Yes. In the gallery, choose a project or select photos, then Export locations: CSV opens in Excel and Google Sheets, "
      "KML in Google Earth, and GeoJSON in QGIS or ArcGIS. You can also build a PDF site report with an overview map."),
+    ("How do I report a bug, with a screenshot?",
+     "In the app, open Settings, Report a problem. Type what happened, add up to three screenshots or a screen recording, "
+     "and press Send: it goes straight to the developer. Screenshots have their hidden data, including GPS, removed before "
+     "sending. You can also email hello@konkomaji.com or open an issue on GitHub."),
     ("Who is it built for?",
      "College students documenting fieldwork, land and infrastructure surveyors, inspectors, NGO and government field "
      "staff, and anyone who needs to show exactly where and when a photo was taken. The Field and Professional setups "
@@ -133,8 +139,8 @@ SCREENS = [
 SCREEN_DEFAULT_SIZE = (1080, 2340)
 
 NAV = [
-    ("Features", "{{home}}#features", None),
-    ("Verification", "{{home}}#verify", None),
+    ("Try it", "{{home}}#try", None),
+    ("How proof works", "{{home}}#verify", None),
     ("Download", "{{root}}download/", "download/"),
     ("Changelog", "{{root}}changelog/", "changelog/"),
     ("Support", "{{root}}support/", "support/"),
@@ -161,8 +167,8 @@ PAGES = [
               "privately, or help with testing, translations and code."),
     dict(slug="privacy/", md="PRIVACY.md", name="Privacy",
          title="Privacy policy | GeoTag Camera",
-         desc="GeoTag Camera collects no data: no account, no server, no ads or analytics. What stays on your phone, "
-              "what leaves it, and when.",
+         desc="What GeoTag Camera keeps on your phone, what leaves it and when: no account and no ads; no analytics in the "
+              "GitHub and F-Droid versions, opt-in usage statistics in the Google Play version.",
          lead="The same policy that ships inside the app, under About &amp; legal."),
     dict(slug="terms/", md="TERMS.md", name="Terms",
          title="Terms of use | GeoTag Camera for Android",
@@ -424,6 +430,7 @@ def header_html(page):
       {nav}
     </nav>
     <div class="navbar-actions">
+      <a class="coffee-pill" href="{{{{home}}}}#coffee"><img src="{{{{root}}}}assets/bmc/bmc-logo.svg" alt="" width="18" height="18"><span>Buy me a coffee</span></a>
       <button class="icon-btn js-only" id="themeToggle" type="button" aria-label="Switch theme">{SUN}{MOON}</button>
       <button class="icon-btn menu-btn js-only" id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobilePanel"><span></span></button>
     </div>
@@ -440,16 +447,25 @@ def footer_html():
     <div class="foot-grid">
       <div class="foot-brand">
         <a class="brand" href="{{{{home}}}}">{MARK_SVG}<span>GeoTag Camera</span></a>
-        <p>An Android camera for photos that need to show where and when they were taken. Free software under the
-        <a href="{{{{root}}}}licenses/#gpl-3-0">GPL-3.0-or-later</a>.</p>
+        <p>A free, open-source Android camera for photos that need to show where and when they were taken. Built in India.</p>
+        <a class="bmc-btn mt3" href="https://www.buymeacoffee.com/konko" rel="noopener"><img class="w160" src="{{{{root}}}}assets/bmc/bmc-button.svg" alt="Buy Me a Coffee" width="217" height="61" loading="lazy"></a>
       </div>
       <nav aria-labelledby="foot-app">
         <h2 id="foot-app">App</h2>
         <ul>
-          <li><a href="{{{{home}}}}">Home</a></li>
           <li><a href="{{{{root}}}}download/">Download</a></li>
+          <li><a href="{{{{home}}}}#try">Try the stamp</a></li>
           <li><a href="{{{{root}}}}changelog/">Changelog</a></li>
           <li><a href="{{{{root}}}}support/">Support</a></li>
+        </ul>
+      </nav>
+      <nav aria-labelledby="foot-project">
+        <h2 id="foot-project">Project</h2>
+        <ul>
+          <li><a href="{REPO_URL}">Source on GitHub</a></li>
+          <li><a href="{REPO_URL}/issues">Issues</a></li>
+          <li><a href="{{{{root}}}}support/#security">Report a security issue</a></li>
+          <li><a href="mailto:{EMAIL}">{EMAIL}</a></li>
         </ul>
       </nav>
       <nav aria-labelledby="foot-legal">
@@ -460,21 +476,11 @@ def footer_html():
           <li><a href="{{{{root}}}}licenses/">Licences</a></li>
         </ul>
       </nav>
-      <nav aria-labelledby="foot-project">
-        <h2 id="foot-project">Project</h2>
-        <ul>
-          <li><a href="{REPO_URL}">Source on GitHub</a></li>
-          <li><a href="{REPO_URL}/releases">All releases</a></li>
-          <li><a href="{REPO_URL}/issues">Issues</a></li>
-          <li><a href="{{{{root}}}}support/#security">Report a security issue</a></li>
-          <li><a href="{{{{root}}}}support/#donate">Buy me a coffee</a></li>
-        </ul>
-      </nav>
     </div>
     <div class="foot-bottom">
-      <p>No ads, no tracking, no cookies.</p>
+      <p>This website sets no cookies and loads nothing from other servers.</p>
       <p class="mono">Version {VERSION}</p>
-      <p>&copy; {YEAR} Konko Maji</p>
+      <p>&copy; {YEAR} Konko Maji &middot; GPL-3.0-or-later</p>
     </div>
   </div>
 </footer>"""
@@ -637,7 +643,7 @@ def shell(page, body, screens, asset_v):
 <script src="{{{{root}}}}assets/site.js?v={asset_v['js']}"></script>
 {structured_data(page, screens)}
 </head>
-<body>
+<body data-root="{{{{root}}}}">
 {header_html(page)}
 <main id="main" tabindex="-1">
 {body}
@@ -741,7 +747,12 @@ WEBSITE_NOTICES = """<h2 id="this-website">This website<a class="anchor" href="#
 <a href="#license-ofl-1-1">SIL Open Font License 1.1</a>. It loads nothing from other servers.</p>
 <p>The store badges belong to their owners and are used only to link to those listings: the F-Droid badge is
 F-Droid artwork, the "Get it on GitHub" badge comes from Kunzisoft's Github-badge project, and the Google Play badge is
-Google's. GitHub is a trademark of GitHub, Inc. Google Play and the Google Play logo are trademarks of Google LLC.</p>"""
+Google's. GitHub is a trademark of GitHub, Inc. Google Play and the Google Play logo are trademarks of Google LLC.</p>
+<p>The Buy Me a Coffee logo and button come from the Buy Me a Coffee brand kit, and the animated cup and sticker are
+Buy Me a Coffee's own GIFs from their GIPHY channel; all are served from this site and belong to Buy Me a Coffee.</p>
+<p>The download count and the supporters list are fetched by this site's server from GitHub and Buy Me a Coffee and
+cached there, so your browser never contacts either. Supporters appear with the name they chose to show; their messages
+only when they made them public.</p>"""
 
 
 def generated_body(page):

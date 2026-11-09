@@ -1,93 +1,82 @@
 <div class="wrap page-head">
   <p class="eyebrow">Download &middot; Version {{version}}</p>
-  <h1>Download and install</h1>
-  <p>GeoTag Camera is free. Right now it installs from a signed APK on GitHub; F-Droid and Google Play are coming soon. Here's which file to pick, how to check it, and how to install it.</p>
+  <h1>Get GeoTag Camera</h1>
+  <p>Free, about 15 MB, for Android 8.0 or newer. Right now it installs from a signed APK on GitHub; F-Droid and Google Play are coming soon.</p>
 </div>
 
-<div class="wrap page-body">
-  <div class="prose">
-    <div class="notice" id="upgrade" role="note">
-      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4.5M12 17.5v.2"/></svg>
-      <p><strong>Coming from 1.3.0 or older? Uninstall the old version first.</strong> Those builds were signed with a development key, and 1.4.0 uses the project's new permanent key, so Android can't update in place. Photos in your gallery stay where they are and still verify. After installing, Gallery, Import photos re-adds them to the in-app list. From 1.4.0 on, updates install over the top as usual.</p>
-    </div>
+<div class="wrap pb8">
+  <div class="notice" id="upgrade" role="note">
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4.5M12 17.5v.2"/></svg>
+    <p><strong>Coming from 1.3.0 or older? Uninstall it first.</strong> Those builds used a development key, so Android can't update them in place. Your photos stay in the gallery and still verify; after installing, Gallery, Import photos adds them back to the list. From 1.4.0 on, updates install over the top.</p>
+  </div>
 
-    <h2 id="get-it">Get it from</h2>
-    <p>The signed APK on GitHub is available now. F-Droid is <a href="https://gitlab.com/fdroid/fdroiddata/-/merge_requests/52533">reviewing the submission</a> and the Google Play release is being prepared; their badges light up here once they're live. Because the builds are reproducible, the F-Droid APK will carry the same signature as the GitHub one, so you can switch between them without reinstalling. GeoTag Camera is published only on GitHub, F-Droid and Google Play: an APK from anywhere else is not from this project.</p>
+  <h2 id="get-it">Where to get it</h2>
+  <p class="muted">GeoTag Camera is published only on GitHub, F-Droid and Google Play. An APK from anywhere else is not from this project. The F-Droid build will carry the same signature as GitHub's (the builds are reproducible), so you can switch between them without reinstalling.</p>
 {{stores}}
 
-    <h2 id="which-apk">Which APK do I need?</h2>
-    <p>Each release has one APK per processor type plus a universal one. If you're not sure, take arm64-v8a: nearly every Android phone from the last several years uses it. If it refuses to install, use the universal APK, which works everywhere but is bigger.</p>
-    <div class="table-wrap">
-      <table>
-        <caption class="visually-hidden">APK files for version {{version}}</caption>
-        <thead><tr><th scope="col">File</th><th scope="col">For</th><th scope="col">Download</th></tr></thead>
-        <tbody>
-          <tr><td><code>geotagcamera-v{{version}}-arm64-v8a.apk</code></td><td>Most phones and tablets (64-bit ARM). About 15 MB. <strong>Start here.</strong></td><td><a href="{{dl}}geotagcamera-v{{version}}-arm64-v8a.apk">APK</a> &middot; <a href="{{dl}}geotagcamera-v{{version}}-arm64-v8a.apk.sha256">SHA-256</a></td></tr>
-          <tr><td><code>geotagcamera-v{{version}}-armeabi-v7a.apk</code></td><td>Older or low-cost phones with a 32-bit ARM processor</td><td><a href="{{dl}}geotagcamera-v{{version}}-armeabi-v7a.apk">APK</a> &middot; <a href="{{dl}}geotagcamera-v{{version}}-armeabi-v7a.apk.sha256">SHA-256</a></td></tr>
-          <tr><td><code>geotagcamera-v{{version}}-x86_64.apk</code></td><td>Chromebooks, Intel-based tablets and the Android emulator</td><td><a href="{{dl}}geotagcamera-v{{version}}-x86_64.apk">APK</a> &middot; <a href="{{dl}}geotagcamera-v{{version}}-x86_64.apk.sha256">SHA-256</a></td></tr>
-          <tr><td><code>geotagcamera-v{{version}}-universal.apk</code></td><td>Any device. Contains all of the above, so it's the largest download</td><td><a href="{{dl}}geotagcamera-v{{version}}-universal.apk">APK</a> &middot; <a href="{{dl}}geotagcamera-v{{version}}-universal.apk.sha256">SHA-256</a></td></tr>
-        </tbody>
-      </table>
+  <h2 class="mt7" id="which-apk">Which APK do I need?</h2>
+  <p class="muted">Pick your phone. Not sure? Most phones from the last several years are the first one.</p>
+  <div class="picker" id="apkPicker" data-dl="{{dl}}" data-version="{{version}}">
+    <button type="button" class="pick" data-abi="arm64-v8a" aria-pressed="true" data-why="64-bit ARM: nearly every phone and tablet sold in recent years. About 15 MB."><strong>Most phones</strong><span>Recommended</span></button>
+    <button type="button" class="pick" data-abi="armeabi-v7a" aria-pressed="false" data-why="32-bit ARM: older or low-cost phones. If the first one says it isn't compatible, use this."><strong>Older or budget phone</strong><span>32-bit</span></button>
+    <button type="button" class="pick" data-abi="x86_64" aria-pressed="false" data-why="For Chromebooks, Intel-based tablets and the Android emulator."><strong>Chromebook or emulator</strong><span>x86_64</span></button>
+    <button type="button" class="pick" data-abi="universal" aria-pressed="false" data-why="Works on every device, but it's about three times bigger."><strong>Not sure</strong><span>Universal, bigger</span></button>
+  </div>
+  <div class="pick-result" id="apkResult">
+    <div class="grow"><code data-apk="name">geotagcamera-v{{version}}-arm64-v8a.apk</code><p class="small muted mt1-0" data-apk="why">64-bit ARM: nearly every phone and tablet sold in recent years. About 15 MB.</p></div>
+    <a class="btn btn-primary" data-apk="link" href="{{dl}}geotagcamera-v{{version}}-arm64-v8a.apk"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download APK</a>
+    <a class="btn btn-ghost btn-sm" data-apk="sum" href="{{dl}}geotagcamera-v{{version}}-arm64-v8a.apk.sha256">SHA-256</a>
+  </div>
+  <p class="small muted mt3">Want to be sure? With USB debugging on, <code>adb shell getprop ro.product.cpu.abi</code> prints your phone's type. All files are on the <a href="https://github.com/konkomaji/geotagcamera/releases/latest">latest release page</a>.</p>
+
+  <h2 class="mt7" id="install">Install</h2>
+  <ol class="steps-list">
+    <li><div>Download the APK on your phone, or copy it over from your computer.</div></li>
+    <li><div>Open it from your browser's downloads or a file manager.</div></li>
+    <li><div>The first time, Android asks to allow installs from that app. Allow it for that app only, go back, and tap Install.</div></li>
+    <li><div>Open GeoTag Camera, choose Field or Professional, and allow camera and location.</div></li>
+    <li><div>Wait for "Location locked" in the corner of the viewfinder, then take your first photo.</div></li>
+  </ol>
+  <p class="small muted mt3">Play Protect may warn about an app it hasn't seen before. That's normal for apps installed outside the Play Store; you can check the file with its SHA-256 below.</p>
+
+  <h2 class="mt7" id="verify-download">Check the download (optional)</h2>
+  <p class="muted">Each APK has a matching <code>.sha256</code> file. Put both in the same folder and run:</p>
+  <div class="tabs">
+    <div role="tablist" aria-label="Your computer">
+      <button role="tab" id="t-win" aria-controls="p-win" aria-selected="true" data-os="win">Windows</button>
+      <button role="tab" id="t-mac" aria-controls="p-mac" aria-selected="false" data-os="mac">macOS</button>
+      <button role="tab" id="t-linux" aria-controls="p-linux" aria-selected="false" data-os="linux">Linux</button>
     </div>
-    <p>Want to check your phone's processor type? With USB debugging on, <code>adb shell getprop ro.product.cpu.abi</code> prints it. All files are also listed on the <a href="https://github.com/konkomaji/geotagcamera/releases/latest">latest release page</a>.</p>
-
-    <h2 id="verify-download">Check the download (optional)</h2>
-    <p>Every APK has a matching <code>.sha256</code> file. Download both into the same folder and compare. If the values differ, delete the APK and download it again.</p>
-    <div class="cmd-grid">
-      <div class="cmd">
-        <h3 class="h4">Windows (PowerShell)</h3>
-<pre><code>Get-FileHash .\geotagcamera-v{{version}}-arm64-v8a.apk -Algorithm SHA256
-Get-Content .\geotagcamera-v{{version}}-arm64-v8a.apk.sha256</code></pre>
-        <p>The two hex values must match (case doesn't matter). In Command Prompt, <code>certutil -hashfile geotagcamera-v{{version}}-arm64-v8a.apk SHA256</code> does the same.</p>
-      </div>
-      <div class="cmd">
-        <h3 class="h4">macOS</h3>
-<pre><code>shasum -a 256 -c geotagcamera-v{{version}}-arm64-v8a.apk.sha256</code></pre>
-      </div>
-      <div class="cmd">
-        <h3 class="h4">Linux</h3>
-<pre><code>sha256sum -c geotagcamera-v{{version}}-arm64-v8a.apk.sha256</code></pre>
-        <p>Both print <code>OK</code> when the file is intact.</p>
-      </div>
+    <div role="tabpanel" id="p-win" aria-labelledby="t-win">
+<pre><code>Get-FileHash .\<span data-apk-file>geotagcamera-v{{version}}-arm64-v8a.apk</span> -Algorithm SHA256
+Get-Content .\<span data-apk-file>geotagcamera-v{{version}}-arm64-v8a.apk</span>.sha256</code></pre>
+      <p class="small muted">In PowerShell. The two values must match (case doesn't matter).</p>
     </div>
-
-    <h2 id="install">Install</h2>
-    <ol>
-      <li>Download the APK on your phone, or copy it over from your computer.</li>
-      <li>Open it from your browser's downloads or your file manager.</li>
-      <li>The first time, Android asks you to allow installs from that app. Allow it for that app only, then go back and tap Install.</li>
-      <li>Open GeoTag Camera, pick Field or Professional, and allow camera and location when asked.</li>
-      <li>Wait for "Location locked" in the corner of the viewfinder, then take your first photo.</li>
-    </ol>
-    <p>Play Protect may warn about an app it hasn't seen before. That's expected for apps installed outside the Play Store. The source is public, and you can compare the file with its SHA-256 above.</p>
-
-    <h2 id="updating">Updating</h2>
-    <p>From 1.4.0 on, every release is signed with the same key, so a newer APK installs over the old one and keeps your photos, projects and settings. Download it the same way and open it.</p>
-    <ul>
-      <li><strong>GitHub</strong>: on the repository, choose Watch, Custom, Releases to get an email when a new version is out.</li>
-      <li>Once the F-Droid listing is live, the F-Droid app will handle updates too, and it installs over a GitHub APK. The Google Play version is a separate listing with its own updates.</li>
-    </ul>
-
-    <h2 id="support-project">Support the project</h2>
-    <p>GeoTag Camera is free, with no ads, and one person builds it in their spare time. If it saves you work, you can buy me a coffee. It's entirely optional and doesn't unlock anything.</p>
-    <p><a class="btn btn-filled" href="https://www.buymeacoffee.com/konko" rel="noopener">Buy me a coffee</a></p>
-
-    <h2 id="requirements">System requirements</h2>
-    <ul class="req-list">
-      <li><strong>Android 8.0 or newer</strong>API level 26 and up, phones and tablets.</li>
-      <li><strong>Camera and GPS</strong>Location must be switched on. Approximate-only location still works, with less precise stamps.</li>
-      <li><strong>No Google Play services</strong>Works on de-Googled phones. Address lookup needs a geocoder on the phone, otherwise the stamp shows the Plus Code.</li>
-      <li><strong>Internet optional</strong>Only for the stamp map, offline map downloads and the optional weather chip.</li>
-      <li><strong>Storage</strong>About 15 MB for the app, plus up to about 150 MB of map cache and any offline areas you save.</li>
-      <li><strong>Permissions</strong>Camera, location while the camera is open, photo location (for Verify), and storage on Android 9 and older only.</li>
-    </ul>
-
-    <h2 id="source">Build it yourself</h2>
-    <p>The app is GPL-3.0-or-later. You need JDK 17 and the Android SDK; no API keys. Steps are in the <a href="https://github.com/konkomaji/geotagcamera#building-from-source">README</a>, and older versions are on the <a href="https://github.com/konkomaji/geotagcamera/releases">releases page</a>.</p>
-
-    <div class="hero-cta">
-      <a class="btn btn-filled" href="https://github.com/konkomaji/geotagcamera/releases/latest">Open the latest release</a>
-      <a class="btn btn-outline" href="{{root}}support/">Something not working?</a>
+    <div role="tabpanel" id="p-mac" aria-labelledby="t-mac" hidden>
+<pre><code>shasum -a 256 -c <span data-apk-file>geotagcamera-v{{version}}-arm64-v8a.apk</span>.sha256</code></pre>
+      <p class="small muted">Prints OK when the file is intact.</p>
     </div>
+    <div role="tabpanel" id="p-linux" aria-labelledby="t-linux" hidden>
+<pre><code>sha256sum -c <span data-apk-file>geotagcamera-v{{version}}-arm64-v8a.apk</span>.sha256</code></pre>
+      <p class="small muted">Prints OK when the file is intact.</p>
+    </div>
+  </div>
+
+  <h2 class="mt7" id="updating">Updating</h2>
+  <p class="muted">Every release from 1.4.0 on is signed with the same key, so a newer APK installs over the old one and keeps your photos, projects and settings. To hear about new versions, choose Watch, Custom, Releases on the <a href="https://github.com/konkomaji/geotagcamera">GitHub repository</a>. Once F-Droid is live, its app will update GeoTag Camera for you, and it installs over a GitHub APK. Google Play will be a separate listing with its own updates.</p>
+
+  <h2 class="mt7" id="requirements">System requirements</h2>
+  <ul class="req">
+    <li><strong>Android 8.0 or newer</strong>API 26 and up, phones and tablets.</li>
+    <li><strong>Camera and GPS</strong>Approximate-only location works, with less precise stamps.</li>
+    <li><strong>No Google Play services</strong>The GitHub and F-Droid versions run on de-Googled phones.</li>
+    <li><strong>Internet optional</strong>For the stamp map, offline map downloads, weather and sending reports.</li>
+    <li><strong>Storage</strong>About 15 MB, plus up to about 150 MB of map cache and saved areas.</li>
+    <li><strong>Permissions</strong>Camera, location while the camera is open, photo location (for Verify).</li>
+  </ul>
+
+  <div class="card mt7 split" id="support-project">
+    <div class="mw56"><h3>Like it? Buy me a coffee</h3><p>GeoTag Camera is free with no ads. A coffee helps keep it maintained. Optional, and it doesn't unlock anything.</p></div>
+    <a class="bmc-btn" href="https://www.buymeacoffee.com/konko" rel="noopener"><img src="{{root}}assets/bmc/bmc-button.svg" alt="Buy Me a Coffee" width="217" height="61"></a>
   </div>
 </div>

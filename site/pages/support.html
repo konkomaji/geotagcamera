@@ -1,60 +1,70 @@
 <div class="wrap page-head">
   <p class="eyebrow">Support</p>
   <h1>Something not working?</h1>
-  <p>I'm one person maintaining this in my spare time, so there's no help desk, but I read every report. The clearer the report, the faster I can fix it.</p>
+  <p>There's no help desk, it's one person, but every report gets read. The clearer the report, the faster the fix.</p>
 </div>
 
-<div class="wrap page-body">
+<div class="wrap pb8">
   <h2 id="report">Report a problem</h2>
-  <div class="support-grid">
-    <div class="card">
-      <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg></div>
-      <h3>From the app</h3>
-      <p>Settings, then Report a problem. Type what happened, add screenshots or a screen recording if they help, and press Send: it goes straight to me, no email app needed. You choose whether to include device details and the app's own log, and you see it all before sending. Screenshots have their hidden data, including GPS, removed first. After a crash or freeze, the app offers to send the details.</p>
+  <div class="grid-3">
+    <div class="card featured">
+      <div class="ic"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg></div>
+      <h3>From the app <span class="small accent-tag">Best</span></h3>
+      <p>Settings, then Report a problem. Describe what happened, add screenshots or a screen recording, press Send. It reaches me directly, no email app needed. You see everything included before it goes; screenshots have their hidden data, including GPS, removed first. After a crash or freeze, the app offers to send the details.</p>
     </div>
     <div class="card">
-      <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div>
+      <div class="ic"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div>
       <h3>By email</h3>
-      <p>Write to <a href="mailto:hello@konkomaji.com">hello@konkomaji.com</a>. The button below starts a message with a short template. Please don't attach photos that show where people live unless they're needed.</p>
-      <a class="btn btn-filled" href="{{mailto}}">Email a problem report</a>
+      <p>Write to <a href="mailto:hello@konkomaji.com">hello@konkomaji.com</a>. The button starts a message with a short template. Please don't attach photos that show where people live unless they're needed.</p>
+      <p class="mt4"><a class="btn btn-tonal btn-sm" href="{{mailto}}">Email a problem report</a></p>
     </div>
     <div class="card">
-      <div class="icon-wrap"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.2v.3"/></svg></div>
+      <div class="ic"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.2v.3"/></svg></div>
       <h3>On GitHub</h3>
-      <p>If you have a GitHub account, a public issue lets others with the same problem find it and follow the fix. Search the existing issues first.</p>
-      <a class="btn btn-tonal" href="https://github.com/konkomaji/geotagcamera/issues/new/choose">Open an issue</a>
+      <p>A public issue lets others with the same problem find it and follow the fix. Search the existing issues first. Ideas and questions are welcome there too.</p>
+      <p class="mt4"><a class="btn btn-tonal btn-sm" href="https://github.com/konkomaji/geotagcamera/issues/new/choose">Open an issue</a></p>
     </div>
   </div>
 
-  <div class="prose">
-    <h2 id="what-to-include">What to include</h2>
-    <ul>
-      <li>The app version (About &amp; legal shows it) and your phone model and Android version.</li>
-      <li>What you did, step by step, what happened, and what you expected.</li>
-      <li>For a verification problem: how the photo got to you (shared through which app, downloaded, copied by cable). Many apps recompress photos, which breaks verification on purpose.</li>
-      <li>A screenshot if it shows the problem. Crop out anything private.</li>
-    </ul>
-    <p>Before writing, it's worth checking the <a href="{{home}}#faq">FAQ</a> and, if you upgraded from 1.3.0 or older, the <a href="{{root}}download/#upgrade">uninstall-first note</a>.</p>
-
-    <h2 id="security">Security problems</h2>
-    <div class="notice info" role="note">
-      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/></svg>
-      <p><strong>Please don't open a public issue for a security problem.</strong> Report it privately through a <a href="https://github.com/konkomaji/geotagcamera/security/advisories/new">GitHub security advisory</a>, or by email if you don't use GitHub.</p>
+  <div class="grid-2 mt7 gap6">
+    <div>
+      <h2 id="what-to-include">What to include</h2>
+      <ul class="steps-list">
+        <li><div>The app version (About &amp; legal shows it), your phone model and Android version. The in-app report adds these for you.</div></li>
+        <li><div>What you did, step by step, what happened, and what you expected.</div></li>
+        <li><div>For a verification problem: how the photo reached you. Many apps recompress photos, which breaks verification on purpose.</div></li>
+        <li><div>A screenshot or screen recording if it shows the problem. Crop out anything private.</div></li>
+      </ul>
+      <p class="small muted mt4">Check the <a href="{{home}}#faq">FAQ</a> first, and if you upgraded from 1.3.0 or older, the <a href="{{root}}download/#upgrade">uninstall-first note</a>.</p>
     </div>
-    <p>In scope: any way to make an edited photo verify, location or personal data leaving the phone in a way the <a href="{{root}}privacy/">privacy policy</a> doesn't describe, crafted files or share intents that crash the app or read files they shouldn't, and anything that exposes the signing key. Stripping the proof and re-signing with your own key is a documented limit, not a bug. The full policy, including what's out of scope, is in <a href="https://github.com/konkomaji/geotagcamera/blob/main/SECURITY.md">SECURITY.md</a>.</p>
-    <p>There's no bug bounty. I aim to acknowledge reports within a week, and you'll be credited in the advisory unless you'd rather not be.</p>
+    <div>
+      <h2 id="security">Security problems</h2>
+      <div class="notice info" role="note">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/></svg>
+        <p><strong>Please don't open a public issue.</strong> Report it privately through a <a href="https://github.com/konkomaji/geotagcamera/security/advisories/new">GitHub security advisory</a>, or by email.</p>
+      </div>
+      <p class="muted">In scope: a way to make an edited photo verify, location or personal data leaving the phone in a way the <a href="{{root}}privacy/">privacy policy</a> doesn't describe, crafted files or share intents that crash the app or read files they shouldn't, and anything that exposes the signing key. The full policy is in <a href="https://github.com/konkomaji/geotagcamera/blob/main/SECURITY.md">SECURITY.md</a>. There's no bug bounty; reports are acknowledged within a week and credited unless you'd rather not be.</p>
+    </div>
+  </div>
 
-    <h2 id="donate">Buy me a coffee</h2>
-    <p>The app is free, with no ads and no paid version. If it's useful to you, a coffee helps keep it maintained. Optional, and it doesn't unlock anything.</p>
-    <p><a class="btn btn-filled" href="https://www.buymeacoffee.com/konko" rel="noopener">Buy me a coffee</a></p>
+  <h2 class="mt7" id="contributing">Help out</h2>
+  <div class="grid-3">
+    <div class="card"><h3>Test on real phones</h3><p>Budget and older phones especially. Tell me what breaks.</p></div>
+    <div class="card"><h3>Translate</h3><p>Hindi and Bengali first. Open an issue to get started.</p></div>
+    <div class="card"><h3>Check the code</h3><p>The verification code and the privacy claims. Read <a href="https://github.com/konkomaji/geotagcamera/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a> and the <a href="https://github.com/konkomaji/geotagcamera/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a> first.</p></div>
+  </div>
 
-    <h2 id="contributing">Contributing</h2>
-    <p>Issues and pull requests are welcome. Please read <a href="https://github.com/konkomaji/geotagcamera/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a> first, and for a larger change open an issue so we can agree on the approach before you put the work in. Everyone taking part is expected to follow the <a href="https://github.com/konkomaji/geotagcamera/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a>.</p>
-    <p>Things that help most right now:</p>
-    <ul>
-      <li>Testing on real phones, especially budget and older ones, and telling me what breaks.</li>
-      <li>Translations, starting with Hindi and Bengali.</li>
-      <li>Checking the verification code and the privacy claims. Don't take my word for them.</li>
-    </ul>
+  <div class="coffee mt8" id="donate">
+    <div class="coffee-art mw320">
+      <img src="{{root}}assets/bmc/support-me.webp" alt="Animated Buy Me a Coffee cup" width="480" height="480" loading="lazy">
+      <span class="credit">GIF by Buy Me a Coffee via GIPHY</span>
+    </div>
+    <div>
+      <p class="eyebrow">Buy me a coffee</p>
+      <h2>Free, with no ads and no paid version</h2>
+      <p class="lede">If GeoTag Camera is useful to you, a coffee helps keep it maintained and free for everyone. Optional, and it doesn't unlock anything.</p>
+      <a class="bmc-btn" href="https://www.buymeacoffee.com/konko" rel="noopener"><img src="{{root}}assets/bmc/bmc-button.svg" alt="Buy Me a Coffee" width="217" height="61"></a>
+      <p class="small muted mt3">See everyone who already has on the <a href="{{home}}#coffee">home page</a>.</p>
+    </div>
   </div>
 </div>
