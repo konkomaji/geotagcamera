@@ -77,6 +77,15 @@ To limit abuse, the script also handles your IP address: it stores only a salted
 
 To have a report deleted sooner, email hello@konkomaji.com with its reference (shown after sending).
 
+## Website forms
+
+The website (konkomaji.com/geotagcamera) has two forms. Nothing is sent until you press the button.
+
+- **Become a tester:** your email address and, if you add them, your name and phone model. They are kept on the web host, outside the public website, only to invite you to the Google Play test, and an email tells the developer you signed up. They are never shared or used for anything else. Ask at hello@konkomaji.com and your entry is deleted.
+- **Send a message:** your email address, optional name and your message, emailed to hello@konkomaji.com so the developer can reply. Messages that look like spam are set aside and not emailed.
+
+To limit abuse, both forms use the same salted, one-way IP hash as problem reports, deleted within a day. The website sets no cookies and loads nothing from other servers. Its download count and supporters list are fetched by the site's own server, so your browser never contacts GitHub or Buy Me a Coffee.
+
 ## Google Play version: usage statistics
 
 Only the version installed from Google Play has this, and only if you agree. The first time you open the camera it asks; both options start switched off, and "No thanks" means nothing is collected. You can change your choice at any time in Settings, Usage statistics.

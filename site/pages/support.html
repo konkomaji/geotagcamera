@@ -50,8 +50,49 @@
   <h2 class="mt7" id="contributing">Help out</h2>
   <div class="grid-3">
     <div class="card"><h3>Test on real phones</h3><p>Budget and older phones especially. Tell me what breaks.</p></div>
-    <div class="card"><h3>Translate</h3><p>Hindi and Bengali first. Open an issue to get started.</p></div>
+    <div class="card"><h3>Test it on Google Play</h3><p>We're getting ready for the Google Play release. Want to be a tester? <a href="#beta">Leave your email address</a> and we'll send you an invitation.</p></div>
     <div class="card"><h3>Check the code</h3><p>The verification code and the privacy claims. Read <a href="https://github.com/konkomaji/geotagcamera/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a> and the <a href="https://github.com/konkomaji/geotagcamera/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a> first.</p></div>
+  </div>
+
+  <div class="grid-2 mt8 gap6">
+    <section class="form-card" id="beta" aria-labelledby="beta-title">
+      <p class="eyebrow">Google Play beta</p>
+      <h2 id="beta-title">Become a tester</h2>
+      <p class="muted">GeoTag Camera is coming to Google Play. Before it goes public, Google requires a closed test, and you can be part of it. Leave your email and we'll send you an invitation when the test opens.</p>
+      <form class="form" method="post" action="{{root}}api/contact.php" data-form>
+        <input type="hidden" name="kind" value="tester">
+        <input type="hidden" name="back" value="support/">
+          <input type="hidden" name="t" value="0" data-form-time>
+          <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <label class="field"><span>Email address <em>(the one you use on Google Play)</em></span><input type="email" name="email" required autocomplete="email" maxlength="200" placeholder="you@gmail.com"></label>
+        <div class="field-row">
+          <label class="field"><span>Name <em>(optional)</em></span><input type="text" name="name" maxlength="80" autocomplete="name"></label>
+          <label class="field"><span>Phone model <em>(optional)</em></span><input type="text" name="device" maxlength="120" placeholder="e.g. Redmi Note 13"></label>
+        </div>
+        <button class="btn btn-primary" type="submit">Join the test</button>
+        <p class="form-status" role="status" aria-live="polite"></p>
+        <p class="form-note">Used only to invite you to the test, never shared, deleted on request. See the <a href="{{root}}privacy/#website-forms">privacy policy</a>.</p>
+      </form>
+    </section>
+    <section class="form-card" id="contact" aria-labelledby="contact-title">
+      <p class="eyebrow">Write to us</p>
+      <h2 id="contact-title">Send a message</h2>
+      <p class="muted">Questions, ideas, partnership or press. It goes to <a href="mailto:hello@konkomaji.com">hello@konkomaji.com</a>. For a problem with the app, the in-app report is faster because it includes your phone details.</p>
+      <form class="form" method="post" action="{{root}}api/contact.php" data-form>
+        <input type="hidden" name="kind" value="message">
+        <input type="hidden" name="back" value="support/">
+          <input type="hidden" name="t" value="0" data-form-time>
+          <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <div class="field-row">
+          <label class="field"><span>Name <em>(optional)</em></span><input type="text" name="name" maxlength="80" autocomplete="name"></label>
+          <label class="field"><span>Email address</span><input type="email" name="email" required autocomplete="email" maxlength="200"></label>
+        </div>
+        <label class="field"><span>Message</span><textarea name="message" required minlength="10" maxlength="3000" rows="5"></textarea></label>
+        <button class="btn btn-primary" type="submit">Send message</button>
+        <p class="form-status" role="status" aria-live="polite"></p>
+        <p class="form-note">We reply from hello@konkomaji.com. Your message is used only to answer you.</p>
+      </form>
+    </section>
   </div>
 
   <div class="coffee mt8" id="donate">

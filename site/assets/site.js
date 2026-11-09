@@ -273,6 +273,115 @@ document.addEventListener('DOMContentLoaded', function () {
     Object.keys(map).forEach(function (id) { var h = document.getElementById(id); if (h) tio.observe(h); });
   }
 
+  /* ---------- screens viewer: tabs + gentle autoplay ---------- */
+  var sv = $('#screenViewer');
+  if (sv) {
+    var svTabs = $$('[role="tab"]', sv), bar = $('.sv-progress', sv), DUR = 5200, timer = null, userTook = false, idx = 0;
+    var caption = document.createElement('p'); caption.className = 'sv-caption'; caption.setAttribute('aria-hidden', 'true');
+    $('.sv-stage', sv).appendChild(caption);
+    var showShot = function (i, focus) {
+      idx = (i + svTabs.length) % svTabs.length;
+      svTabs.forEach(function (t, k) {
+        var on = k === idx;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+        var p = document.getElementById(t.getAttribute('aria-controls'));
+        if (p) { p.hidden = !on; var img = p.querySelector('img'); if (on && img && img.loading === 'lazy') img.loading = 'eager'; }
+      });
+      caption.textContent = $('.st-text span', svTabs[idx]).textContent;
+      if (focus) svTabs[idx].focus();
+      if (window.innerWidth <= 860) svTabs[idx].scrollIntoView({ block: 'nearest', inline: 'center', behavior: reduced ? 'auto' : 'smooth' });
+    };
+    var stop = function () { userTook = true; clearTimeout(timer); if (bar) bar.classList.remove('run'); };
+    var tick = function () {
+      if (userTook || reduced) return;
+      if (bar) { bar.classList.remove('run'); void bar.offsetWidth; bar.style.setProperty('--sv-dur', DUR + 'ms'); bar.classList.add('run'); }
+      timer = setTimeout(function () { showShot(idx + 1); tick(); }, DUR);
+    };
+    svTabs.forEach(function (t, k) {
+      t.addEventListener('click', function () { stop(); showShot(k); });
+      t.addEventListener('keydown', function (e) {
+        var d = (e.key === 'ArrowDown' || e.key === 'ArrowRight') ? 1 : (e.key === 'ArrowUp' || e.key === 'ArrowLeft') ? -1 : 0;
+        if (d) { e.preventDefault(); stop(); showShot(k + d, true); }
+      });
+    });
+    sv.addEventListener('mouseenter', function () { clearTimeout(timer); if (bar) bar.classList.remove('run'); });
+    sv.addEventListener('mouseleave', function () { if (!userTook) tick(); });
+    showShot(0);
+    if ('IntersectionObserver' in window && !reduced) {
+      var svo = new IntersectionObserver(function (en) {
+        en.forEach(function (e) { if (e.isIntersecting && !userTook) { tick(); svo.disconnect(); } });
+      }, { threshold: .35 });
+      svo.observe(sv);
+    }
+  }
+
+  /* ---------- real-world problems: reveal + filter ---------- */
+  var issues = $$('.issue');
+  if (issues.length) {
+    issues.forEach(function (card) {
+      var btn = $('.issue-toggle', card), fix = $('.issue-fix', card);
+      fix.hidden = true;
+      btn.addEventListener('click', function () {
+        var open = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+        btn.textContent = open ? 'How GeoTag Camera handles it' : 'Hide the answer';
+        fix.hidden = open; card.classList.toggle('open', !open);
+        if (!open) { fix.classList.remove('show'); void fix.offsetWidth; fix.classList.add('show'); }
+      });
+    });
+    $$('[data-filter]').forEach(function (f) {
+      f.addEventListener('click', function () {
+        var cat = f.getAttribute('data-filter');
+        $$('[data-filter]').forEach(function (x) { x.setAttribute('aria-pressed', x === f ? 'true' : 'false'); });
+        issues.forEach(function (c) { c.hidden = cat !== 'all' && c.getAttribute('data-cat') !== cat; });
+      });
+    });
+    var all = $('[data-reveal-all]');
+    if (all) all.addEventListener('click', function () {
+      var opening = all.getAttribute('data-open') !== 'true';
+      all.setAttribute('data-open', opening ? 'true' : 'false');
+      all.textContent = opening ? 'Hide the answers' : 'Show every answer';
+      issues.forEach(function (c) {
+        var btn = $('.issue-toggle', c), fix = $('.issue-fix', c);
+        btn.setAttribute('aria-expanded', opening ? 'true' : 'false');
+        btn.textContent = opening ? 'Hide the answer' : 'How GeoTag Camera handles it';
+        fix.hidden = !opening; c.classList.toggle('open', opening);
+      });
+    });
+  }
+
+  /* ---------- website forms (tester signup, contact) ---------- */
+  $$('form[data-form]').forEach(function (form) {
+    var t = $('[data-form-time]', form); if (t) t.value = String(Math.floor(Date.now() / 1000));
+    var status = $('.form-status', form), btn = $('button[type="submit"]', form);
+    form.addEventListener('submit', function (e) {
+      if (!window.fetch || !window.FormData) return;
+      e.preventDefault();
+      status.className = 'form-status'; status.textContent = 'Sending...';
+      btn.disabled = true;
+      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'X-GeoTag-Client': 'web' }, credentials: 'omit' })
+        .then(function (r) { return r.json().catch(function () { return { ok: false, msg: 'Something went wrong. Please email hello@konkomaji.com.' }; }); })
+        .then(function (d) {
+          status.className = 'form-status ' + (d.ok ? 'ok' : 'err');
+          status.textContent = d.msg;
+          if (d.ok) { form.reset(); if (t) t.value = String(Math.floor(Date.now() / 1000)); }
+        })
+        .catch(function () { status.className = 'form-status err'; status.textContent = 'No connection. Please try again, or email hello@konkomaji.com.'; })
+        .then(function () { btn.disabled = false; });
+    });
+  });
+  // Without JavaScript the server redirects back with ?sent= or ?error=; show that here too.
+  (function () {
+    var q = new URLSearchParams(location.search), sent = q.get('sent'), err = q.get('error');
+    if (!sent && !err) return;
+    var form = $(sent === 'tester' || location.hash === '#beta' ? '#beta form' : '#contact form');
+    if (!form) return;
+    var st = $('.form-status', form);
+    st.className = 'form-status ' + (sent ? 'ok' : 'err');
+    st.textContent = sent ? (sent === 'tester' ? "You're on the list. We'll email you when the test opens." : 'Thanks, your message was sent.') : err;
+  })();
+
   /* ---------- live numbers from this site's own api/stats.php ---------- */
   if (!$('[data-stat]') && !$('#wall')) return;
   var animateTo = function (el, n) {
@@ -294,6 +403,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var s = d.supporters, wall = $('#wall');
     if (!s || !wall) return;
     if (!(s.coffees > 0)) return;
+    $$('[data-thanks-empty]').forEach(function (el) { el.hidden = true; });
+    $$('[data-thanks-live]').forEach(function (el) { el.hidden = false; });
     $$('[data-stat="coffees"]').forEach(function (el) { animateTo(el, s.coffees); });
     $$('[data-stat="supporters"]').forEach(function (el) { animateTo(el, s.count || 0); });
     $$('[data-stat="coffees-word"]').forEach(function (el) { el.textContent = s.coffees === 1 ? 'coffee' : 'coffees'; });
@@ -305,7 +416,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var who = document.createElement('p'); who.className = 'note-by'; who.textContent = m.name;
       li.appendChild(q); li.appendChild(who); list.appendChild(li);
     });
-    if (!list.children.length) list.hidden = true;
-    wall.hidden = false;
+    list.hidden = !list.children.length;
   }).catch(function () { /* numbers stay at their static fallback */ });
 });

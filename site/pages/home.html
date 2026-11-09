@@ -181,7 +181,87 @@
   </div>
 </section>
 
-<section id="features" class="alt" aria-labelledby="who-title">
+<section id="problems" class="alt" aria-labelledby="problems-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Real problems, fixed</p>
+      <h2 id="problems-title">The complaints in every GPS camera app's reviews</h2>
+      <p class="lede">Pulled from Play Store reviews of the most-installed GPS camera apps. Tap one to see how GeoTag Camera handles it.</p>
+    </div>
+    <div class="filters js-only" role="group" aria-label="Filter problems">
+      <button type="button" class="chip" data-filter="all" aria-pressed="true">All</button>
+      <button type="button" class="chip" data-filter="money" aria-pressed="false">Ads and paywalls</button>
+      <button type="button" class="chip" data-filter="accuracy" aria-pressed="false">Accuracy</button>
+      <button type="button" class="chip" data-filter="field" aria-pressed="false">In the field</button>
+      <button type="button" class="chip" data-filter="trust" aria-pressed="false">Trust</button>
+      <button type="button" class="btn btn-ghost btn-sm" data-reveal-all>Show every answer</button>
+    </div>
+    <div class="issues">
+      <article class="issue" data-cat="money">
+        <p class="issue-q">An ad plays before the camera even opens.</p>
+        <button type="button" class="issue-toggle js-only" aria-expanded="false" aria-controls="fix-1">How GeoTag Camera handles it</button>
+        <div class="issue-fix" id="fix-1"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><div><strong>No ads, ever.</strong> The app opens straight to the viewfinder. Nothing sits over the shutter, and nothing pops up between shots.</div></div>
+      </article>
+      <article class="issue" data-cat="money">
+        <p class="issue-q">Basic stamp fields need a subscription.</p>
+        <button type="button" class="issue-toggle js-only" aria-expanded="false" aria-controls="fix-2">How GeoTag Camera handles it</button>
+        <div class="issue-fix" id="fix-2"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><div><strong>Every field is free.</strong> Coordinates, address, map, altitude, bearing, logo, custom text, exports and PDF reports. Nothing is locked, and there's no paid version.</div></div>
+      </article>
+      <article class="issue" data-cat="accuracy">
+        <p class="issue-q">The address is from where I was five minutes ago.</p>
+        <button type="button" class="issue-toggle js-only" aria-expanded="false" aria-controls="fix-3">How GeoTag Camera handles it</button>
+        <div class="issue-fix" id="fix-3"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><div><strong>Looked up for where you are.</strong> The address is fetched again as soon as you move about 30 m, and a GPS fix older than 30 seconds is never stamped.</div></div>
+      </article>
+      <article class="issue" data-cat="accuracy">
+        <p class="issue-q">The shot was lost while the GPS was still searching.</p>
+        <button type="button" class="issue-toggle js-only" aria-expanded="false" aria-controls="fix-4">How GeoTag Camera handles it</button>
+        <div class="issue-fix" id="fix-4"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><div><strong>The photo is held, not lost.</strong> Take the shot anyway: it waits up to a minute for a GPS fix and saves the moment one arrives. You decide whether to keep waiting.</div></div>
+      </article>
+      <article class="issue" data-cat="accuracy">
+        <p class="issue-q">Zoom and focus are clumsy.</p>
+        <button type="button" class="issue-toggle js-only" aria-expanded="false" aria-controls="fix-5">How GeoTag Camera handles it</button>
+        <div class="issue-fix" id="fix-5"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><div><strong>Pinch, zoom chips and tap to focus.</strong> Night and HDR modes too, on phones whose camera supports them.</div></div>
+      </article>
+      <article class="issue" data-cat="field">
+        <p class="issue-q">No signal on site, so no address and no map.</p>
+        <button type="button" class="issue-toggle js-only" aria-expanded="false" aria-controls="fix-6">How GeoTag Camera handles it</button>
+        <div class="issue-fix" id="fix-6"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><div><strong>Works offline.</strong> Stamping, signing and verifying need no connection. Addresses already looked up are reused, the Plus Code is worked out on the phone, and you can save map areas before a trip.</div></div>
+      </article>
+      <article class="issue" data-cat="field">
+        <p class="issue-q">It drains the battery.</p>
+        <button type="button" class="issue-toggle js-only" aria-expanded="false" aria-controls="fix-7">How GeoTag Camera handles it</button>
+        <div class="issue-fix" id="fix-7"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><div><strong>Location only while the camera is open.</strong> No background location and no background service. GPS stops the moment you leave the camera screen.</div></div>
+      </article>
+      <article class="issue" data-cat="field">
+        <p class="issue-q">It took a photo the second it opened, and stopped my music.</p>
+        <button type="button" class="issue-toggle js-only" aria-expanded="false" aria-controls="fix-8">How GeoTag Camera handles it</button>
+        <div class="issue-fix" id="fix-8"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><div><strong>Only you press the shutter.</strong> The app never shoots on its own, and it doesn't take over the phone's audio, so music and podcasts keep playing.</div></div>
+      </article>
+      <article class="issue" data-cat="field">
+        <p class="issue-q">Renaming hundreds of photos for the report.</p>
+        <button type="button" class="issue-toggle js-only" aria-expanded="false" aria-controls="fix-9">How GeoTag Camera handles it</button>
+        <div class="issue-fix" id="fix-9"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><div><strong>Named for you.</strong> Files are saved as IMG_20261109_104200_Kalna.jpg, grouped by project, and exported to CSV, KML, GeoJSON or a PDF site report.</div></div>
+      </article>
+      <article class="issue" data-cat="trust">
+        <p class="issue-q">Anyone can fake a GPS stamp.</p>
+        <button type="button" class="issue-toggle js-only" aria-expanded="false" aria-controls="fix-10">How GeoTag Camera handles it</button>
+        <div class="issue-fix" id="fix-10"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><div><strong>Signed on the phone.</strong> Each photo is signed with its location and time; any later edit shows up when it's verified. Locations from mock-GPS apps are never signed.</div></div>
+      </article>
+      <article class="issue" data-cat="trust">
+        <p class="issue-q">Too many permissions and trackers for a camera.</p>
+        <button type="button" class="issue-toggle js-only" aria-expanded="false" aria-controls="fix-11">How GeoTag Camera handles it</button>
+        <div class="issue-fix" id="fix-11"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><div><strong>Camera and location, that's it.</strong> Plus photo location for Verify. The GitHub and F-Droid versions contain no analytics or ad code; the source is public.</div></div>
+      </article>
+      <article class="issue" data-cat="trust">
+        <p class="issue-q">It crashes halfway through a job.</p>
+        <button type="button" class="issue-toggle js-only" aria-expanded="false" aria-controls="fix-12">How GeoTag Camera handles it</button>
+        <div class="issue-fix" id="fix-12"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><div><strong>Built not to lose your work.</strong> If the phone runs out of memory the photo is saved at half size instead of dropped, and storage errors show a message instead of closing the app.</div></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="features" aria-labelledby="who-title">
   <div class="wrap">
     <div class="section-head">
       <p class="eyebrow">Built for field work</p>
@@ -201,23 +281,18 @@
   </div>
 </section>
 
-<section id="screens" aria-labelledby="screens-title">
+<section id="screens" class="alt" aria-labelledby="screens-title">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow">Screens</p>
-      <h2 id="screens-title">What it looks like</h2>
+      <p class="eyebrow">A tour of the app</p>
+      <h2 id="screens-title">From framing to proof in six screens</h2>
+      <p class="lede">Real screenshots from version {{version}}. Pick a step, or let it play.</p>
     </div>
-  </div>
-  <div class="shots-wrap">
   {{screens}}
-  </div>
-  <div class="shots-nav js-only">
-    <button class="icon-btn" type="button" data-shots="prev" aria-label="Previous screenshots"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
-    <button class="icon-btn" type="button" data-shots="next" aria-label="Next screenshots"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
   </div>
 </section>
 
-<section id="open-source" class="alt" aria-labelledby="oss-title">
+<section id="open-source" aria-labelledby="oss-title">
   <div class="wrap">
     <div class="section-head">
       <p class="eyebrow">Open source</p>
@@ -255,12 +330,13 @@
         <a class="bmc-btn" href="https://www.buymeacoffee.com/konko" rel="noopener"><img src="{{root}}assets/bmc/bmc-button.svg" alt="Buy Me a Coffee" width="217" height="61"></a>
       </div>
     </div>
-    <div class="wall" id="wall" hidden>
+    <div class="wall" id="wall">
       <div class="thanks">
-        <h3>Thank you</h3>
-        <p class="thanks-count"><b data-stat="coffees">0</b> <span data-stat="coffees-word">coffees</span> from <b data-stat="supporters">0</b> <span data-stat="supporters-word">supporters</span> keep GeoTag Camera free.</p>
+        <h3>Thank you, coffee people</h3>
+        <p class="thanks-count" data-thanks-empty>No coffees yet. Be the first: your name and message will appear here as a thank-you.</p>
+        <p class="thanks-count" data-thanks-live hidden><b data-stat="coffees">0</b> <span data-stat="coffees-word">coffees</span> from <b data-stat="supporters">0</b> <span data-stat="supporters-word">supporters</span> keep GeoTag Camera free.</p>
       </div>
-      <ul class="notes"></ul>
+      <ul class="notes" hidden></ul>
     </div>
   </div>
 </section>

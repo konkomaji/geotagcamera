@@ -118,6 +118,23 @@ FAQ = [
      "In the app, open Settings, Report a problem. Type what happened, add up to three screenshots or a screen recording, "
      "and press Send: it goes straight to the developer. Screenshots have their hidden data, including GPS, removed before "
      "sending. You can also email hello@konkomaji.com or open an issue on GitHub."),
+    ("Why does my GPS camera app show the wrong address?",
+     "Many apps reuse the address from wherever you last were, so the map pin is right but the text is stale. GeoTag Camera "
+     "looks the address up again as soon as you move about 30 metres, and it never stamps a GPS fix older than 30 seconds. "
+     "With no signal it uses the nearest address it already looked up, and the Plus Code is always worked out on the phone."),
+    ("Is there a GPS map camera app without ads or a subscription?",
+     "Yes. GeoTag Camera has no ads, no subscription and no locked fields: every stamp field, the map, the logo and custom text, "
+     "exports and PDF reports are free. It's open source, so you can check that yourself."),
+    ("Can a GPS stamp on a photo be faked?",
+     "A stamp alone can be: anyone can type text onto an image or use a fake-GPS app. GeoTag Camera signs every photo on the "
+     "phone, so any later edit to the image, location or time shows up when it's verified, and it never signs a location that "
+     "comes from a mock-location app. It still can't prove who held the phone."),
+    ("Does the app take a photo by itself, stop my music or run in the background?",
+     "No. It only takes a photo when you press the shutter, it doesn't take over your phone's audio so music and podcasts keep "
+     "playing, and it uses location only while the camera screen is open, never in the background."),
+    ("How can I test the Google Play version early?",
+     "Sign up on the support page with your email address. When the Google Play closed test opens you'll get an invitation "
+     "by email. Your address is used only for that and deleted on request."),
     ("Who is it built for?",
      "College students documenting fieldwork, land and infrastructure surveyors, inspectors, NGO and government field "
      "staff, and anyone who needs to show exactly where and when a photo was taken. The Field and Professional setups "
@@ -129,12 +146,18 @@ FAQ = [
 # Screenshots: another process supplies site/assets/screens/N.png. Sizes are read from the
 # files when present; captions describe what each one should show.
 SCREENS = [
-    ("1.png", "Camera", "The camera with the live stamp previewed on the viewfinder"),
-    ("2.png", "Stamp", "A just-taken photo with the compact stamp, map thumbnail and Signed badge"),
-    ("3.png", "Gallery", "The gallery with a verified badge on each signed photo"),
-    ("4.png", "Verify", "Photo details: unaltered since signing, with the signing key fingerprint"),
-    ("5.png", "Settings", "Settings with Field or Professional setup and a live stamp preview"),
-    ("6.png", "Setup", "First launch: choose Field for quick capture or Professional for every detail"),
+    ("1.png", "Camera", "The camera with the live stamp previewed on the viewfinder",
+     "Frame the shot with the stamp already on screen, drawn by the same code that burns it in. Pinch or tap the zoom chips, tap to focus, and the location chip says when the GPS fix is locked."),
+    ("2.png", "Stamp", "A just-taken photo with the compact stamp, map thumbnail and Signed badge",
+     "Place, address, Plus Code, coordinates, time and a small map go onto the photo and into its EXIF. It's signed on the phone and saved with a name like IMG_20261109_104200_Kalna.jpg."),
+    ("3.png", "Gallery", "The gallery with a verified badge on each signed photo",
+     "Photos grouped by day and project, each with a badge that says whether it still verifies. Export the locations to CSV, KML or GeoJSON, or build a PDF site report."),
+    ("4.png", "Verify", "Photo details: unaltered since signing, with the signing key fingerprint",
+     "Open any photo, even one someone sent you, and see whether its pixels, location and time still match the signature, and which key signed it."),
+    ("5.png", "Settings", "Settings with Field or Professional setup and a live stamp preview",
+     "Switch every stamp field on or off and watch the preview change. Add your organisation's name and logo, a fixed line of text, or a hand-drawn signature."),
+    ("6.png", "Setup", "First launch: choose Field for quick capture or Professional for every detail",
+     "Pick Field for quick capture with the essentials, or Professional for projects, exports and every stamp detail. You can change it later."),
 ]
 SCREEN_DEFAULT_SIZE = (1080, 2340)
 
@@ -480,7 +503,7 @@ def footer_html():
     <div class="foot-bottom">
       <p>This website sets no cookies and loads nothing from other servers.</p>
       <p class="mono">Version {VERSION}</p>
-      <p>&copy; {YEAR} Konko Maji &middot; GPL-3.0-or-later</p>
+      <p>&copy; {YEAR} <a href="https://konkomaji.com/">Konko Maji</a> &middot; GPL-3.0-or-later</p>
     </div>
   </div>
 </footer>"""
@@ -687,18 +710,25 @@ def stores_html(stores):
 
 
 def screens_html():
-    present = []
-    items = []
-    for fname, label, alt in SCREENS:
+    present, tabs, panels = [], [], []
+    for i, (fname, label, alt, desc) in enumerate(SCREENS):
         path = SITE / "assets" / "screens" / fname
         size = png_size(path) if path.exists() else None
         if size:
             present.append(fname)
         w, h = size or SCREEN_DEFAULT_SIZE
-        items.append(
-            f'<li><figure><img src="{{{{root}}}}assets/screens/{fname}" alt="{html.escape(alt)}" width="{w}" height="{h}" '
-            f'loading="lazy" decoding="async"><figcaption>{html.escape(label)}</figcaption></figure></li>')
-    block = ('<ul class="shots" aria-label="Screenshots">\n  ' + "\n  ".join(items) + "\n</ul>")
+        sel = "true" if i == 0 else "false"
+        tabs.append(
+            f'<button role="tab" id="st-{i}" aria-controls="sp-{i}" aria-selected="{sel}" tabindex="{0 if i == 0 else -1}">'
+            f'<span class="st-num">{i + 1:02d}</span><span class="st-text"><strong>{html.escape(label)}</strong>'
+            f'<span>{html.escape(desc)}</span></span></button>')
+        panels.append(
+            f'<figure role="tabpanel" id="sp-{i}" aria-labelledby="st-{i}" class="sv-panel"{"" if i == 0 else " data-later"}>'
+            f'<img src="{{{{root}}}}assets/screens/{fname}" alt="{html.escape(alt)}" width="{w}" height="{h}" '
+            f'loading="{"eager" if i == 0 else "lazy"}" decoding="async"><figcaption class="visually-hidden">{html.escape(label)}</figcaption></figure>')
+    block = ('<div class="sv" id="screenViewer">\n  <div class="sv-tabs" role="tablist" aria-label="App screens">\n    '
+             + "\n    ".join(tabs) + '\n  </div>\n  <div class="sv-stage"><div class="phone sv-phone"><div class="phone-screen">\n    '
+             + "\n    ".join(panels) + '\n  </div></div>\n  <div class="sv-progress js-only" aria-hidden="true"><span></span></div></div>\n</div>')
     return block, present
 
 
@@ -927,6 +957,8 @@ def check_site():
         for tag, attr, val, relattr in s.refs:
             if re.match(r"^(mailto:|obtainium:|data:)", val):
                 continue
+            if val.startswith("https://konkomaji.com/") and not val.startswith("https://konkomaji.com" + BASE_PATH):
+                continue  # the author's own site, outside this one
             if val.startswith("http://"):
                 errors.append(f"{rel}: insecure URL {val}")
             if tag in ("img", "script", "source") or (tag == "link" and relattr != "canonical"):

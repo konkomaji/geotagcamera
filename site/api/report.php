@@ -110,52 +110,8 @@ function hit(string $file, int $window, int $limit): bool {
     return $ok;
 }
 
-/**
- * Minimal authenticated SMTP over TLS, so mail goes out through the domain's
- * own mailbox (DKIM-signed and SPF-aligned by the mail provider) instead of
- * the web server's mail(). Settings live in geotag-report-data/smtp.ini
- * outside the web root, never in the public repository:
- *   host = "smtp.hostinger.com"
- *   port = 465
- *   user = "hello@konkomaji.com"
- *   pass = "..."
- *   to   = "konkomaji@gmail.com"   (optional: where reports go)
- */
-function smtp_send(array $cfg, string $to, string $subject, string $body, array $headers): bool {
-    $host = (string)$cfg['host']; $port = (int)($cfg['port'] ?? 465);
-    $ctx = stream_context_create(['ssl' => ['verify_peer' => true, 'verify_peer_name' => true, 'peer_name' => $host]]);
-    $fp = @stream_socket_client("ssl://$host:$port", $errno, $errstr, 15, STREAM_CLIENT_CONNECT, $ctx);
-    if (!$fp) return false;
-    stream_set_timeout($fp, 30);
-    $read = function () use ($fp): string {
-        $out = '';
-        while (($line = fgets($fp, 1024)) !== false) { $out .= $line; if (strlen($line) < 4 || $line[3] === ' ') break; }
-        return $out;
-    };
-    $cmd = function (string $c, string $expect) use ($fp, $read): bool {
-        if ($c !== '') fwrite($fp, $c . "\r\n");
-        return str_starts_with($read(), $expect);
-    };
-    $user = (string)$cfg['user'];
-    $ok = $cmd('', '220')
-        && $cmd('EHLO ' . substr(strrchr($user, '@'), 1), '250')
-        && $cmd('AUTH LOGIN', '334')
-        && $cmd(base64_encode($user), '334')
-        && $cmd(base64_encode((string)$cfg['pass']), '235')
-        && $cmd("MAIL FROM:<$user>", '250')
-        && $cmd("RCPT TO:<$to>", '25')
-        && $cmd('DATA', '354');
-    if ($ok) {
-        $msg = implode("\r\n", array_merge(["To: <$to>", "Subject: $subject"], $headers)) . "\r\n\r\n" . $body;
-        // Dot-stuffing: a line starting with "." must be doubled.
-        $msg = preg_replace('/^\./m', '..', str_replace(["\r\n", "\n"], ["\n", "\r\n"], $msg));
-        fwrite($fp, $msg . "\r\n");
-        $ok = $cmd('.', '250');
-    }
-    @fwrite($fp, "QUIT\r\n");
-    fclose($fp);
-    return $ok;
-}
+require __DIR__ . '/mailer.php';
+
 
 /** True when sha256($input) starts with $bits zero bits. */
 function leading_zero_bits(string $input, int $bits): bool {
