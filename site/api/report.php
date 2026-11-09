@@ -40,8 +40,10 @@ declare(strict_types=1);
 ini_set('display_errors', '0');
 error_reporting(E_ALL);
 
-const TO_EMAIL        = 'konkomaji@gmail.com';
-const FROM_EMAIL      = 'noreply@konkomaji.com';   // must be on the site's own domain
+// Reports are sent from the project's public address to the developer's private inbox.
+// The inbox can be changed in geotag-report-data/smtp.ini (to = "...") without a code change.
+const DEFAULT_TO      = 'konkomaji@gmail.com';
+const FROM_EMAIL      = 'hello@konkomaji.com';     // the public contact; must be on the site's own domain
 const MAX_JSON        = 300000;                    // bytes of report JSON
 const MAX_IMAGES      = 3;
 const MAX_VIDEOS      = 1;
@@ -115,8 +117,9 @@ function hit(string $file, int $window, int $limit): bool {
  * outside the web root, never in the public repository:
  *   host = "smtp.hostinger.com"
  *   port = 465
- *   user = "noreply@konkomaji.com"
+ *   user = "hello@konkomaji.com"
  *   pass = "..."
+ *   to   = "konkomaji@gmail.com"   (optional: where reports go)
  */
 function smtp_send(array $cfg, string $to, string $subject, string $body, array $headers): bool {
     $host = (string)$cfg['host']; $port = (int)($cfg['port'] ?? 465);
@@ -195,6 +198,9 @@ if (!is_dir($data) && !@mkdir($data, 0700, true)) {
     @mkdir($data, 0700, true);
 }
 foreach (['rate', 'seen', 'reports', 'spam'] as $d) @mkdir("$data/$d", 0700);
+$smtp = @parse_ini_file("$data/smtp.ini");
+$toEmail = (is_array($smtp) && !empty($smtp['to']) && filter_var($smtp['to'], FILTER_VALIDATE_EMAIL)) ? $smtp['to'] : DEFAULT_TO;
+define('TO_EMAIL', $toEmail);
 $saltFile = "$data/salt";
 if (!is_file($saltFile)) @file_put_contents($saltFile, bin2hex(random_bytes(16)));
 $salt = (string)@file_get_contents($saltFile);
@@ -214,7 +220,7 @@ if (!is_file($sweep) || filemtime($sweep) < time() - 3600) {
     foreach (glob("$data/seen/*") ?: [] as $f) if (filemtime($f) < time() - 86400) @unlink($f);
 }
 if (dir_size("$data/reports") + dir_size("$data/spam") > STORE_CAP) {
-    reply(503, ['ok' => false, 'error' => 'Report service is full right now. Please email ' . TO_EMAIL]);
+    reply(503, ['ok' => false, 'error' => 'Report service is full right now. Please email ' . FROM_EMAIL]);
 }
 
 // ---- 3. rate limits ----------------------------------------------------------------------
@@ -347,7 +353,6 @@ foreach ($images as [$name, $mime, $path]) {
 $body .= "--$boundary--\r\n";
 
 $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
-$smtp = @parse_ini_file("$data/smtp.ini");
 if (is_array($smtp) && !empty($smtp['host']) && !empty($smtp['user']) && isset($smtp['pass'])) {
     $mailed = smtp_send($smtp, TO_EMAIL, $encodedSubject, $body, $headers);
     // Fall back so a broken SMTP setting never loses a report's email entirely.

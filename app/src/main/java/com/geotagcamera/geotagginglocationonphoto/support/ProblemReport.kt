@@ -15,7 +15,7 @@ import java.io.File
 /** Builds the report for the user's email app or GitHub. Direct sending is [ReportSender]. */
 object ProblemReport {
 
-    const val EMAIL = "konkomaji@gmail.com"
+    const val EMAIL = "hello@konkomaji.com"
     const val ISSUES_URL = "https://github.com/konkomaji/geotagcamera/issues/new"
     /** Where this build came from, for the bug form's version answer. */
     private val SOURCE = if (BuildConfig.FLAVOR == "play") "Google Play" else "GitHub, F-Droid or IzzyOnDroid"

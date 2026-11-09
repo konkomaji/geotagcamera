@@ -15,7 +15,7 @@
 - Downloads: signed APKs on GitHub releases, one per CPU type (arm64-v8a, armeabi-v7a, x86_64) plus universal, each with a .sha256 file
 - Stores: GitHub releases now (the only official download today); F-Droid (submission in review, reproducible builds, same signature as GitHub) and Google Play coming soon. Not published anywhere else.
 - Upgrading from 1.3.0 or older: uninstall first (new permanent signing key); photos stay in the gallery and still verify; Gallery, Import photos re-adds them to the in-app list
-- Author: Konko Maji (konkomaji@gmail.com)
+- Author: Konko Maji (hello@konkomaji.com)
 
 ## Pages
 

@@ -71,11 +71,11 @@ Report a problem (Settings, or About & legal) shows you everything a report will
 
 A report never includes your photos, your capture list or your locations.
 
-**Where it goes:** **Send report** uploads it over an encrypted connection (HTTPS) to a small script on this app's own website (konkomaji.com, hosted by Hostinger). The script emails it to the developer at konkomaji@gmail.com and keeps a copy on the web host, outside the public website, so a report isn't lost if email fails. Stored reports and attachments are deleted automatically after 30 days. Screen recordings are not emailed; they are kept on the host for those 30 days only.
+**Where it goes:** **Send report** uploads it over an encrypted connection (HTTPS) to a small script on this app's own website (konkomaji.com, hosted by Hostinger). The script emails it to the developer and keeps a copy on the web host, outside the public website, so a report isn't lost if email fails. Stored reports and attachments are deleted automatically after 30 days. Screen recordings are not emailed; they are kept on the host for those 30 days only.
 
 To limit abuse, the script also handles your IP address: it stores only a salted one-way hash of it (for IPv6, of its /64 network), used to limit how many reports can be sent per hour and per day, and deletes it within a day. Your IP address itself is not stored. Reports that look like spam are set aside and not emailed.
 
-To have a report deleted sooner, email konkomaji@gmail.com with its reference (shown after sending).
+To have a report deleted sooner, email hello@konkomaji.com with its reference (shown after sending).
 
 ## Google Play version: usage statistics
 
@@ -114,7 +114,7 @@ The GitHub and F-Droid versions contain no analytics code at all.
 - Uninstalling the app removes all of the above and the signing key.
 - Photos already saved to your gallery are yours. They stay until you delete them yourself.
 
-On our side: problem reports are deleted automatically after 30 days, or sooner if you ask. Usage statistics in the Google Play version can be stopped any time in Settings; to have data already collected deleted, email konkomaji@gmail.com.
+On our side: problem reports are deleted automatically after 30 days, or sooner if you ask. Usage statistics in the Google Play version can be stopped any time in Settings; to have data already collected deleted, email hello@konkomaji.com.
 
 ## Children
 
@@ -126,4 +126,4 @@ If the app's behaviour changes in a way that affects your privacy, this file wil
 
 ## Contact
 
-Questions about this policy: email konkomaji@gmail.com, or open an issue at https://github.com/konkomaji/geotagcamera/issues. For anything you'd rather not post publicly, use a [private security advisory](https://github.com/konkomaji/geotagcamera/security/advisories/new).
+Questions about this policy: email hello@konkomaji.com, or open an issue at https://github.com/konkomaji/geotagcamera/issues. For anything you'd rather not post publicly, use a [private security advisory](https://github.com/konkomaji/geotagcamera/security/advisories/new).

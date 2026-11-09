@@ -34,4 +34,4 @@ Map data is © OpenStreetMap contributors (ODbL), served by OpenFreeMap. Weather
 
 ## Contact
 
-Report a problem from the app (About & legal, Report a problem), email konkomaji@gmail.com, or open an issue at https://github.com/konkomaji/geotagcamera/issues. Security issues: see SECURITY.md in the repository.
+Report a problem from the app (About & legal, Report a problem), email hello@konkomaji.com, or open an issue at https://github.com/konkomaji/geotagcamera/issues. Security issues: see SECURITY.md in the repository.

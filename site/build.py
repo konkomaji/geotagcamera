@@ -35,7 +35,7 @@ ZIP_PATH = DIST / "geotagcamera-site.zip"
 BASE_URL = "https://konkomaji.com/geotagcamera/"
 BASE_PATH = "/geotagcamera/"
 REPO_URL = "https://github.com/konkomaji/geotagcamera"
-EMAIL = "konkomaji@gmail.com"
+EMAIL = "hello@konkomaji.com"
 YEAR = "2026"
 
 
@@ -490,7 +490,7 @@ PERSON = {
     "@id": "https://konkomaji.com/#person",
     "name": "Konko Maji",
     "url": "https://konkomaji.com/",
-    "email": "mailto:konkomaji@gmail.com",
+    "email": "mailto:hello@konkomaji.com",
     "sameAs": ["https://github.com/konkomaji"],
 }
 APP_ID = BASE_URL + "#app"
