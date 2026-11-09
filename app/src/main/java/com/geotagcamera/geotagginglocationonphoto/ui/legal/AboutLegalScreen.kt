@@ -116,6 +116,7 @@ fun AboutLegalScreen(
                 LinkRow("Website", WEBSITE_URL, context)
                 LinkRow("Source code", SOURCE_URL, context)
                 LinkRow("Privacy policy, online", "$SOURCE_URL/blob/main/PRIVACY.md", context)
+                if (BuildConfig.DONATE_URL.isNotEmpty()) LinkRow("Buy me a coffee", BuildConfig.DONATE_URL, context)
             }
 
             Spacer(Modifier.height(28.dp))

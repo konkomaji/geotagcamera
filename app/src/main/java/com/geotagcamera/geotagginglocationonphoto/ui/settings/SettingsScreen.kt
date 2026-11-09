@@ -1,5 +1,8 @@
 package com.geotagcamera.geotagginglocationonphoto.ui.settings
 
+import com.geotagcamera.geotagginglocationonphoto.BuildConfig
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.material.icons.outlined.LocalCafe
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -321,6 +324,13 @@ private fun SettingsContent(
             NavRow(Icons.Outlined.Info, "About & legal", "Privacy, terms, licences, delete app data", onOpenAboutLegal)
             HorizontalDivider(Modifier.padding(start = 56.dp))
             NavRow(Icons.Outlined.BugReport, "Report a problem", "Email the developer, with device details if you like", onOpenReport)
+            if (BuildConfig.DONATE_URL.isNotEmpty()) {
+                val uriHandler = LocalUriHandler.current
+                HorizontalDivider(Modifier.padding(start = 56.dp))
+                NavRow(Icons.Outlined.LocalCafe, "Buy me a coffee", "Free, no ads, no tracking. Support keeps it that way", {
+                    runCatching { uriHandler.openUri(BuildConfig.DONATE_URL) }
+                })
+            }
         }
     }
 }

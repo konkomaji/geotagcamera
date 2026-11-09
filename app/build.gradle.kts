@@ -38,8 +38,16 @@ android {
     // future Google Play listing. Same applicationId and code otherwise.
     flavorDimensions += "distribution"
     productFlavors {
-        create("foss") { dimension = "distribution" }
-        create("play") { dimension = "distribution" }
+        create("foss") {
+            dimension = "distribution"
+            buildConfigField("String", "DONATE_URL", "\"https://www.buymeacoffee.com/konko\"")
+        }
+        // No donate link on Google Play: its Payments policy forbids sending
+        // users to outside payment pages for developer tips.
+        create("play") {
+            dimension = "distribution"
+            buildConfigField("String", "DONATE_URL", "\"\"")
+        }
     }
 
     signingConfigs {
@@ -92,7 +100,8 @@ android {
     // downloads small; the universal APK stays for anyone unsure which to pick.
     splits {
         abi {
-            isEnable = true
+            // App bundles can't carry ABI splits (Play splits them itself).
+            isEnable = gradle.startParameter.taskNames.none { it.contains("bundle", ignoreCase = true) }
             reset()
             // -Pabi=arm64-v8a builds just that one (F-Droid builds one ABI per run).
             val only = (project.findProperty("abi") as String?)?.takeIf { it.isNotBlank() }
@@ -122,14 +131,18 @@ val copyLegalDocs by tasks.registering(Copy::class) {
 tasks.named("preBuild") { dependsOn(copyLegalDocs) }
 
 // Each ABI APK needs its own versionCode so stores and in-place updates can
-// tell them apart: universal = base*10, then 1 = armeabi-v7a, 2 = arm64-v8a, 3 = x86_64.
+// tell them apart: universal = base*10, then 1 = armeabi-v7a, 2 = arm64-v8a, 3 = x86_64,
+// and 9 = the Google Play bundle.
 val abiDigit = mapOf("armeabi-v7a" to 1, "arm64-v8a" to 2, "x86_64" to 3)
 androidComponents {
     onVariants { variant ->
         variant.outputs.forEach { output ->
             val abi = output.filters.find { it.filterType == com.android.build.api.variant.FilterConfiguration.FilterType.ABI }?.identifier
             val base = output.versionCode.orNull ?: 0
-            output.versionCode.set(base * 10 + (abi?.let { abiDigit[it] } ?: 0))
+            // Google Play builds (one AAB, Play splits it) end in 9, so a Play
+            // update always outranks a GitHub/F-Droid APK of the same version.
+            val digit = if (variant.flavorName == "play") 9 else abi?.let { abiDigit[it] } ?: 0
+            output.versionCode.set(base * 10 + digit)
         }
     }
 }
