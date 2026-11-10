@@ -780,9 +780,8 @@ F-Droid artwork, the "Get it on GitHub" badge comes from Kunzisoft's Github-badg
 Google's. GitHub is a trademark of GitHub, Inc. Google Play and the Google Play logo are trademarks of Google LLC.</p>
 <p>The Buy Me a Coffee logo and button come from the Buy Me a Coffee brand kit, and the animated cup and sticker are
 Buy Me a Coffee's own GIFs from their GIPHY channel; all are served from this site and belong to Buy Me a Coffee.</p>
-<p>The download count and the supporters list are fetched by this site's server from GitHub and Buy Me a Coffee and
-cached there, so your browser never contacts either. Supporters appear with the name they chose to show; their messages
-only when they made them public.</p>"""
+<p>The download count is fetched by this site's server from GitHub and cached there, so your browser never
+contacts GitHub.</p>"""
 
 
 def generated_body(page):

@@ -1,6 +1,6 @@
 /* GeoTag Camera website script.
    No cookies, no tracking, no third-party requests. The only network call is
-   to this site's own api/stats.php (download count and supporters, cached on
+   to this site's own api/stats.php (download count, cached on
    the server). The only thing stored is your light/dark choice, in
    localStorage, on your device. Everything works without this script; it
    only adds the interactive demos and live numbers. */
@@ -290,7 +290,13 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       caption.textContent = $('.st-text span', svTabs[idx]).textContent;
       if (focus) svTabs[idx].focus();
-      if (window.innerWidth <= 860) svTabs[idx].scrollIntoView({ block: 'nearest', inline: 'center', behavior: reduced ? 'auto' : 'smooth' });
+      // Mobile: the tabs are a horizontal strip. Scroll only that strip, never the page
+      // (scrollIntoView also scrolled the page down to the tour on every autoplay step).
+      var strip = svTabs[idx].parentElement;
+      if (strip.scrollWidth > strip.clientWidth) {
+        var sr = strip.getBoundingClientRect(), tr = svTabs[idx].getBoundingClientRect();
+        strip.scrollTo({ left: strip.scrollLeft + (tr.left - sr.left) - (sr.width - tr.width) / 2, behavior: reduced ? 'auto' : 'smooth' });
+      }
     };
     var stop = function () { userTook = true; clearTimeout(timer); if (bar) bar.classList.remove('run'); };
     var tick = function () {
@@ -383,7 +389,7 @@ document.addEventListener('DOMContentLoaded', function () {
   })();
 
   /* ---------- live numbers from this site's own api/stats.php ---------- */
-  if (!$('[data-stat]') && !$('#wall')) return;
+  if (!$('[data-stat]')) return;
   var animateTo = function (el, n) {
     if (reduced || n < 20) { el.textContent = fmt(n); return; }
     var start = null, from = 0, dur = 900;
@@ -400,22 +406,5 @@ document.addEventListener('DOMContentLoaded', function () {
     $$('[data-stat="downloads"]').forEach(function (el) { if (typeof d.downloads === 'number') { animateTo(el, d.downloads); var box = el.closest('[data-live]'); if (box) { box.hidden = false; box.classList.add('live'); } } });
     $$('[data-stat="stars"]').forEach(function (el) { if (typeof d.stars === 'number') animateTo(el, d.stars); });
     $$('[data-stat="released"]').forEach(function (el) { if (d.released) el.textContent = d.released; });
-    var s = d.supporters, wall = $('#wall');
-    if (!s || !wall) return;
-    if (!(s.coffees > 0)) return;
-    $$('[data-thanks-empty]').forEach(function (el) { el.hidden = true; });
-    $$('[data-thanks-live]').forEach(function (el) { el.hidden = false; });
-    $$('[data-stat="coffees"]').forEach(function (el) { animateTo(el, s.coffees); });
-    $$('[data-stat="supporters"]').forEach(function (el) { animateTo(el, s.count || 0); });
-    $$('[data-stat="coffees-word"]').forEach(function (el) { el.textContent = s.coffees === 1 ? 'coffee' : 'coffees'; });
-    $$('[data-stat="supporters-word"]').forEach(function (el) { el.textContent = s.count === 1 ? 'supporter' : 'supporters'; });
-    var list = $('.notes', wall);
-    (s.messages || []).forEach(function (m) {
-      var li = document.createElement('li');
-      var q = document.createElement('blockquote'); q.textContent = m.note;
-      var who = document.createElement('p'); who.className = 'note-by'; who.textContent = m.name;
-      li.appendChild(q); li.appendChild(who); list.appendChild(li);
-    });
-    list.hidden = !list.children.length;
   }).catch(function () { /* numbers stay at their static fallback */ });
 });
