@@ -1,0 +1,3 @@
+- Contact address for questions and reports is now hello@konkomaji.com
+- Privacy policy updated: website forms and problem reports explained
+- Analytics consent screen shows your current choice correctly

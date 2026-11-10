@@ -36,15 +36,15 @@ android {
         minSdk = 26
         targetSdk = 36
         // Split APKs get versionCode * 10 + ABI digit (see androidComponents below).
-        versionCode = 8
-        versionName = "1.4.2"
+        versionCode = 9
+        versionName = "1.4.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    // foss: Android's own location services, no Google Play services. Shipped on
-    // GitHub, F-Droid and IzzyOnDroid. play: Fused Location Provider, kept for a
-    // future Google Play listing. Same applicationId and code otherwise.
+    // foss: Android's own location services, no Google Play services, no analytics.
+    // Shipped on GitHub and F-Droid. play: Fused Location Provider and consent-gated
+    // Firebase Analytics, shipped on Google Play. Same applicationId and code otherwise.
     flavorDimensions += "distribution"
     productFlavors {
         create("foss") {

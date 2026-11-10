@@ -4,6 +4,20 @@ All notable changes to this project are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows [Semantic Versioning](https://semver.org/).
 
+## [1.4.3] - 2026-11-11
+
+A small maintenance release. Installs over 1.4.x and keeps your photos, projects and settings.
+
+### Changed
+- The contact address for questions and problem reports is now **hello@konkomaji.com**. Reports already sent still reach the developer.
+- The privacy policy ([PRIVACY.md](PRIVACY.md), also in the app under About) now covers the website's tester signup and contact forms and how problem reports are stored and deleted.
+
+### Fixed
+- The analytics consent screen (Google Play version only) now shows your current choice when you open it again from Settings.
+
+### Google Play version
+- Anonymous usage statistics through Google Analytics are switched on in this build, still only if you agree; both options stay off until you choose. The GitHub and F-Droid versions contain no analytics.
+
 ## [1.4.2] - 2026-11-09
 
 Fixes from the F-Droid review and GitHub issue #11, a new way to report problems, and a hardening pass so the app never loses a photo or gives a wrong verdict when something goes wrong. Installs over 1.4.0 and 1.4.1 and keeps your photos, projects and settings.

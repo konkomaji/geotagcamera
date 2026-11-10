@@ -259,7 +259,7 @@ Release builds are reproducible: building a tagged version from source gives a b
 
 ## Project status
 
-Current version: **1.4.2**: compass bearing, sea-level altitude, locale-aware stamp dates, in-app problem reports with screenshots, and a reliability and security pass. 1.4.0 was the first full release, with projects, stamp notes, CSV/KML/GeoJSON export, PDF site reports and no Google Play services. Full history: [CHANGELOG.md](CHANGELOG.md).
+Current version: **1.4.3**: new contact address (hello@konkomaji.com) and privacy policy update. 1.4.2 added compass bearing, sea-level altitude, locale-aware stamp dates, in-app problem reports with screenshots, and a reliability and security pass. 1.4.0 was the first full release, with projects, stamp notes, CSV/KML/GeoJSON export, PDF site reports and no Google Play services. Full history: [CHANGELOG.md](CHANGELOG.md).
 
 Found a bug? Use **Report a problem** in the app (it goes straight to the developer, screenshots and screen recordings welcome), or [open an issue](https://github.com/konkomaji/geotagcamera/issues).
 

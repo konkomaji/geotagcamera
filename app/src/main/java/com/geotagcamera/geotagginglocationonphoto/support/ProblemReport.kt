@@ -18,7 +18,7 @@ object ProblemReport {
     const val EMAIL = "hello@konkomaji.com"
     const val ISSUES_URL = "https://github.com/konkomaji/geotagcamera/issues/new"
     /** Where this build came from, for the bug form's version answer. */
-    private val SOURCE = if (BuildConfig.FLAVOR == "play") "Google Play" else "GitHub, F-Droid or IzzyOnDroid"
+    private val SOURCE = if (BuildConfig.FLAVOR == "play") "Google Play" else "GitHub or F-Droid"
 
     enum class Kind(val label: String) { PROBLEM("Problem"), IDEA("Idea"), QUESTION("Question") }
 

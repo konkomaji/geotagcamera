@@ -84,7 +84,7 @@ The website (konkomaji.com/geotagcamera) has two forms. Nothing is sent until yo
 - **Become a tester:** your email address and, if you add them, your name and phone model. They are kept on the web host, outside the public website, only to invite you to the Google Play test, and an email tells the developer you signed up. They are never shared or used for anything else. Ask at hello@konkomaji.com and your entry is deleted.
 - **Send a message:** your email address, optional name and your message, emailed to hello@konkomaji.com so the developer can reply. Messages that look like spam are set aside and not emailed.
 
-To limit abuse, both forms use the same salted, one-way IP hash as problem reports, deleted within a day. The website sets no cookies and loads nothing from other servers. Its download count and supporters list are fetched by the site's own server, so your browser never contacts GitHub or Buy Me a Coffee.
+To limit abuse, both forms use the same salted, one-way IP hash as problem reports, deleted within a day. The website sets no cookies and loads nothing from other servers. Its download count is fetched by the site's own server, so your browser never contacts GitHub.
 
 ## Google Play version: usage statistics
 
