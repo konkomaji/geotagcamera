@@ -18,7 +18,7 @@ material = "1.13.0"
 camerax = "1.5.1"
 playServicesLocation = "21.4.0"
 # Google Play flavor only (analytics). Never in foss.
-firebaseBom = "34.4.0"
+firebaseBom = "35.1.0"
 room = "2.8.3"
 datastore = "1.1.7"
 exifinterface = "1.4.1"
